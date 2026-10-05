@@ -1,0 +1,247 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum FulfillmentType {
+  IN_STOCK
+  MADE_TO_ORDER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PACKED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  COD
+  BANK_TRANSFER
+  GATEWAY
+}
+
+enum PaymentStatus {
+  UNPAID
+  AWAITING_VERIFICATION
+  PAID
+  REFUNDED
+  FAILED
+}
+
+enum CustomRequestStatus {
+  NEW
+  REVIEWING
+  QUOTED
+  CLOSED
+}
+
+model Category {
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  description String?
+  sortOrder   Int       @default(0)
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id                String          @id @default(cuid())
+  name              String
+  slug              String          @unique
+  oneLiner          String
+  story             String
+  materials         String
+  handmadeProof     String
+  stylingNote       String
+  price             Int
+  compareAtPrice    Int?
+  currency          String          @default("PKR")
+  fulfillment       FulfillmentType @default(MADE_TO_ORDER)
+  stock             Int?
+  leadTimeDays      Int?
+  featured          Boolean         @default(false)
+  published         Boolean         @default(true)
+  isBundle          Boolean         @default(false)
+  bundleProductIds  String[]        @default([])
+  introOfferPercent Int?
+  seoTitle          String?
+  seoDescription    String?
+  tags              String[]        @default([])
+  categoryId        String
+  category          Category        @relation(fields: [categoryId], references: [id])
+  images            ProductImage[]
+  variants          Variant[]
+  orderItems        OrderItem[]
+  wishlistItems     WishlistItem[]
+  waitlistEntries   WaitlistEntry[]
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+}
+
+model ProductImage {
+  id        String  @id @default(cuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String
+  kind      String  @default("hero")
+  sortOrder Int     @default(0)
+}
+
+model Variant {
+  id          String      @id @default(cuid())
+  productId   String
+  product     Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  name        String
+  optionGroup String      @default("Option")
+  swatchHex   String?
+  imageUrl    String?
+  sku         String?     @unique
+  priceDelta  Int         @default(0)
+  stock       Int?
+  orderItems  OrderItem[]
+}
+
+model Customer {
+  id           String         @id @default(cuid())
+  email        String         @unique
+  passwordHash String
+  name         String
+  phone        String?
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  orders       Order[]
+  wishlist     WishlistItem[]
+  waitlist     WaitlistEntry[]
+}
+
+model WishlistItem {
+  id         String   @id @default(cuid())
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+
+  @@unique([customerId, productId])
+}
+
+model WaitlistEntry {
+  id         String   @id @default(cuid())
+  email      String
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variantId  String?
+  customerId String?
+  customer   Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  notified   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  @@index([email, productId])
+}
+
+model Order {
+  id              String        @id @default(cuid())
+  orderNumber     String        @unique
+  status          OrderStatus   @default(PENDING)
+  paymentMethod   PaymentMethod
+  paymentStatus   PaymentStatus @default(UNPAID)
+  paymentRef      String?
+  customerId      String?
+  customer        Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  customerName    String
+  customerEmail   String
+  customerPhone   String
+  shippingAddress String
+  shippingCity    String
+  shippingNotes   String?
+  trackingNumber  String?
+  trackingUrl     String?
+  adminNotes      String?
+  subtotal        Int
+  discountCode    String?
+  discountAmount  Int           @default(0)
+  shippingFee     Int           @default(0)
+  total           Int
+  currency        String        @default("PKR")
+  items           OrderItem[]
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  variantId   String?
+  variant     Variant? @relation(fields: [variantId], references: [id])
+  name        String
+  variantName String?
+  price       Int
+  quantity    Int
+}
+
+model Settings {
+  id                String  @id @default("default")
+  shippingFlatFee   Int     @default(250)
+  freeShippingOver  Int     @default(5000)
+  bannerText        String?
+  bankName          String?
+  bankAccountTitle  String?
+  bankAccountNumber String?
+  bankIban          String?
+}
+
+model CustomRequest {
+  id           String              @id @default(cuid())
+  name         String
+  email        String
+  phone        String
+  pieceType    String
+  colors       String
+  details      String
+  occasion     String
+  budget       String
+  neededBy     DateTime?
+  referenceUrl String?
+  status       CustomRequestStatus @default(NEW)
+  adminNotes   String?
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+
+  @@index([status, createdAt])
+  @@index([email])
+}
+
+enum DiscountType {
+  PERCENT
+  FIXED
+}
+
+model DiscountCode {
+  id              String       @id @default(cuid())
+  code            String       @unique
+  type            DiscountType
+  value           Int
+  minSubtotal     Int          @default(0)
+  maxUses         Int?
+  usedCount       Int          @default(0)
+  active          Boolean      @default(true)
+  isIntroOffer    Boolean      @default(false)
+  startsAt        DateTime?
+  endsAt          DateTime?
+  description     String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}

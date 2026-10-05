@@ -1,0 +1,255 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --aubergine: #2a1f2d;
+  --porcelain: #f4eee6;
+  --copper: #b85f45;
+  --sage: #7f8b78;
+  --brass: #b79b63;
+  --stone: #d7cec3;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-porcelain text-aubergine font-body antialiased;
+    background-image:
+      radial-gradient(ellipse 120% 80% at 10% -10%, rgba(215, 206, 195, 0.45), transparent 50%),
+      radial-gradient(ellipse 80% 60% at 100% 0%, rgba(127, 139, 120, 0.08), transparent 45%);
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--copper) 28%, transparent);
+    color: var(--aubergine);
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-display font-normal tracking-tight;
+  }
+}
+
+@layer components {
+  .text-nav {
+    @apply font-body text-[11px] uppercase tracking-nav text-aubergine/80;
+  }
+
+  .text-brand {
+    @apply font-body text-[11px] uppercase tracking-brand;
+  }
+
+  .rule-brass {
+    @apply h-px w-full bg-brass/60;
+  }
+
+  .container-content {
+    @apply mx-auto w-full max-w-content px-4 sm:px-8 lg:px-12;
+  }
+
+  /** Two-column card grids on mobile — tighter gaps, scale up from sm */
+  .card-grid {
+    @apply grid grid-cols-2 gap-x-2.5 gap-y-5 sm:gap-x-5 sm:gap-y-8 lg:gap-x-8 lg:gap-y-10;
+  }
+
+  .card-grid-tiles {
+    @apply grid grid-cols-2 gap-2 sm:gap-3 lg:gap-4;
+  }
+
+  .card-grid-stat {
+    @apply grid grid-cols-2 gap-2 sm:gap-3;
+  }
+
+  /* Animated hamburger → X */
+  .hamburger {
+    @apply relative block h-[14px] w-[20px];
+  }
+
+  .hamburger span {
+    @apply absolute left-0 block h-[1.5px] w-full bg-aubergine transition-all duration-300 ease-[cubic-bezier(0.22,1,0.36,1)];
+  }
+
+  .hamburger span:nth-child(1) {
+    top: 0;
+  }
+
+  .hamburger span:nth-child(2) {
+    top: 50%;
+    margin-top: -0.75px;
+  }
+
+  .hamburger span:nth-child(3) {
+    bottom: 0;
+  }
+
+  .hamburger[data-open="true"] span:nth-child(1) {
+    top: 50%;
+    margin-top: -0.75px;
+    transform: rotate(45deg);
+  }
+
+  .hamburger[data-open="true"] span:nth-child(2) {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+
+  .hamburger[data-open="true"] span:nth-child(3) {
+    bottom: auto;
+    top: 50%;
+    margin-top: -0.75px;
+    transform: rotate(-45deg);
+  }
+
+  .hamburger-on-dark span {
+    @apply bg-porcelain;
+  }
+
+  /* Announcement ticker */
+  .ticker-track {
+    animation: ticker-scroll 38s linear infinite;
+  }
+
+  .ticker-track:hover {
+    animation-play-state: paused;
+  }
+}
+
+@layer utilities {
+  .fade-in {
+    animation: fade-in 0.7s ease-out both;
+  }
+
+  .fade-up {
+    animation: fade-up 0.8s ease-out both;
+  }
+
+  .star-pulse {
+    animation: star-pulse 2.4s ease-in-out infinite;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: opacity, transform;
+  }
+
+  .reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hero-copy-in {
+    animation: hero-copy-in 0.85s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .hero-progress {
+    animation-name: hero-progress;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+  }
+
+  .menu-item-in {
+    animation: menu-item-in 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+
+    .hero-copy-in,
+    .hero-progress,
+    .menu-item-in,
+    .ticker-track {
+      animation: none;
+    }
+
+    .hero-progress {
+      width: 100%;
+    }
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes star-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+}
+
+@keyframes hero-copy-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes hero-progress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes menu-item-in {
+  from {
+    opacity: 0;
+    transform: translateX(-14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ticker-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
