@@ -54,7 +54,7 @@ export default async function AdminCustomersPage() {
   }
 
   return (
-    <div className="container-content py-12">
+    <div className="py-4">
       <SectionHeading
         title="Customers"
         description="People who have placed orders in your store."

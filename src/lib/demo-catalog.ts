@@ -71,6 +71,19 @@ export function getDemoMetrics() {
     (p) => p.fulfillment === "IN_STOCK" && (p.stock ?? 0) <= 2
   ).length;
 
+  const sold = new Map<string, { name: string; qty: number; revenue: number }>();
+  for (const order of orders) {
+    for (const item of order.items) {
+      const prev = sold.get(item.name) || { name: item.name, qty: 0, revenue: 0 };
+      prev.qty += item.quantity;
+      prev.revenue += item.price * item.quantity;
+      sold.set(item.name, prev);
+    }
+  }
+  const bestSellers = Array.from(sold.values())
+    .sort((a, b) => b.qty - a.qty)
+    .slice(0, 5);
+
   return {
     productCount: catalog.length,
     publishedCount: catalog.filter((p) => p.published).length,
@@ -83,6 +96,8 @@ export function getDemoMetrics() {
     avgOrderValue: orders.length
       ? Math.round(orders.reduce((s, o) => s + o.total, 0) / orders.length)
       : 0,
+    invoiceCount: orders.length,
+    bestSellers,
     recentOrders: orders.slice(-5).reverse(),
   };
 }

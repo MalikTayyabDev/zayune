@@ -58,7 +58,7 @@ export default async function AccountPage() {
   ).length;
 
   return (
-    <div className="container-content py-14 sm:py-20">
+    <div className="py-2 sm:py-4">
       <div className="flex flex-wrap items-end justify-between gap-6">
         <SectionHeading
           eyebrow="Account"

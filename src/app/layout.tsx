@@ -4,8 +4,11 @@ import { CartDrawer } from "@/components/cart/CartDrawer";
 import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { SubscribePopup } from "@/components/marketing/SubscribePopup";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
+import { SupportChat } from "@/components/support/SupportChat";
+import { WhatsAppFloat } from "@/components/support/WhatsAppFloat";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
@@ -96,6 +99,9 @@ export default function RootLayout({
           <main className="min-h-[70vh]">{children}</main>
           <Footer />
           <CartDrawer />
+          <WhatsAppFloat />
+          <SupportChat />
+          <SubscribePopup />
         </SessionProvider>
       </body>
     </html>

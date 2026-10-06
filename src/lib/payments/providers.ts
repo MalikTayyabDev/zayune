@@ -16,25 +16,33 @@ const codProvider: PaymentProvider = {
 const bankTransferProvider: PaymentProvider = {
   id: "bank_transfer",
   label: "Bank / Raast Transfer",
-  description: "Transfer to our account and share your payment reference.",
+  description:
+    "Confirm with 30% bank/Raast advance. Remaining balance as arranged / on delivery.",
   async initiate(input) {
     const bankName = process.env.BANK_NAME || "[Bank name — to be supplied]";
     const title = process.env.BANK_ACCOUNT_TITLE || "ZAYUNE";
     const number = process.env.BANK_ACCOUNT_NUMBER || "[Account number — to be supplied]";
     const iban = process.env.BANK_IBAN || "[IBAN / Raast ID — to be supplied]";
 
+    const advance = Math.round(input.amount * 0.3);
     return {
       provider: "bank_transfer",
       paymentStatus: "AWAITING_VERIFICATION",
       referenceHint: input.orderNumber,
       instructions: [
-        `Transfer ${input.amount.toLocaleString("en-PK")} ${input.currency} to:`,
+        "To confirm your order, please pay 30% in advance by Bank / Raast transfer.",
+        `Advance due now: ${advance.toLocaleString("en-PK")} ${input.currency}`,
+        `Order total: ${input.amount.toLocaleString("en-PK")} ${input.currency}`,
+        "",
+        `Transfer to:`,
         `${title}`,
         `${bankName}`,
         `Account: ${number}`,
         `IBAN / Raast: ${iban}`,
         `Use reference: ${input.orderNumber}`,
-        "We will confirm payment manually and update your order.",
+        "",
+        "After transfer, reply on WhatsApp with your order number so we can verify and start making your piece.",
+        "Remaining balance can be paid on delivery or as arranged.",
       ].join("\n"),
     };
   },

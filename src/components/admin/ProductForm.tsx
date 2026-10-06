@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { ImageUpload } from "@/components/ui/ImageUpload";
 
 type Category = { id: string; name: string };
 type CatalogOption = { id: string; name: string };
@@ -268,9 +269,20 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                   key={index}
                   className="grid gap-3 border border-stone/80 bg-stone/10 p-4 sm:grid-cols-2"
                 >
+                  <div className="sm:col-span-2">
+                    <ImageUpload
+                      label={`Image ${index + 1}`}
+                      value={image.url}
+                      onChange={(url) => {
+                        const next = [...values.images];
+                        next[index] = { ...image, url };
+                        setField("images", next);
+                      }}
+                    />
+                  </div>
                   <Field
-                    label="Image URL"
-                    value={image.url}
+                    label="Or paste image URL"
+                    value={image.url.startsWith("data:") ? "" : image.url}
                     onChange={(v) => {
                       const next = [...values.images];
                       next[index] = { ...image, url: v };
@@ -295,7 +307,7 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                         next[index] = { ...image, kind: e.target.value };
                         setField("images", next);
                       }}
-                      className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm"
+                      className="form-select mt-2 w-full appearance-none border border-stone bg-porcelain px-4 py-3 pr-10 text-sm"
                     >
                       {imageKinds.map((kind) => (
                         <option key={kind} value={kind}>
@@ -395,15 +407,17 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                       />
                     </div>
                   </label>
-                  <Field
-                    label="Variant image URL"
-                    value={variant.imageUrl}
-                    onChange={(v) => {
-                      const next = [...values.variants];
-                      next[index] = { ...variant, imageUrl: v };
-                      setField("variants", next);
-                    }}
-                  />
+                  <div className="sm:col-span-2">
+                    <ImageUpload
+                      label="Variant / swatch image"
+                      value={variant.imageUrl}
+                      onChange={(url) => {
+                        const next = [...values.variants];
+                        next[index] = { ...variant, imageUrl: url };
+                        setField("variants", next);
+                      }}
+                    />
+                  </div>
                   <Field
                     label="Price delta"
                     type="number"

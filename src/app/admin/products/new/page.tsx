@@ -19,7 +19,7 @@ export default async function NewProductPage() {
   ]);
 
   return (
-    <div className="container-content py-12">
+    <div className="py-4">
       <ProductForm
         categories={categories.map((c) => ({ id: c.id, name: c.name }))}
         catalog={products.map((p) => ({ id: p.id, name: p.name }))}

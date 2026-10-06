@@ -112,7 +112,10 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
           shippingNotes: form.get("shippingNotes"),
           paymentMethod,
           paymentRef: paymentRef || undefined,
-          discountCode: discountInput || discountCodeStore || undefined,
+          discountCode:
+            discountAmount > 0
+              ? discountCodeStore || discountLabel || undefined
+              : undefined,
           items: items.map((item) => ({
             productId: item.productId,
             variantId: item.variantId,
@@ -127,7 +130,16 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
       }
 
       clearCart();
-      router.push(`/order/${data.orderId}/confirmation`);
+      const next =
+        data.redirectUrl || `/order/${data.orderId}/confirmation`;
+      if (data.whatsappConfirmUrl && typeof window !== "undefined") {
+        sessionStorage.setItem(
+          `zayune_wa_${data.orderId}`,
+          data.whatsappConfirmUrl
+        );
+      }
+      router.push(next);
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setLoading(false);

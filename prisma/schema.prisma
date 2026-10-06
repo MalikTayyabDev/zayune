@@ -204,21 +204,22 @@ model Settings {
 }
 
 model CustomRequest {
-  id           String              @id @default(cuid())
-  name         String
-  email        String
-  phone        String
-  pieceType    String
-  colors       String
-  details      String
-  occasion     String
-  budget       String
-  neededBy     DateTime?
-  referenceUrl String?
-  status       CustomRequestStatus @default(NEW)
-  adminNotes   String?
-  createdAt    DateTime            @default(now())
-  updatedAt    DateTime            @updatedAt
+  id            String              @id @default(cuid())
+  name          String
+  email         String
+  phone         String
+  pieceType     String
+  colors        String
+  details       String
+  occasion      String
+  budget        String
+  neededBy      DateTime?
+  referenceUrl  String?
+  referenceImage String?
+  status        CustomRequestStatus @default(NEW)
+  adminNotes    String?
+  createdAt     DateTime            @default(now())
+  updatedAt     DateTime            @updatedAt
 
   @@index([status, createdAt])
   @@index([email])
@@ -229,19 +230,61 @@ enum DiscountType {
   FIXED
 }
 
+enum DiscountUsageType {
+  UNLIMITED
+  LIMITED
+  ONE_TIME
+  ONE_TIME_EMAIL
+}
+
 model DiscountCode {
-  id              String       @id @default(cuid())
-  code            String       @unique
+  id              String            @id @default(cuid())
+  code            String            @unique
   type            DiscountType
   value           Int
-  minSubtotal     Int          @default(0)
+  minSubtotal     Int               @default(0)
   maxUses         Int?
-  usedCount       Int          @default(0)
-  active          Boolean      @default(true)
-  isIntroOffer    Boolean      @default(false)
+  usedCount       Int               @default(0)
+  active          Boolean           @default(true)
+  isIntroOffer    Boolean           @default(false)
+  usageType       DiscountUsageType @default(UNLIMITED)
+  /// JSON array of product IDs; empty/null = all products
+  productIds      String?
   startsAt        DateTime?
   endsAt          DateTime?
   description     String?
-  createdAt       DateTime     @default(now())
-  updatedAt       DateTime     @updatedAt
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+model SupportTicket {
+  id        String   @id @default(cuid())
+  ticketId  String   @unique
+  name      String
+  email     String
+  phone     String
+  message   String
+  status    String   @default("OPEN")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model Subscriber {
+  id         String   @id @default(cuid())
+  email      String   @unique
+  name       String?
+  couponCode String
+  createdAt  DateTime @default(now())
+}
+
+model DiscountRedemption {
+  id           String   @id @default(cuid())
+  code         String
+  email        String
+  orderId      String?
+  createdAt    DateTime @default(now())
+
+  @@index([code, email])
 }

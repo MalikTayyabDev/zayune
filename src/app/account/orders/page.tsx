@@ -29,7 +29,7 @@ export default async function AccountOrdersPage() {
       });
 
   return (
-    <div className="container-content py-14 sm:py-20">
+    <div className="py-2 sm:py-4">
       <SectionHeading
         eyebrow="Account"
         title="Your orders"

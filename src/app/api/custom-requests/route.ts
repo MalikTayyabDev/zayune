@@ -17,6 +17,7 @@ const schema = z.object({
   referenceUrl: z
     .union([z.string().url(), z.literal(""), z.null()])
     .optional(),
+  referenceImage: z.string().optional().nullable(),
 });
 
 export async function POST(request: Request) {
@@ -27,6 +28,7 @@ export async function POST(request: Request) {
         ? new Date(data.neededBy)
         : null;
     const referenceUrl = data.referenceUrl?.trim() || null;
+    const referenceImage = data.referenceImage?.trim() || null;
 
     if (neededBy && Number.isNaN(neededBy.getTime())) {
       return NextResponse.json(
@@ -47,6 +49,7 @@ export async function POST(request: Request) {
         budget: data.budget,
         neededBy,
         referenceUrl,
+        referenceImage,
       });
       return NextResponse.json({ id: entry.id });
     }
@@ -63,6 +66,7 @@ export async function POST(request: Request) {
         budget: data.budget,
         neededBy,
         referenceUrl,
+        referenceImage,
       },
     });
 

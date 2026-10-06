@@ -12,7 +12,7 @@ export default async function AdminSettingsPage() {
   const settings = await getSettings();
 
   return (
-    <div className="container-content py-12">
+    <div className="py-4">
       <SectionHeading
         title="Settings"
         description="Shipping rate, optional banner, and bank transfer details."

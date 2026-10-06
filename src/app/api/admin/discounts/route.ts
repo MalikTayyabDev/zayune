@@ -16,6 +16,10 @@ const schema = z.object({
   value: z.number().int().positive(),
   minSubtotal: z.number().int().nonnegative().default(0),
   maxUses: z.number().int().positive().nullable().optional(),
+  usageType: z
+    .enum(["UNLIMITED", "LIMITED", "ONE_TIME", "ONE_TIME_EMAIL"])
+    .default("UNLIMITED"),
+  productIds: z.string().nullable().optional(),
   active: z.boolean().default(true),
   isIntroOffer: z.boolean().default(false),
   description: z.string().optional().nullable(),
@@ -58,6 +62,8 @@ export async function POST(request: Request) {
         usedCount: 0,
         active: data.active,
         isIntroOffer: data.isIntroOffer,
+        usageType: data.usageType,
+        productIds: data.productIds || null,
         startsAt: null,
         endsAt: null,
         description: data.description || null,
@@ -75,6 +81,8 @@ export async function POST(request: Request) {
         value: data.value,
         minSubtotal: data.minSubtotal,
         maxUses: data.maxUses ?? null,
+        usageType: data.usageType,
+        productIds: data.productIds || null,
         active: data.active,
         isIntroOffer: data.isIntroOffer,
         description: data.description || null,

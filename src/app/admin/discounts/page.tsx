@@ -16,7 +16,7 @@ export default async function AdminDiscountsPage() {
     : await prisma.discountCode.findMany({ orderBy: { createdAt: "desc" } });
 
   return (
-    <div className="container-content py-12">
+    <div className="py-4">
       <SectionHeading
         title="Discounts & intro offers"
         description="Create codes for checkout. Mark one as an introductory offer to promote it in the top bar."

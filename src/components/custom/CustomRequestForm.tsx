@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { ImageUpload } from "@/components/ui/ImageUpload";
 import {
   BUDGET_RANGES,
   OCCASIONS,
@@ -12,6 +13,7 @@ import {
 export function CustomRequestForm() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [referenceImage, setReferenceImage] = useState("");
   const [done, setDone] = useState<{
     name: string;
     pieceType: string;
@@ -39,6 +41,7 @@ export function CustomRequestForm() {
       budget: String(form.get("budget") || ""),
       neededBy: String(form.get("neededBy") || "") || null,
       referenceUrl: String(form.get("referenceUrl") || "") || null,
+      referenceImage: referenceImage || null,
     };
 
     try {
@@ -177,6 +180,13 @@ export function CustomRequestForm() {
           placeholder="Instagram or Pinterest URL"
         />
       </div>
+
+      <ImageUpload
+        guest
+        label="Reference product / inspiration photo"
+        value={referenceImage}
+        onChange={setReferenceImage}
+      />
 
       {error && (
         <p className="text-xs text-copper" role="alert">

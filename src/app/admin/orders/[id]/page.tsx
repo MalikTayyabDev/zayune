@@ -24,7 +24,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
   if (!order) notFound();
 
   return (
-    <div className="container-content py-12">
+    <div className="py-4">
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <SectionHeading
           eyebrow="Order"

@@ -16,6 +16,22 @@ import {
 import { getPaymentProvider } from "@/lib/payments/providers";
 import { prisma } from "@/lib/prisma";
 import { generateOrderNumber } from "@/lib/utils";
+import { siteConfig } from "@/lib/site";
+
+function buildWhatsAppConfirm(
+  name: string,
+  orderNumber: string,
+  total: number,
+  paymentMethod: string
+) {
+  const advance = Math.round(total * 0.3);
+  const bankNote =
+    paymentMethod === "bank_transfer"
+      ? ` I will send 30% advance (Rs ${advance.toLocaleString("en-PK")}) via bank/Raast with reference ${orderNumber}.`
+      : "";
+  const text = `Hi ZAYUNE, this is ${name}. Please confirm my order ${orderNumber} (total Rs ${total.toLocaleString("en-PK")}).${bankNote}`;
+  return `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(text)}`;
+}
 
 const itemSchema = z.object({
   productId: z.string(),
@@ -61,7 +77,10 @@ export async function POST(request: Request) {
       0
     );
 
-    const discount = await resolveDiscount(data.discountCode, subtotal);
+    const discount = await resolveDiscount(data.discountCode, subtotal, {
+      email: data.customerEmail,
+      productIds: data.items.map((i) => i.productId),
+    });
     const shippingFee = await resolveShipping(subtotal - discount.discountAmount);
     const total = Math.max(0, subtotal - discount.discountAmount + shippingFee);
 
@@ -134,20 +153,31 @@ export async function POST(request: Request) {
         updatedAt: now,
       });
 
-      await incrementDiscountUse(discount.discountCode);
-      await sendOrderConfirmationEmail({
+      await incrementDiscountUse(discount.discountCode, data.customerEmail);
+      const itemsSummary = pricedItems
+        .map((i) => `${i.name}${i.variantName ? ` (${i.variantName})` : ""} × ${i.quantity}`)
+        .join(", ");
+      void sendOrderConfirmationEmail({
         to: data.customerEmail,
         orderNumber,
         customerName: data.customerName,
         total,
         currency: "PKR",
+        paymentMethod: methodMap[data.paymentMethod],
+        itemsSummary,
       });
 
       return NextResponse.json({
         orderId,
         orderNumber,
         instructions: payment.instructions,
-        redirectUrl: payment.redirectUrl,
+        redirectUrl: payment.redirectUrl || `/order/${orderId}/confirmation`,
+        whatsappConfirmUrl: buildWhatsAppConfirm(
+          data.customerName,
+          orderNumber,
+          total,
+          data.paymentMethod
+        ),
       });
     }
 
@@ -182,20 +212,31 @@ export async function POST(request: Request) {
       },
     });
 
-    await incrementDiscountUse(discount.discountCode);
-    await sendOrderConfirmationEmail({
+    await incrementDiscountUse(discount.discountCode, data.customerEmail);
+    const itemsSummary = pricedItems
+      .map((i) => `${i.name}${i.variantName ? ` (${i.variantName})` : ""} × ${i.quantity}`)
+      .join(", ");
+    void sendOrderConfirmationEmail({
       to: data.customerEmail,
       orderNumber: order.orderNumber,
       customerName: data.customerName,
       total,
       currency: "PKR",
+      paymentMethod: methodMap[data.paymentMethod],
+      itemsSummary,
     });
 
     return NextResponse.json({
       orderId: order.id,
       orderNumber: order.orderNumber,
       instructions: payment.instructions,
-      redirectUrl: payment.redirectUrl,
+      redirectUrl: payment.redirectUrl || `/order/${order.id}/confirmation`,
+      whatsappConfirmUrl: buildWhatsAppConfirm(
+        data.customerName,
+        order.orderNumber,
+        total,
+        data.paymentMethod
+      ),
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

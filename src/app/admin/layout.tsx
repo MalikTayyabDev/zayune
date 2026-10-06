@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
-import { Logo } from "@/components/brand/Logo";
+import { DashboardShell } from "@/components/layout/DashboardShell";
 import { authOptions } from "@/lib/auth";
 
 const links = [
@@ -25,33 +25,18 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="min-h-[70vh] bg-stone/15">
-      <div className="border-b border-stone bg-aubergine text-porcelain">
-        <div className="container-content flex flex-wrap items-center justify-between gap-4 py-4">
-          <div className="flex items-center gap-4">
-            <Logo variant="light" href="/admin" className="h-12 w-auto" />
-            <div>
-              <p className="text-nav text-porcelain/50">ZAYUNE Studio</p>
-              <p className="font-display text-xl">Admin</p>
-            </div>
-          </div>
-          <nav className="flex flex-wrap gap-4">
-            {links.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                className="text-nav text-porcelain/75 hover:text-brass"
-              >
-                {link.label}
-              </Link>
-            ))}
-            <Link href="/" className="text-nav text-brass">
-              View store →
-            </Link>
-          </nav>
-        </div>
+    <DashboardShell title="Admin" eyebrow="ZAYUNE Studio" links={links} tone="admin">
+      <div className="mb-4 flex justify-end lg:hidden">
+        <Link href="/" className="text-nav text-copper">
+          View store →
+        </Link>
       </div>
-      <div className="bg-porcelain">{children}</div>
-    </div>
+      <div className="hidden justify-end lg:flex">
+        <Link href="/" className="text-nav text-copper hover:text-aubergine">
+          View store →
+        </Link>
+      </div>
+      {children}
+    </DashboardShell>
   );
 }

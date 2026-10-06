@@ -1,4 +1,8 @@
-import { findDemoDiscount, getDemoDiscounts } from "@/lib/demo-discounts";
+import {
+  findDemoDiscount,
+  getDemoDiscounts,
+  getDemoRedemptions,
+} from "@/lib/demo-discounts";
 import { findDemoProduct } from "@/lib/demo-catalog";
 import { demoSettings, isDemoMode } from "@/lib/demo-data";
 import { prisma } from "@/lib/prisma";
@@ -107,7 +111,11 @@ export async function priceCartLines(lines: CartLineInput[]): Promise<PricedLine
   return priced;
 }
 
-export async function resolveDiscount(code: string | undefined | null, subtotal: number) {
+export async function resolveDiscount(
+  code: string | undefined | null,
+  subtotal: number,
+  opts?: { email?: string; productIds?: string[] }
+) {
   if (!code?.trim()) {
     return { discountAmount: 0, discountCode: null as string | null, label: null as string | null };
   }
@@ -128,9 +136,50 @@ export async function resolveDiscount(code: string | undefined | null, subtotal:
   if (discount.endsAt && discount.endsAt.getTime() < now) {
     throw new Error("Discount code has expired.");
   }
-  if (discount.maxUses != null && discount.usedCount >= discount.maxUses) {
+
+  const usageType =
+    ("usageType" in discount && discount.usageType) ||
+    (discount.maxUses === 1 ? "ONE_TIME" : discount.maxUses != null ? "LIMITED" : "UNLIMITED");
+
+  const maxUses =
+    usageType === "ONE_TIME" ? 1 : discount.maxUses != null ? discount.maxUses : null;
+
+  if (maxUses != null && discount.usedCount >= maxUses) {
     throw new Error("Discount code has reached its usage limit.");
   }
+
+  if (usageType === "ONE_TIME_EMAIL" && opts?.email) {
+    const email = opts.email.toLowerCase();
+    if (isDemoMode()) {
+      if (getDemoRedemptions().some((r) => r.code === normalized && r.email === email)) {
+        throw new Error("This code was already used with this email.");
+      }
+    } else {
+      const prior = await prisma.discountRedemption.findFirst({
+        where: { code: normalized, email },
+      });
+      if (prior) {
+        throw new Error("This code was already used with this email.");
+      }
+    }
+  }
+
+  const productIdsRaw =
+    "productIds" in discount ? (discount.productIds as string | null) : null;
+  if (productIdsRaw && opts?.productIds?.length) {
+    try {
+      const allowed = JSON.parse(productIdsRaw) as string[];
+      if (Array.isArray(allowed) && allowed.length > 0) {
+        const hit = opts.productIds.some((id) => allowed.includes(id));
+        if (!hit) {
+          throw new Error("This code doesn’t apply to the items in your cart.");
+        }
+      }
+    } catch (e) {
+      if (e instanceof Error && e.message.includes("doesn’t apply")) throw e;
+    }
+  }
+
   if (subtotal < discount.minSubtotal) {
     throw new Error(
       `Add ${discount.minSubtotal - subtotal} more to use this code.`
@@ -163,13 +212,19 @@ export async function resolveShipping(subtotalAfterDiscount: number) {
   return settings.shippingFlatFee ?? 250;
 }
 
-export async function incrementDiscountUse(code: string | null) {
+export async function incrementDiscountUse(
+  code: string | null,
+  email?: string | null
+) {
   if (!code) return;
   if (isDemoMode()) {
     const d = findDemoDiscount(code);
     if (d) {
       d.usedCount += 1;
       d.updatedAt = new Date();
+      if (d.usageType === "ONE_TIME_EMAIL" && email) {
+        getDemoRedemptions().push({ code: d.code, email: email.toLowerCase() });
+      }
     }
     return;
   }
@@ -177,6 +232,14 @@ export async function incrementDiscountUse(code: string | null) {
     where: { code },
     data: { usedCount: { increment: 1 } },
   });
+  if (email) {
+    const discount = await prisma.discountCode.findUnique({ where: { code } });
+    if (discount?.usageType === "ONE_TIME_EMAIL") {
+      await prisma.discountRedemption.create({
+        data: { code, email: email.toLowerCase() },
+      });
+    }
+  }
 }
 
 export async function getIntroOfferBanner() {

@@ -8,6 +8,8 @@ export type DemoDiscount = {
   usedCount: number;
   active: boolean;
   isIntroOffer: boolean;
+  usageType: "UNLIMITED" | "LIMITED" | "ONE_TIME" | "ONE_TIME_EMAIL";
+  productIds: string | null;
   startsAt: Date | null;
   endsAt: Date | null;
   description: string | null;
@@ -26,6 +28,8 @@ const defaults: DemoDiscount[] = [
     usedCount: 0,
     active: true,
     isIntroOffer: true,
+    usageType: "UNLIMITED",
+    productIds: null,
     startsAt: null,
     endsAt: null,
     description: "Introductory offer — 10% off your first order",
@@ -42,9 +46,29 @@ const defaults: DemoDiscount[] = [
     usedCount: 0,
     active: true,
     isIntroOffer: false,
+    usageType: "LIMITED",
+    productIds: null,
     startsAt: null,
     endsAt: null,
     description: "PKR 500 off orders over 3,000",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    id: "disc-sub5",
+    code: "SUBSCRIBE5",
+    type: "PERCENT",
+    value: 5,
+    minSubtotal: 0,
+    maxUses: null,
+    usedCount: 0,
+    active: true,
+    isIntroOffer: false,
+    usageType: "ONE_TIME_EMAIL",
+    productIds: null,
+    startsAt: null,
+    endsAt: null,
+    description: "Subscribe offer — 5% off (one-time per email)",
     createdAt: new Date(),
     updatedAt: new Date(),
   },
@@ -52,6 +76,7 @@ const defaults: DemoDiscount[] = [
 
 const globalStore = globalThis as unknown as {
   __zayuneDiscounts?: DemoDiscount[];
+  __zayuneRedemptions?: { code: string; email: string }[];
 };
 
 export function getDemoDiscounts() {
@@ -59,6 +84,13 @@ export function getDemoDiscounts() {
     globalStore.__zayuneDiscounts = structuredClone(defaults);
   }
   return globalStore.__zayuneDiscounts;
+}
+
+export function getDemoRedemptions() {
+  if (!globalStore.__zayuneRedemptions) {
+    globalStore.__zayuneRedemptions = [];
+  }
+  return globalStore.__zayuneRedemptions;
 }
 
 export function findDemoDiscount(code: string) {
@@ -84,6 +116,10 @@ export function getActiveIntroOffer() {
       if (!d.active || !d.isIntroOffer) return false;
       if (d.startsAt && d.startsAt.getTime() > now) return false;
       if (d.endsAt && d.endsAt.getTime() < now) return false;
+      if (d.usageType === "LIMITED" || d.usageType === "ONE_TIME") {
+        const max = d.usageType === "ONE_TIME" ? 1 : d.maxUses;
+        if (max != null && d.usedCount >= max) return false;
+      }
       if (d.maxUses != null && d.usedCount >= d.maxUses) return false;
       return true;
     }) || null

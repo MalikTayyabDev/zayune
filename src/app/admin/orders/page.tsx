@@ -20,7 +20,7 @@ export default async function AdminOrdersPage() {
       });
 
   return (
-    <div className="container-content py-12">
+    <div className="py-4">
       <SectionHeading
         title="Orders"
         description="Update status, payment, tracking, and open invoices."

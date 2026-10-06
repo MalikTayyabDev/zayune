@@ -10,6 +10,7 @@ export type DemoCustomRequest = {
   budget: string;
   neededBy: Date | null;
   referenceUrl: string | null;
+  referenceImage: string | null;
   status: "NEW" | "REVIEWING" | "QUOTED" | "CLOSED";
   adminNotes: string | null;
   createdAt: Date;

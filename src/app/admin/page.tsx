@@ -22,6 +22,8 @@ export default async function AdminHomePage() {
     customerEstimate: 0,
     lowStockCount: 0,
     avgOrderValue: 0,
+    invoiceCount: 0,
+    bestSellers: [] as { name: string; qty: number; revenue: number }[],
   };
 
   let recentOrders: Array<{
@@ -72,6 +74,13 @@ export default async function AdminHomePage() {
     const revenue = paidOrders.reduce((s, o) => s + o.total, 0);
     const allTotals = await prisma.order.aggregate({ _avg: { total: true } });
 
+    const itemAgg = await prisma.orderItem.groupBy({
+      by: ["name"],
+      _sum: { quantity: true, price: true },
+      orderBy: { _sum: { quantity: "desc" } },
+      take: 5,
+    });
+
     metrics = {
       productCount,
       publishedCount,
@@ -82,6 +91,12 @@ export default async function AdminHomePage() {
       customerEstimate,
       lowStockCount,
       avgOrderValue: Math.round(allTotals._avg.total || 0),
+      invoiceCount: orderCount,
+      bestSellers: itemAgg.map((row) => ({
+        name: row.name,
+        qty: row._sum.quantity || 0,
+        revenue: 0,
+      })),
     };
     recentOrders = recent;
   }
@@ -107,10 +122,15 @@ export default async function AdminHomePage() {
       value: formatPrice(metrics.avgOrderValue),
       href: "/admin/orders",
     },
+    {
+      label: "Invoices",
+      value: String(metrics.invoiceCount),
+      href: "/admin/orders",
+    },
   ];
 
   return (
-    <div className="container-content py-12">
+    <div className="py-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <SectionHeading
           eyebrow="Dashboard"
@@ -153,6 +173,35 @@ export default async function AdminHomePage() {
           </Link>
         ))}
       </div>
+
+      <section className="mt-14">
+        <h2 className="mb-6 font-display text-2xl">Best sellers</h2>
+        {metrics.bestSellers.length === 0 ? (
+          <p className="border border-stone p-6 text-sm text-aubergine/60">
+            Best sellers appear after orders are placed.
+          </p>
+        ) : (
+          <ul className="divide-y divide-stone border border-stone">
+            {metrics.bestSellers.map((item, i) => (
+              <li
+                key={item.name}
+                className="flex items-center justify-between gap-4 p-4 text-sm"
+              >
+                <span>
+                  <span className="text-nav text-brass mr-3">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  {item.name}
+                </span>
+                <span className="text-aubergine/60">
+                  {item.qty} sold
+                  {item.revenue > 0 ? ` · ${formatPrice(item.revenue)}` : ""}
+                </span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
 
       <section className="mt-14">
         <h2 className="font-display text-2xl mb-6">Recent orders</h2>

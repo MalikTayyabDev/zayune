@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   ArrowUpRight,
-  Flower2,
   Heart,
   MessageCircle,
   ShoppingBag,
@@ -22,12 +21,10 @@ import { cn } from "@/lib/utils";
 
 const nav = [
   { href: "/shop", label: "Shop all" },
-  { href: "/shop/crochet-flowers", label: "Flowers" },
-  { href: "/shop/jewelry", label: "Jewelry" },
-  { href: "/shop/keychains", label: "Keychains" },
   { href: "/custom", label: "Custom" },
   { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
+  { href: "/account", label: "Account" },
 ];
 
 const collections = [
@@ -64,7 +61,6 @@ export function Header() {
 
   const count = mounted ? itemCount : 0;
   const saved = mounted ? wishCount : 0;
-  const whatsapp = siteConfig.whatsapp;
 
   function closeMenu() {
     setOpen(false);
@@ -92,9 +88,8 @@ export function Header() {
           aria-label={open ? "Close menu" : "Open menu"}
           aria-expanded={open}
           className={cn(
-            "relative z-[70] -ml-1 flex h-10 w-10 items-center justify-center transition-transform duration-300 lg:hidden",
-            open &&
-              "-translate-y-3 sm:-translate-y-3.5"
+            "relative z-[70] -ml-1 flex h-10 w-10 items-center justify-center transition-all duration-300 lg:hidden",
+            open && "fixed left-4 top-[max(0.65rem,env(safe-area-inset-top))] -translate-y-0"
           )}
           onClick={() => setOpen((v) => !v)}
         >
@@ -118,7 +113,15 @@ export function Header() {
         </div>
 
         <nav className="hidden flex-1 items-center justify-center gap-5 xl:gap-7 lg:flex">
-          {nav.map((item) => (
+          {[
+            { href: "/shop", label: "Shop" },
+            { href: "/shop/crochet-flowers", label: "Flowers" },
+            { href: "/shop/jewelry", label: "Jewelry" },
+            { href: "/shop/keychains", label: "Keychains" },
+            { href: "/custom", label: "Custom" },
+            { href: "/about", label: "About" },
+            { href: "/contact", label: "Contact" },
+          ].map((item) => (
             <Link
               key={item.href}
               href={item.href}
@@ -131,7 +134,7 @@ export function Header() {
 
         <div
           className={cn(
-            "relative z-[70] -mr-1 flex items-center gap-0 transition-opacity duration-300 lg:ml-auto lg:gap-0.5",
+            "relative z-[70] -mr-1 flex items-center gap-0 transition-opacity duration-300 lg:ml-auto",
             open && "pointer-events-none opacity-0 lg:pointer-events-auto lg:opacity-100"
           )}
         >
@@ -140,9 +143,9 @@ export function Header() {
             className="relative inline-flex h-9 w-9 items-center justify-center text-aubergine transition-colors hover:text-copper sm:h-10 sm:w-10"
             aria-label={`Wishlist, ${saved} items`}
           >
-            <Icon icon={Heart} size={17} className="text-current" />
+            <Icon icon={Heart} size={18} className="text-copper" />
             {saved > 0 && (
-              <span className="absolute right-0 top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-copper px-0.5 text-[8px] text-porcelain sm:right-0.5 sm:top-1">
+              <span className="absolute right-0 top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-copper px-0.5 text-[8px] text-porcelain">
                 {saved}
               </span>
             )}
@@ -153,9 +156,9 @@ export function Header() {
             className="relative inline-flex h-9 w-9 items-center justify-center text-aubergine transition-colors hover:text-copper sm:h-10 sm:w-10"
             aria-label={`Cart, ${count} items`}
           >
-            <Icon icon={ShoppingBag} size={17} className="text-current" />
+            <Icon icon={ShoppingBag} size={18} className="text-copper" />
             {count > 0 && (
-              <span className="absolute right-0 top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-aubergine px-0.5 text-[8px] text-porcelain sm:right-0.5 sm:top-1">
+              <span className="absolute right-0 top-0.5 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-aubergine px-0.5 text-[8px] text-porcelain">
                 {count}
               </span>
             )}
@@ -163,7 +166,6 @@ export function Header() {
         </div>
       </div>
 
-      {/* Full-screen mobile menu */}
       <div
         className={cn(
           "fixed inset-0 z-[60] lg:hidden",
@@ -185,44 +187,59 @@ export function Header() {
             }}
           />
 
-          <div className="relative flex min-h-full flex-col px-5 pb-10 pt-[max(4.5rem,calc(env(safe-area-inset-top)+3.5rem))]">
-            <div
-              className={cn("flex items-center gap-2", open && "menu-item-in")}
-              style={{ animationDelay: "30ms" }}
-            >
-              <Logo href={null} variant="light" className="h-8" />
+          <div className="relative flex min-h-full flex-col px-5 pb-10 pt-[max(3.75rem,calc(env(safe-area-inset-top)+2.75rem))]">
+            <div className="flex items-center justify-between gap-3">
+              <Link href="/" onClick={closeMenu} aria-label="ZAYUNE home">
+                <Logo href={null} variant="light" className="h-8" />
+              </Link>
+              <div className="flex items-center gap-1">
+                <Link
+                  href="/wishlist"
+                  onClick={closeMenu}
+                  className="relative inline-flex h-10 w-10 items-center justify-center"
+                  aria-label="Wishlist"
+                >
+                  <Icon icon={Heart} size={18} className="text-brass" />
+                  {saved > 0 && (
+                    <span className="absolute right-1 top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-brass px-0.5 text-[8px] text-aubergine">
+                      {saved}
+                    </span>
+                  )}
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeMenu();
+                    openDrawer();
+                  }}
+                  className="relative inline-flex h-10 w-10 items-center justify-center"
+                  aria-label="Cart"
+                >
+                  <Icon icon={ShoppingBag} size={18} className="text-brass" />
+                  {count > 0 && (
+                    <span className="absolute right-1 top-1 flex h-3.5 min-w-3.5 items-center justify-center rounded-full bg-porcelain px-0.5 text-[8px] text-aubergine">
+                      {count}
+                    </span>
+                  )}
+                </button>
+              </div>
             </div>
 
-            <div
-              className={cn(
-                "mt-3 flex items-center gap-2",
-                open && "menu-item-in"
-              )}
-              style={{ animationDelay: "60ms" }}
-            >
+            <div className="mt-3 flex items-center gap-2">
               <CopperStar size={10} animated className="text-brass" />
               <p className="text-[10px] uppercase tracking-nav text-porcelain/55">
                 Crochet handmade accessories
               </p>
             </div>
 
-            <div
-              className={cn("mt-6", open && "menu-item-in")}
-              style={{ animationDelay: "90ms" }}
-            >
+            <div className={cn("mt-5", open && "menu-item-in")}>
               <SearchBar
                 onNavigate={closeMenu}
                 className="[&_input]:border-porcelain/20 [&_input]:bg-porcelain/10 [&_input]:py-3.5 [&_input]:text-porcelain [&_input]:placeholder:text-porcelain/40 [&_svg]:text-brass"
               />
             </div>
 
-            <div
-              className={cn(
-                "mt-6 grid grid-cols-2 gap-2",
-                open && "menu-item-in"
-              )}
-              style={{ animationDelay: "120ms" }}
-            >
+            <div className="mt-5 grid grid-cols-2 gap-2">
               {collections.map((item) => (
                 <Link
                   key={item.href}
@@ -235,11 +252,7 @@ export function Header() {
                   </p>
                   <p className="mt-1.5 flex items-center justify-between font-display text-xl leading-none text-porcelain">
                     {item.label}
-                    <Icon
-                      icon={ArrowUpRight}
-                      size={14}
-                      className="text-brass/70"
-                    />
+                    <Icon icon={ArrowUpRight} size={14} className="text-brass" />
                   </p>
                 </Link>
               ))}
@@ -255,34 +268,25 @@ export function Header() {
                     "group flex items-center justify-between border-b border-porcelain/10 py-3.5 first:border-t",
                     open && "menu-item-in"
                   )}
-                  style={{ animationDelay: `${150 + index * 40}ms` }}
+                  style={{ animationDelay: `${100 + index * 40}ms` }}
                 >
-                  <span className="font-display text-[1.85rem] leading-none tracking-tight text-porcelain transition group-active:text-brass">
+                  <span className="font-display text-[1.85rem] leading-none tracking-tight text-porcelain">
                     {item.label}
                   </span>
                   <Icon
                     icon={ArrowUpRight}
                     size={16}
-                    className="text-porcelain/35 transition group-active:text-brass"
+                    className="text-brass/80"
                   />
                 </Link>
               ))}
             </nav>
 
-            <div
-              className={cn(
-                "mt-auto space-y-5 pt-10",
-                open && "menu-item-in"
-              )}
-              style={{ animationDelay: `${150 + nav.length * 40}ms` }}
-            >
-              <div className="flex flex-wrap items-center gap-3">
-                <AccountLinks onNavigate={closeMenu} tone="dark" />
-              </div>
-
+            <div className="mt-auto space-y-5 pt-10">
+              <AccountLinks onNavigate={closeMenu} tone="dark" />
               <div className="grid grid-cols-2 gap-2">
                 <Link
-                  href={`https://wa.me/${whatsapp}`}
+                  href={`https://wa.me/${siteConfig.whatsapp}`}
                   target="_blank"
                   rel="noreferrer"
                   onClick={closeMenu}
@@ -302,11 +306,6 @@ export function Header() {
                   Instagram
                 </Link>
               </div>
-
-              <p className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-nav text-porcelain/40">
-                <Icon icon={Flower2} size={12} className="text-brass" />
-                Handmade in Pakistan
-              </p>
             </div>
           </div>
         </div>

@@ -23,7 +23,7 @@ export default async function AdminCustomRequestsPage() {
       });
 
   return (
-    <div className="container-content py-12">
+    <div className="py-4">
       <SectionHeading
         title="Custom requests"
         description="Inbox for made-to-order inquiries — quote, then convert to an order when ready."
