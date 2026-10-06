@@ -21,13 +21,7 @@ export function CartDrawer() {
 
   useEffect(() => setMounted(true), []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    document.body.style.overflow = open ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open, mounted]);
+  // Body scroll lock is owned by Header (menu + cart) to avoid races.
 
   if (!mounted) return null;
 

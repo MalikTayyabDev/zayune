@@ -10,6 +10,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { Logo } from "@/components/brand/Logo";
 import { CopperStar } from "@/components/brand/CopperStar";
 import { AccountLinks } from "@/components/layout/AccountLinks";
@@ -41,17 +42,20 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const itemCount = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0));
+  const cartOpen = useCartStore((s) => s.drawerOpen);
   const openDrawer = useCartStore((s) => s.openDrawer);
   const wishCount = useWishlistStore((s) => s.items.length);
 
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "";
+    if (!mounted) return;
+    const lock = open || cartOpen;
+    document.body.style.overflow = lock ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
     };
-  }, [open]);
+  }, [open, cartOpen, mounted]);
 
   useEffect(() => {
     if (!open) return;
@@ -69,6 +73,118 @@ export function Header() {
     setOpen(false);
   }
 
+  const menu =
+    mounted &&
+    createPortal(
+      <div
+        className={cn(
+          "fixed inset-0 z-[100] lg:hidden",
+          open ? "pointer-events-auto" : "pointer-events-none"
+        )}
+        aria-hidden={!open}
+      >
+        <div
+          className={cn(
+            "absolute inset-0 flex flex-col bg-aubergine text-porcelain transition-transform duration-300 ease-out",
+            open ? "translate-x-0" : "-translate-x-full"
+          )}
+        >
+          <div
+            className="pointer-events-none absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 80% 50% at 0% 0%, rgba(183,155,99,0.28), transparent 55%), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(127,139,120,0.22), transparent 50%)",
+            }}
+          />
+
+          <div className="relative z-[1] flex h-14 shrink-0 items-center justify-between border-b border-porcelain/10 px-4">
+            <Link href="/" onClick={closeMenu} aria-label="ZAYUNE home">
+              <Logo href={null} variant="light" className="h-8" />
+            </Link>
+            <button
+              type="button"
+              aria-label="Close menu"
+              onClick={closeMenu}
+              className="inline-flex h-11 w-11 items-center justify-center rounded-sm border border-porcelain/20"
+            >
+              <Icon icon={X} size={20} className="text-porcelain" />
+            </button>
+          </div>
+
+          <div className="relative z-[1] flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-5 pb-8 pt-4">
+            <div className="flex items-center gap-2">
+              <CopperStar size={10} animated className="text-brass" />
+              <p className="text-[10px] uppercase tracking-nav text-porcelain/55">
+                Crochet handmade accessories
+              </p>
+            </div>
+
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              {collections.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={closeMenu}
+                  className="border border-porcelain/15 bg-porcelain/[0.06] px-3.5 py-3 active:bg-porcelain/15"
+                >
+                  <p className="text-[9px] uppercase tracking-nav text-brass">
+                    {item.note}
+                  </p>
+                  <p className="mt-1 flex items-center justify-between font-display text-xl leading-none text-porcelain">
+                    {item.label}
+                    <Icon icon={ArrowUpRight} size={14} className="text-brass" />
+                  </p>
+                </Link>
+              ))}
+            </div>
+
+            <nav className="mt-5 flex flex-col">
+              {nav.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={closeMenu}
+                  className="flex items-center justify-between border-b border-porcelain/10 py-3 first:border-t"
+                >
+                  <span className="font-display text-[1.65rem] leading-none text-porcelain">
+                    {item.label}
+                  </span>
+                  <Icon icon={ArrowUpRight} size={16} className="text-brass/80" />
+                </Link>
+              ))}
+            </nav>
+
+            <div className="mt-8 space-y-4">
+              <AccountLinks onNavigate={closeMenu} tone="dark" />
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  href={`https://wa.me/${siteConfig.whatsapp}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={closeMenu}
+                  className="inline-flex items-center justify-center gap-2 border border-porcelain/20 bg-porcelain/10 py-3 text-[10px] uppercase tracking-nav text-porcelain"
+                >
+                  <Icon icon={MessageCircle} size={14} className="text-brass" />
+                  WhatsApp
+                </Link>
+                <Link
+                  href={siteConfig.instagram}
+                  target="_blank"
+                  rel="noreferrer"
+                  onClick={closeMenu}
+                  className="inline-flex items-center justify-center gap-2 border border-porcelain/20 bg-porcelain/10 py-3 text-[10px] uppercase tracking-nav text-porcelain"
+                >
+                  <InstagramIcon size={13} className="text-brass" />
+                  Instagram
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>,
+      document.body
+    );
+
   return (
     <header className="sticky top-0 z-40 border-b border-stone/70 bg-porcelain/95 backdrop-blur-md">
       <div className="hidden border-b border-stone/60 bg-stone/20 lg:block">
@@ -83,7 +199,7 @@ export function Header() {
           type="button"
           aria-label="Open menu"
           aria-expanded={open}
-          className="relative z-[50] -ml-1 flex h-10 w-10 items-center justify-center lg:hidden"
+          className="-ml-1 flex h-10 w-10 items-center justify-center lg:hidden"
           onClick={() => {
             setSearchOpen(false);
             setOpen(true);
@@ -96,7 +212,7 @@ export function Header() {
           </span>
         </button>
 
-        <div className="absolute left-1/2 top-1/2 z-[50] -translate-x-1/2 -translate-y-1/2 lg:static lg:translate-x-0 lg:translate-y-0 lg:shrink-0">
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:static lg:translate-x-0 lg:translate-y-0 lg:shrink-0">
           <Logo priority className="h-9 sm:h-11 lg:h-12" />
         </div>
 
@@ -120,7 +236,7 @@ export function Header() {
           ))}
         </nav>
 
-        <div className="relative z-[50] -mr-1 flex items-center gap-0 lg:ml-auto">
+        <div className="-mr-1 flex items-center gap-0 lg:ml-auto">
           <button
             type="button"
             aria-label="Search"
@@ -131,7 +247,7 @@ export function Header() {
               setSearchOpen((v) => !v);
             }}
           >
-            <Icon icon={Search} size={18} className="text-copper" />
+            <Icon icon={searchOpen ? X : Search} size={18} className="text-copper" />
           </button>
           <Link
             href="/wishlist"
@@ -161,7 +277,6 @@ export function Header() {
         </div>
       </div>
 
-      {/* Mobile search panel under header */}
       {searchOpen && (
         <div className="border-t border-stone/60 bg-porcelain px-4 py-3 lg:hidden">
           <SearchBar
@@ -172,118 +287,7 @@ export function Header() {
         </div>
       )}
 
-      {/* Full-screen menu */}
-      <div
-        className={cn(
-          "fixed inset-0 z-[60] lg:hidden",
-          open ? "pointer-events-auto" : "pointer-events-none"
-        )}
-        aria-hidden={!open}
-      >
-        <div
-          className={cn(
-            "absolute inset-0 flex flex-col overflow-y-auto bg-aubergine text-porcelain transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)]",
-            open ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-2"
-          )}
-        >
-          <div
-            className="pointer-events-none absolute inset-0"
-            style={{
-              background:
-                "radial-gradient(ellipse 80% 50% at 0% 0%, rgba(183,155,99,0.28), transparent 55%), radial-gradient(ellipse 60% 40% at 100% 100%, rgba(127,139,120,0.22), transparent 50%)",
-            }}
-          />
-
-          {/* Top bar: logo + close */}
-          <div className="relative flex h-14 shrink-0 items-center justify-between px-4 pt-[env(safe-area-inset-top)]">
-            <Link href="/" onClick={closeMenu} aria-label="ZAYUNE home">
-              <Logo href={null} variant="light" className="h-8" />
-            </Link>
-            <button
-              type="button"
-              aria-label="Close menu"
-              onClick={closeMenu}
-              className="inline-flex h-11 w-11 items-center justify-center"
-            >
-              <Icon icon={X} size={22} className="text-porcelain" />
-            </button>
-          </div>
-
-          <div className="relative flex flex-1 flex-col px-5 pb-8 pt-1">
-            <div className="flex items-center gap-2">
-              <CopperStar size={10} animated className="text-brass" />
-              <p className="text-[10px] uppercase tracking-nav text-porcelain/55">
-                Crochet handmade accessories
-              </p>
-            </div>
-
-            <div className="mt-4 grid grid-cols-2 gap-2">
-              {collections.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={closeMenu}
-                  className="group border border-porcelain/15 bg-porcelain/[0.06] px-3.5 py-3 transition active:bg-porcelain/15"
-                >
-                  <p className="text-[9px] uppercase tracking-nav text-brass">
-                    {item.note}
-                  </p>
-                  <p className="mt-1 flex items-center justify-between font-display text-xl leading-none text-porcelain">
-                    {item.label}
-                    <Icon icon={ArrowUpRight} size={14} className="text-brass" />
-                  </p>
-                </Link>
-              ))}
-            </div>
-
-            <nav className="mt-5 flex flex-col">
-              {nav.map((item, index) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={closeMenu}
-                  className={cn(
-                    "group flex items-center justify-between border-b border-porcelain/10 py-3 first:border-t",
-                    open && "menu-item-in"
-                  )}
-                  style={{ animationDelay: `${80 + index * 35}ms` }}
-                >
-                  <span className="font-display text-[1.7rem] leading-none tracking-tight text-porcelain">
-                    {item.label}
-                  </span>
-                  <Icon icon={ArrowUpRight} size={16} className="text-brass/80" />
-                </Link>
-              ))}
-            </nav>
-
-            <div className="mt-auto space-y-4 pt-8">
-              <AccountLinks onNavigate={closeMenu} tone="dark" />
-              <div className="grid grid-cols-2 gap-2">
-                <Link
-                  href={`https://wa.me/${siteConfig.whatsapp}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={closeMenu}
-                  className="inline-flex items-center justify-center gap-2 border border-porcelain/20 bg-porcelain/10 py-3 text-[10px] uppercase tracking-nav text-porcelain"
-                >
-                  <Icon icon={MessageCircle} size={14} className="text-brass" />
-                  WhatsApp
-                </Link>
-                <Link
-                  href={siteConfig.instagram}
-                  target="_blank"
-                  rel="noreferrer"
-                  onClick={closeMenu}
-                  className="inline-flex items-center justify-center gap-2 border border-porcelain/20 bg-porcelain/10 py-3 text-[10px] uppercase tracking-nav text-porcelain"
-                >
-                  <InstagramIcon size={13} className="text-brass" />
-                  Instagram
-                </Link>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {menu}
     </header>
   );
 }

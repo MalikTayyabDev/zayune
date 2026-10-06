@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Hand, MessageCircle, ShoppingBag, Truck, UserRound } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -8,6 +8,7 @@ import { VariantSwatches, type SwatchVariant } from "@/components/product/Varian
 import { WaitlistForm } from "@/components/product/WaitlistForm";
 import { WishlistButton } from "@/components/product/WishlistButton";
 import { useCartStore } from "@/lib/cart-store";
+import { maxPurchasableQty } from "@/lib/stock";
 import { formatPrice, whatsappOrderUrl } from "@/lib/utils";
 
 type Props = {
@@ -41,15 +42,21 @@ export function AddToCart({ product }: Props) {
     return (product.stock ?? 0) > 0;
   }, [product, selected]);
 
+  const maxQty = maxPurchasableQty(product, selected?.stock);
+
+  useEffect(() => {
+    setQuantity((q) => Math.min(q, Math.max(1, maxQty || 1)));
+  }, [maxQty, variantId]);
+
   function handleAdd() {
-    if (!available) return;
+    if (!available || maxQty < 1) return;
     addItem({
       productId: product.id,
       slug: product.slug,
       name: product.name,
       price: unitPrice,
       image: product.image,
-      quantity,
+      quantity: Math.min(quantity, maxQty),
       variantId: selected?.id,
       variantName: selected?.name,
     });
@@ -84,8 +91,9 @@ export function AddToCart({ product }: Props) {
             <button
               type="button"
               className="h-11 w-11 text-sm"
-              onClick={() => setQuantity((q) => q + 1)}
+              onClick={() => setQuantity((q) => Math.min(maxQty || 1, q + 1))}
               aria-label="Increase quantity"
+              disabled={!available || maxQty < 1}
             >
               +
             </button>

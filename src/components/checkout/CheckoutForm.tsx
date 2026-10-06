@@ -38,6 +38,7 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
   const [discountLabel, setDiscountLabel] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [redirecting, setRedirecting] = useState(false);
 
   const shippingAfter =
     subtotal - discountAmount >= 5000 ? 0 : shippingFee;
@@ -129,7 +130,6 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
         throw new Error(data.error || "Unable to place order");
       }
 
-      clearCart();
       const next =
         data.redirectUrl || `/order/${data.orderId}/confirmation`;
       if (data.whatsappConfirmUrl && typeof window !== "undefined") {
@@ -138,12 +138,27 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
           data.whatsappConfirmUrl
         );
       }
+      setRedirecting(true);
+      clearCart();
+      // Hard navigate so confirmation always loads (avoids empty-cart flash).
+      if (typeof window !== "undefined") {
+        window.location.assign(next);
+        return;
+      }
       router.push(next);
-      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
       setLoading(false);
+      setRedirecting(false);
     }
+  }
+
+  if (redirecting) {
+    return (
+      <div className="py-16 text-center">
+        <p className="text-sm text-aubergine/60">Placing your order…</p>
+      </div>
+    );
   }
 
   if (items.length === 0) {

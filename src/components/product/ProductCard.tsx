@@ -2,12 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, Flower2, Plus } from "lucide-react";
+import { Bell, Eye, Flower2, Plus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { QuickViewModal } from "@/components/product/QuickViewModal";
 import { WishlistButton } from "@/components/product/WishlistButton";
 import { Icon } from "@/components/ui/Icon";
 import { useCartStore } from "@/lib/cart-store";
+import { isOutOfStock } from "@/lib/stock";
 import { formatPrice, cn } from "@/lib/utils";
 
 type Variant = {
@@ -29,6 +30,8 @@ type Props = {
     isBundle?: boolean;
     currency: string;
     oneLiner: string;
+    fulfillment?: string | null;
+    stock?: number | null;
     images: { url: string; alt: string }[];
     category: { name: string };
     variants?: Variant[];
@@ -47,6 +50,7 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
     [product.variants, variantId]
   );
 
+  const oos = isOutOfStock(product, selected?.stock);
   const primary = product.images[0];
   const secondary = product.images[1] || product.images[0];
   const activeImage = selected?.imageUrl || primary?.url || "";
@@ -56,6 +60,10 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
   function quickAdd(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
+    if (oos) {
+      setQuickView(true);
+      return;
+    }
     setAdding(true);
     addItem({
       productId: product.id,
@@ -83,11 +91,12 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
                   sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                   className={cn(
                     "object-cover transition duration-500",
-                    !selected?.imageUrl && "group-hover:opacity-0"
+                    oos && "opacity-70",
+                    !selected?.imageUrl && !oos && "group-hover:opacity-0"
                   )}
                 />
               )}
-              {!selected?.imageUrl && secondary && (
+              {!selected?.imageUrl && !oos && secondary && (
                 <Image
                   src={secondary.url}
                   alt={secondary.alt || product.name}
@@ -99,12 +108,17 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
             </div>
           </Link>
 
-          <div className="absolute left-2 top-2 z-10 sm:left-3 sm:top-3">
+          <div className="absolute left-2 top-2 z-10 flex flex-col gap-1.5 sm:left-3 sm:top-3">
             <span className="inline-flex h-6 items-center justify-center gap-1 bg-porcelain/95 px-1.5 text-[8px] uppercase tracking-nav text-aubergine/70 backdrop-blur-sm sm:h-7 sm:justify-start sm:gap-1.5 sm:px-2.5 sm:text-[9px]">
               <Icon icon={Flower2} size={11} className="text-copper sm:hidden" />
               <Icon icon={Flower2} size={12} className="hidden text-copper sm:block" />
               <span className="hidden sm:inline">Handmade</span>
             </span>
+            {oos && (
+              <span className="inline-flex h-6 items-center bg-aubergine/90 px-2 text-[8px] uppercase tracking-nav text-porcelain sm:h-7 sm:text-[9px]">
+                Sold out
+              </span>
+            )}
           </div>
 
           <div className="absolute right-2 top-2 z-10 sm:right-3 sm:top-3">
@@ -121,7 +135,6 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
             />
           </div>
 
-          {/* Hover actions — shared 40px row height */}
           <div className="absolute inset-x-3 bottom-3 z-10 flex translate-y-2 items-center gap-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
             {showQuickAdd && (
               <button
@@ -129,8 +142,17 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
                 onClick={quickAdd}
                 className="inline-flex h-10 min-h-10 max-h-10 flex-1 items-center justify-center gap-1.5 box-border bg-aubergine px-3 text-[10px] uppercase leading-none tracking-nav text-porcelain"
               >
-                <Icon icon={Plus} size={14} className="text-porcelain" />
-                {adding ? "Added ✓" : "Quick add"}
+                {oos ? (
+                  <>
+                    <Icon icon={Bell} size={14} className="text-porcelain" />
+                    Get notified
+                  </>
+                ) : (
+                  <>
+                    <Icon icon={Plus} size={14} className="text-porcelain" />
+                    {adding ? "Added ✓" : "Quick add"}
+                  </>
+                )}
               </button>
             )}
 
@@ -179,6 +201,11 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
                 Bundle
               </span>
             )}
+            {oos && (
+              <span className="text-[10px] uppercase tracking-nav text-aubergine/45">
+                Out of stock
+              </span>
+            )}
           </div>
           {swatches.length > 0 && (
             <div className="flex flex-wrap gap-1.5 pt-1">
@@ -202,7 +229,6 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
             </div>
           )}
 
-          {/* Mobile actions */}
           <div className="mt-auto flex items-center gap-2 pt-1.5 sm:hidden">
             {showQuickAdd && (
               <button
@@ -210,7 +236,7 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
                 onClick={quickAdd}
                 className="text-[10px] uppercase tracking-nav text-copper"
               >
-                {adding ? "Added ✓" : "Add +"}
+                {oos ? "Notify me" : adding ? "Added ✓" : "Add +"}
               </button>
             )}
             <button
