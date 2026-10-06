@@ -1,6 +1,6 @@
 "use client";
 
-import { Mail, MessageCircle } from "lucide-react";
+import { Landmark, Mail, MessageCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -15,6 +15,7 @@ type Props = {
   paymentMethod: string;
   isBank: boolean;
   advanceAmount: number;
+  payUrl: string;
 };
 
 export function OrderNextSteps({
@@ -26,6 +27,7 @@ export function OrderNextSteps({
   paymentMethod,
   isBank,
   advanceAmount,
+  payUrl,
 }: Props) {
   const [waUrl, setWaUrl] = useState("");
 
@@ -36,8 +38,8 @@ export function OrderNextSteps({
       return;
     }
     const bankNote = isBank
-      ? ` I will send 30% advance (Rs ${advanceAmount.toLocaleString("en-PK")}) via bank/Raast with reference ${orderNumber}.`
-      : "";
+      ? ` I will send 30% advance (Rs ${advanceAmount.toLocaleString("en-PK")}) via bank/Raast. Pay link: ${payUrl}`
+      : ` Confirm link: ${payUrl}`;
     const text = `Hi ZAYUNE, this is ${customerName}. Please confirm my order ${orderNumber} (total Rs ${total.toLocaleString("en-PK")}).${bankNote}`;
     setWaUrl(
       `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(text)}`
@@ -48,8 +50,15 @@ export function OrderNextSteps({
     isBank,
     orderId,
     orderNumber,
+    payUrl,
     total,
   ]);
+
+  useEffect(() => {
+    if (payUrl) {
+      sessionStorage.setItem(`zayune_pay_${orderId}`, payUrl);
+    }
+  }, [orderId, payUrl]);
 
   return (
     <div className="mt-8 space-y-4 text-left">
@@ -59,29 +68,44 @@ export function OrderNextSteps({
           Check your email
         </p>
         <p className="mt-2 text-sm leading-relaxed text-aubergine/75">
-          We sent a confirmation to <strong>{customerEmail}</strong>. Please open
-          it and keep your order number handy. If it doesn’t arrive in a few
-          minutes, check spam.
+          We sent a confirmation to <strong>{customerEmail}</strong> with your
+          secure pay/confirm link.
         </p>
       </div>
 
       <div className="border border-stone bg-porcelain px-5 py-4">
         <p className="inline-flex items-center gap-2 text-nav text-aubergine">
-          <Icon icon={MessageCircle} size={14} className="text-copper" />
-          Confirm on WhatsApp
+          <Icon icon={Landmark} size={14} className="text-copper" />
+          {isBank ? "Pay 30% advance & confirm" : "Confirm your order"}
         </p>
         <p className="mt-2 text-sm leading-relaxed text-aubergine/75">
-          In Pakistan, orders move faster when you confirm on WhatsApp. Tap below
-          to message us with your order number
           {isBank
-            ? ` and arrange the 30% advance (Rs ${advanceAmount.toLocaleString("en-PK")}).`
-            : "."}
+            ? `Open your secure link for bank/Raast details and the 30% advance (Rs ${advanceAmount.toLocaleString("en-PK")}). When you tap “I’ve sent the 30% advance”, your order status updates on the site.`
+            : "Open your secure link and confirm the order — status updates on the site immediately."}
+        </p>
+        {payUrl && (
+          <Button href={payUrl} className="mt-4 w-full sm:w-auto">
+            {isBank ? "Open bank details & confirm" : "Confirm order"}
+          </Button>
+        )}
+      </div>
+
+      <div className="border border-stone bg-porcelain px-5 py-4">
+        <p className="inline-flex items-center gap-2 text-nav text-aubergine">
+          <Icon icon={MessageCircle} size={14} className="text-copper" />
+          WhatsApp ZAYUNE
+        </p>
+        <p className="mt-2 text-sm leading-relaxed text-aubergine/75">
+          Message us with your order number
+          {isBank ? " after you transfer the advance." : "."} We also email the
+          studio a one-tap WhatsApp link to message you with bank details.
         </p>
         {waUrl && (
           <Button
             href={waUrl}
             target="_blank"
             rel="noreferrer"
+            variant="secondary"
             className="mt-4 w-full sm:w-auto"
           >
             WhatsApp to confirm order
@@ -89,8 +113,9 @@ export function OrderNextSteps({
         )}
         {isBank && (
           <p className="mt-3 text-xs leading-relaxed text-aubergine/55">
-            Payment method: {paymentMethod.replace("_", " ")}. Your order stays
-            awaiting verification until the advance transfer is confirmed.
+            Payment method: {paymentMethod.replace("_", " ")}. After you mark
+            advance sent, status becomes Confirmed · Awaiting verification until
+            we verify the transfer.
           </p>
         )}
       </div>

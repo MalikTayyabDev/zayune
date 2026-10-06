@@ -51,7 +51,15 @@ type Order = {
   }>;
 };
 
-export function OrderManager({ order }: { order: Order }) {
+export function OrderManager({
+  order,
+  whatsappCustomerUrl,
+  payUrl,
+}: {
+  order: Order;
+  whatsappCustomerUrl?: string | null;
+  payUrl?: string;
+}) {
   const router = useRouter();
   const [status, setStatus] = useState(order.status);
   const [paymentStatus, setPaymentStatus] = useState(order.paymentStatus);
@@ -209,6 +217,21 @@ export function OrderManager({ order }: { order: Order }) {
         <Button type="button" onClick={save} disabled={saving} className="w-full">
           {saving ? "Saving…" : "Update order"}
         </Button>
+        {whatsappCustomerUrl && (
+          <a
+            href={whatsappCustomerUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="flex w-full items-center justify-center bg-[#25D366] px-4 py-3 text-[11px] uppercase tracking-nav text-white"
+          >
+            WhatsApp customer (bank + link)
+          </a>
+        )}
+        {payUrl && (
+          <Link href={payUrl} target="_blank" className="block text-center text-nav text-copper">
+            Customer pay / confirm link
+          </Link>
+        )}
         <Link
           href={`/order/${order.id}/invoice`}
           target="_blank"
@@ -219,6 +242,11 @@ export function OrderManager({ order }: { order: Order }) {
         <Link href={`/track?order=${order.orderNumber}`} className="block text-center text-nav">
           Customer tracking link
         </Link>
+        <p className="text-[11px] leading-relaxed text-aubergine/45">
+          Tip: when customer marks 30% advance sent, set Payment to{" "}
+          <strong>Awaiting verification</strong>, then <strong>Paid</strong> after
+          you verify the transfer.
+        </p>
       </aside>
     </div>
   );

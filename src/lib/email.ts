@@ -63,6 +63,8 @@ export async function sendOrderConfirmationEmail(input: {
   paymentMethod?: string;
   advanceAmount?: number;
   itemsSummary?: string;
+  payUrl?: string;
+  whatsappCustomerUrl?: string | null;
 }) {
   const from = process.env.RESEND_FROM_EMAIL || "orders@zayune.com";
   const site = process.env.NEXTAUTH_URL || siteConfig.url;
@@ -79,16 +81,18 @@ export async function sendOrderConfirmationEmail(input: {
     `Total: ${input.total.toLocaleString("en-PK")} ${input.currency}`,
     input.itemsSummary ? `Items: ${input.itemsSummary}` : "",
     "",
-    "Please check this confirmation email and keep your order number handy.",
+    input.payUrl
+      ? `Confirm / pay advance here (updates your order on the site):\n${input.payUrl}`
+      : "Please keep your order number handy.",
     isBank
       ? [
           "",
-          "Bank / Raast confirmation:",
+          "Bank / Raast:",
           `Please transfer 30% advance (${advance.toLocaleString("en-PK")} ${input.currency}) to confirm your order.`,
           "Use your order number as the payment reference.",
-          "We will also WhatsApp you shortly to confirm — please reply so we can move forward.",
+          "Open the link above for full bank details, then tap “I’ve sent the 30% advance”.",
         ].join("\n")
-      : "We may WhatsApp you on the number you provided to confirm your order.",
+      : "Open the confirmation link above to confirm your order.",
     "",
     `Track anytime: ${site}/track?order=${encodeURIComponent(input.orderNumber)}`,
     "",
@@ -124,6 +128,10 @@ export async function sendOrderConfirmationEmail(input: {
           `Payment: ${input.paymentMethod || "n/a"}`,
           isBank ? `Advance due (30%): ${advance.toLocaleString("en-PK")} ${input.currency}` : "",
           input.itemsSummary ? `Items: ${input.itemsSummary}` : "",
+          input.payUrl ? `Customer pay link: ${input.payUrl}` : "",
+          input.whatsappCustomerUrl
+            ? `WhatsApp customer (prefilled): ${input.whatsappCustomerUrl}`
+            : "",
           `${site}/admin/orders`,
         ]
           .filter(Boolean)

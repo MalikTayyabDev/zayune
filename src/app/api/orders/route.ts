@@ -6,8 +6,13 @@ import { authOptions } from "@/lib/auth";
 import { getDemoCustomers } from "@/lib/demo-customers";
 import { isDemoMode } from "@/lib/demo-data";
 import { getDemoOrdersStore } from "@/lib/demo-orders";
+import { formatAdvance } from "@/lib/bank-details";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { isServerlessRuntime } from "@/lib/env";
+import {
+  createOrderAccessToken,
+  orderPayUrl,
+} from "@/lib/order-token";
 import {
   incrementDiscountUse,
   priceCartLines,
@@ -17,21 +22,68 @@ import {
 import { getPaymentProvider } from "@/lib/payments/providers";
 import { prisma } from "@/lib/prisma";
 import { generateOrderNumber } from "@/lib/utils";
-import { siteConfig } from "@/lib/site";
+import {
+  buildCustomerOrderWhatsAppText,
+  sendWhatsAppCloudMessage,
+  whatsappToCustomerUrl,
+  whatsappToStudioUrl,
+} from "@/lib/whatsapp-order";
 
-function buildWhatsAppConfirm(
+function buildStudioConfirmWa(
   name: string,
   orderNumber: string,
   total: number,
-  paymentMethod: string
+  paymentMethod: string,
+  payUrl: string
 ) {
-  const advance = Math.round(total * 0.3);
+  const advance = formatAdvance(total);
   const bankNote =
     paymentMethod === "bank_transfer"
-      ? ` I will send 30% advance (Rs ${advance.toLocaleString("en-PK")}) via bank/Raast with reference ${orderNumber}.`
-      : "";
+      ? ` I will send 30% advance (Rs ${advance.toLocaleString("en-PK")}) via bank/Raast. Pay link: ${payUrl}`
+      : ` Confirm link: ${payUrl}`;
   const text = `Hi ZAYUNE, this is ${name}. Please confirm my order ${orderNumber} (total Rs ${total.toLocaleString("en-PK")}).${bankNote}`;
-  return `https://wa.me/${siteConfig.whatsapp}?text=${encodeURIComponent(text)}`;
+  return whatsappToStudioUrl(text);
+}
+
+async function buildOrderNotifyBundle(input: {
+  id: string;
+  orderNumber: string;
+  customerName: string;
+  customerPhone: string;
+  total: number;
+  paymentMethod: string;
+}) {
+  const token = createOrderAccessToken({
+    id: input.id,
+    orderNumber: input.orderNumber,
+  });
+  const payUrl = orderPayUrl(token);
+  const customerText = buildCustomerOrderWhatsAppText({
+    customerName: input.customerName,
+    orderNumber: input.orderNumber,
+    total: input.total,
+    paymentMethod: input.paymentMethod,
+    payUrl,
+  });
+  const whatsappCustomerUrl = whatsappToCustomerUrl(
+    input.customerPhone,
+    customerText
+  );
+  const whatsappConfirmUrl = buildStudioConfirmWa(
+    input.customerName,
+    input.orderNumber,
+    input.total,
+    input.paymentMethod,
+    payUrl
+  );
+
+  // Auto-send if Cloud API is configured
+  void sendWhatsAppCloudMessage({
+    toPhone: input.customerPhone,
+    text: customerText,
+  });
+
+  return { token, payUrl, whatsappCustomerUrl, whatsappConfirmUrl };
 }
 
 const itemSchema = z.object({
@@ -169,6 +221,14 @@ export async function POST(request: Request) {
       const itemsSummary = pricedItems
         .map((i) => `${i.name}${i.variantName ? ` (${i.variantName})` : ""} × ${i.quantity}`)
         .join(", ");
+      const notify = await buildOrderNotifyBundle({
+        id: orderId,
+        orderNumber,
+        customerName: data.customerName,
+        customerPhone: data.customerPhone,
+        total,
+        paymentMethod: data.paymentMethod,
+      });
       void sendOrderConfirmationEmail({
         to: data.customerEmail,
         orderNumber,
@@ -177,6 +237,9 @@ export async function POST(request: Request) {
         currency: "PKR",
         paymentMethod: methodMap[data.paymentMethod],
         itemsSummary,
+        payUrl: notify.payUrl,
+        whatsappCustomerUrl: notify.whatsappCustomerUrl,
+        advanceAmount: formatAdvance(total),
       });
 
       return NextResponse.json({
@@ -184,12 +247,9 @@ export async function POST(request: Request) {
         orderNumber,
         instructions: payment.instructions,
         redirectUrl: payment.redirectUrl || `/order/${orderId}/confirmation`,
-        whatsappConfirmUrl: buildWhatsAppConfirm(
-          data.customerName,
-          orderNumber,
-          total,
-          data.paymentMethod
-        ),
+        payUrl: notify.payUrl,
+        whatsappConfirmUrl: notify.whatsappConfirmUrl,
+        whatsappCustomerUrl: notify.whatsappCustomerUrl,
       });
     }
 
@@ -228,6 +288,14 @@ export async function POST(request: Request) {
     const itemsSummary = pricedItems
       .map((i) => `${i.name}${i.variantName ? ` (${i.variantName})` : ""} × ${i.quantity}`)
       .join(", ");
+    const notify = await buildOrderNotifyBundle({
+      id: order.id,
+      orderNumber: order.orderNumber,
+      customerName: data.customerName,
+      customerPhone: data.customerPhone,
+      total,
+      paymentMethod: data.paymentMethod,
+    });
     void sendOrderConfirmationEmail({
       to: data.customerEmail,
       orderNumber: order.orderNumber,
@@ -236,6 +304,9 @@ export async function POST(request: Request) {
       currency: "PKR",
       paymentMethod: methodMap[data.paymentMethod],
       itemsSummary,
+      payUrl: notify.payUrl,
+      whatsappCustomerUrl: notify.whatsappCustomerUrl,
+      advanceAmount: formatAdvance(total),
     });
 
     return NextResponse.json({
@@ -243,12 +314,9 @@ export async function POST(request: Request) {
       orderNumber: order.orderNumber,
       instructions: payment.instructions,
       redirectUrl: payment.redirectUrl || `/order/${order.id}/confirmation`,
-      whatsappConfirmUrl: buildWhatsAppConfirm(
-        data.customerName,
-        order.orderNumber,
-        total,
-        data.paymentMethod
-      ),
+      payUrl: notify.payUrl,
+      whatsappConfirmUrl: notify.whatsappConfirmUrl,
+      whatsappCustomerUrl: notify.whatsappCustomerUrl,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

@@ -27,7 +27,8 @@ const bankTransferProvider: PaymentProvider = {
     const advance = Math.round(input.amount * 0.3);
     return {
       provider: "bank_transfer",
-      paymentStatus: "AWAITING_VERIFICATION",
+      // Stay UNPAID until the customer marks advance sent on /order/pay/[token]
+      paymentStatus: "UNPAID",
       referenceHint: input.orderNumber,
       instructions: [
         "To confirm your order, please pay 30% in advance by Bank / Raast transfer.",

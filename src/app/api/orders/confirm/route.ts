@@ -1,0 +1,160 @@
+import { OrderStatus, PaymentStatus } from "@prisma/client";
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { findDemoOrder, updateDemoOrder } from "@/lib/demo-orders";
+import { ensureDatabaseUrl } from "@/lib/env";
+import { sendOrderStatusEmail } from "@/lib/email";
+import { verifyOrderAccessToken } from "@/lib/order-token";
+import { prisma } from "@/lib/prisma";
+import { siteConfig } from "@/lib/site";
+
+const schema = z.object({
+  token: z.string().min(10),
+  action: z.enum(["confirm_order", "mark_advance_sent"]),
+  paymentRef: z.string().max(120).optional().nullable(),
+});
+
+async function notifyTeamAdvance(input: {
+  orderNumber: string;
+  customerName: string;
+  customerEmail: string;
+  paymentRef?: string | null;
+}) {
+  const key = process.env.RESEND_API_KEY;
+  if (!key) return;
+  const { Resend } = await import("resend");
+  const resend = new Resend(key);
+  const from = process.env.RESEND_FROM_EMAIL || "orders@zayune.com";
+  const team = (
+    process.env.ORDER_NOTIFY_EMAILS ||
+    process.env.NEXT_PUBLIC_STUDIO_EMAIL ||
+    ""
+  )
+    .split(",")
+    .map((e) => e.trim())
+    .filter(Boolean);
+  if (!team.length) return;
+  try {
+    await resend.emails.send({
+      from,
+      to: team,
+      subject: `Advance marked paid — ${input.orderNumber}`,
+      text: [
+        `${input.customerName} marked 30% advance as sent.`,
+        `Order: ${input.orderNumber}`,
+        `Email: ${input.customerEmail}`,
+        input.paymentRef ? `Reference: ${input.paymentRef}` : "",
+        `Verify in admin: ${(process.env.NEXTAUTH_URL || siteConfig.url).replace(/\/$/, "")}/admin/orders`,
+      ]
+        .filter(Boolean)
+        .join("\n"),
+    });
+  } catch (error) {
+    console.error("[email] advance notify", error);
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const data = schema.parse(await request.json());
+    const payload = verifyOrderAccessToken(data.token);
+    if (!payload) {
+      return NextResponse.json({ error: "Invalid or expired link." }, { status: 400 });
+    }
+
+    if (ensureDatabaseUrl()) {
+      const order = await prisma.order.findFirst({
+        where: {
+          OR: [{ id: payload.id }, { orderNumber: payload.n }],
+        },
+      });
+      if (!order || order.orderNumber !== payload.n) {
+        return NextResponse.json({ error: "Order not found." }, { status: 404 });
+      }
+
+      if (order.status === "CANCELLED") {
+        return NextResponse.json(
+          { error: "This order was cancelled." },
+          { status: 400 }
+        );
+      }
+
+      const isBank = order.paymentMethod === "BANK_TRANSFER";
+
+      if (data.action === "mark_advance_sent") {
+        if (!isBank) {
+          return NextResponse.json(
+            { error: "This order does not use bank transfer." },
+            { status: 400 }
+          );
+        }
+        const updated = await prisma.order.update({
+          where: { id: order.id },
+          data: {
+            status: OrderStatus.CONFIRMED,
+            paymentStatus: PaymentStatus.AWAITING_VERIFICATION,
+            paymentRef: data.paymentRef?.trim() || order.paymentRef,
+          },
+        });
+        void notifyTeamAdvance({
+          orderNumber: updated.orderNumber,
+          customerName: updated.customerName,
+          customerEmail: updated.customerEmail,
+          paymentRef: updated.paymentRef,
+        });
+        void sendOrderStatusEmail({
+          to: updated.customerEmail,
+          orderNumber: updated.orderNumber,
+          customerName: updated.customerName,
+          status: updated.status,
+        });
+        return NextResponse.json({
+          ok: true,
+          status: updated.status,
+          paymentStatus: updated.paymentStatus,
+          message:
+            "Thank you — we’ve marked your advance as sent. We’ll verify the transfer and start your order.",
+        });
+      }
+
+      const updated = await prisma.order.update({
+        where: { id: order.id },
+        data: { status: OrderStatus.CONFIRMED },
+      });
+      void sendOrderStatusEmail({
+        to: updated.customerEmail,
+        orderNumber: updated.orderNumber,
+        customerName: updated.customerName,
+        status: updated.status,
+      });
+      return NextResponse.json({
+        ok: true,
+        status: updated.status,
+        paymentStatus: updated.paymentStatus,
+        message: "Your order is confirmed. We’ll be in touch on WhatsApp soon.",
+      });
+    }
+
+    const demo = findDemoOrder(payload.id) || findDemoOrder(payload.n);
+    if (!demo) {
+      return NextResponse.json({ error: "Order not found." }, { status: 404 });
+    }
+    const updated = updateDemoOrder(demo.id, {
+      status: "CONFIRMED" as OrderStatus,
+      ...(data.action === "mark_advance_sent"
+        ? {
+            paymentStatus: "AWAITING_VERIFICATION" as PaymentStatus,
+            paymentRef: data.paymentRef?.trim() || demo.paymentRef,
+          }
+        : {}),
+    });
+    return NextResponse.json({
+      ok: true,
+      status: updated?.status,
+      paymentStatus: updated?.paymentStatus,
+      message: "Order updated.",
+    });
+  } catch {
+    return NextResponse.json({ error: "Unable to confirm order." }, { status: 400 });
+  }
+}

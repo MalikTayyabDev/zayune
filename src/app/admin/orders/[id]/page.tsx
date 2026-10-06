@@ -6,7 +6,16 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { authOptions } from "@/lib/auth";
 import { isDemoMode } from "@/lib/demo-data";
 import { findDemoOrder } from "@/lib/demo-orders";
+import {
+  createOrderAccessToken,
+  orderPayPath,
+  orderPayUrl,
+} from "@/lib/order-token";
 import { prisma } from "@/lib/prisma";
+import {
+  buildCustomerOrderWhatsAppText,
+  whatsappToCustomerUrl,
+} from "@/lib/whatsapp-order";
 
 type Props = { params: { id: string } };
 
@@ -22,6 +31,24 @@ export default async function AdminOrderDetailPage({ params }: Props) {
       });
 
   if (!order) notFound();
+
+  const token = createOrderAccessToken({
+    id: order.id,
+    orderNumber: order.orderNumber,
+  });
+  const payUrl = orderPayPath(token);
+  const customerText = buildCustomerOrderWhatsAppText({
+    customerName: order.customerName,
+    orderNumber: order.orderNumber,
+    total: order.total,
+    currency: order.currency,
+    paymentMethod: String(order.paymentMethod),
+    payUrl: orderPayUrl(token),
+  });
+  const whatsappCustomerUrl = whatsappToCustomerUrl(
+    order.customerPhone,
+    customerText
+  );
 
   return (
     <div className="py-4">
@@ -57,6 +84,8 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           currency: order.currency,
           items: order.items,
         }}
+        payUrl={payUrl}
+        whatsappCustomerUrl={whatsappCustomerUrl}
       />
     </div>
   );

@@ -4,6 +4,10 @@ import { OrderNextSteps } from "@/components/order/OrderNextSteps";
 import { Button } from "@/components/ui/Button";
 import { findDemoOrder } from "@/lib/demo-orders";
 import { ensureDatabaseUrl, isServerlessRuntime } from "@/lib/env";
+import {
+  createOrderAccessToken,
+  orderPayPath,
+} from "@/lib/order-token";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 import { getPaymentProvider } from "@/lib/payments/providers";
@@ -89,6 +93,11 @@ export default async function OrderConfirmationPage({ params }: Props) {
     : null;
 
   const advanceAmount = Math.round(order.total * 0.3);
+  const payToken = createOrderAccessToken({
+    id: order.id,
+    orderNumber: order.orderNumber,
+  });
+  const payUrl = orderPayPath(payToken);
 
   return (
     <div className="container-content py-16 sm:py-24 max-w-narrow mx-auto text-center">
@@ -150,10 +159,16 @@ export default async function OrderConfirmationPage({ params }: Props) {
         paymentMethod={String(order.paymentMethod)}
         isBank={methodKey === "bank_transfer"}
         advanceAmount={advanceAmount}
+        payUrl={payUrl}
       />
 
       <div className="mt-8 flex flex-wrap justify-center gap-3">
-        <Button href={`/track?order=${order.orderNumber}`}>Track order</Button>
+        <Button href={payUrl}>
+          {methodKey === "bank_transfer" ? "Pay advance & confirm" : "Confirm order"}
+        </Button>
+        <Button href={`/track?order=${order.orderNumber}`} variant="secondary">
+          Track order
+        </Button>
         <Button href={`/order/${order.id}/invoice`} variant="secondary">
           View invoice
         </Button>
