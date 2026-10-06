@@ -13,13 +13,22 @@ type Props = {
 };
 
 async function getOrder(id: string) {
-  if (isDemoMode()) {
-    return findDemoOrder(id);
+  // Prefer database whenever available (Vercel + Neon)
+  if (process.env.DATABASE_URL && !isDemoMode()) {
+    const byId = await prisma.order.findUnique({
+      where: { id },
+      include: { items: true },
+    });
+    if (byId) return byId;
+
+    const byNumber = await prisma.order.findFirst({
+      where: { orderNumber: id },
+      include: { items: true },
+    });
+    if (byNumber) return byNumber;
   }
-  return prisma.order.findUnique({
-    where: { id },
-    include: { items: true },
-  });
+
+  return findDemoOrder(id) || null;
 }
 
 export default async function OrderConfirmationPage({ params }: Props) {
@@ -30,12 +39,16 @@ export default async function OrderConfirmationPage({ params }: Props) {
       <div className="container-content py-24 text-center">
         <p className="font-display text-3xl">Order not found</p>
         <p className="mx-auto mt-3 max-w-md text-sm text-aubergine/60">
-          If you just placed an order, wait a moment and refresh — or check your
-          email for the order number.
+          If you just placed an order, your confirmation email has the order
+          number — or open Track order. Older demo orders may not persist on the
+          live server.
         </p>
-        <Button href="/shop" className="mt-8">
-          Continue shopping
-        </Button>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Button href="/track">Track order</Button>
+          <Button href="/shop" variant="secondary">
+            Continue shopping
+          </Button>
+        </div>
       </div>
     );
   }
