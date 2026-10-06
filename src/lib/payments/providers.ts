@@ -4,7 +4,7 @@ const codProvider: PaymentProvider = {
   id: "cod",
   label: "Cash on Delivery",
   description:
-    "Pay when your ready-made piece arrives. Not available for made-to-order / custom (those need 30% advance).",
+    "Pay when your piece arrives. Only for ready in-stock items — not available for made-to-order / custom pieces.",
   async initiate() {
     return {
       provider: "cod",
@@ -18,7 +18,7 @@ const bankTransferProvider: PaymentProvider = {
   id: "bank_transfer",
   label: "Bank / Raast Transfer",
   description:
-    "Confirm with 30% bank/Raast advance. Remaining balance as arranged / on delivery.",
+    "30% advance to confirm (required for all bank payments and for made-to-order / custom pieces — once crocheted, there’s no going back). Remaining balance as arranged / on delivery.",
   async initiate(input) {
     const bankName = process.env.BANK_NAME || "[Bank name — to be supplied]";
     const title = process.env.BANK_ACCOUNT_TITLE || "ZAYUNE";

@@ -26,6 +26,8 @@ export function buildCustomerOrderWhatsAppText(input: {
     input.paymentMethod === "bank_transfer";
   const advance = formatAdvance(input.total);
   const bank = getBankDetails();
+  // Bank (and made-to-order forced to bank) always get 30% instructions
+  const needsAdvance = isBank;
 
   const lines = [
     `Hi ${input.customerName.split(" ")[0]},`,
@@ -33,9 +35,10 @@ export function buildCustomerOrderWhatsAppText(input: {
     `Thank you for your ZAYUNE order ${input.orderNumber}.`,
     `Total: Rs ${input.total.toLocaleString("en-PK")} ${currency}`,
     "",
-    isBank
+    needsAdvance
       ? [
           `To confirm your order, please pay 30% advance: Rs ${advance.toLocaleString("en-PK")}`,
+          "(Required for bank payments and made-to-order / custom pieces.)",
           "",
           "Bank / Raast:",
           `${bank.accountTitle}`,

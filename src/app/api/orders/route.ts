@@ -10,13 +10,13 @@ import { formatAdvance } from "@/lib/bank-details";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { isServerlessRuntime } from "@/lib/env";
 import {
-  createOrderAccessToken,
-  orderPayUrl,
-} from "@/lib/order-token";
-import {
   cartRequiresAdvance,
   orderRequiresAdvance,
 } from "@/lib/order-policy";
+import {
+  createOrderAccessToken,
+  orderPayUrl,
+} from "@/lib/order-token";
 import {
   incrementDiscountUse,
   priceCartLines,
@@ -129,20 +129,24 @@ export async function POST(request: Request) {
       }))
     );
 
-    const madeToOrderCart = cartRequiresAdvance(pricedItems);
-    // Custom / made-to-order cannot use COD — need 30% bank advance first
-    if (madeToOrderCart && data.paymentMethod === "cod") {
+    const madeToOrder = cartRequiresAdvance(pricedItems);
+    // Made-to-order / custom: bank + 30% only — COD not allowed (no returns once made)
+    let paymentMethod = data.paymentMethod;
+    if (madeToOrder && paymentMethod === "cod") {
       return NextResponse.json(
         {
           error:
-            "Made-to-order and custom pieces need a 30% bank/Raast advance before we start. Cash on Delivery is only for ready in-stock items.",
+            "Made-to-order and custom pieces require a 30% bank/Raast advance — Cash on Delivery isn’t available for these items.",
         },
         { status: 400 }
       );
     }
+    if (madeToOrder) {
+      paymentMethod = "bank_transfer";
+    }
 
     const needsAdvance = orderRequiresAdvance({
-      paymentMethod: data.paymentMethod,
+      paymentMethod,
       lines: pricedItems,
     });
 
@@ -158,7 +162,7 @@ export async function POST(request: Request) {
     const shippingFee = await resolveShipping(subtotal - discount.discountAmount);
     const total = Math.max(0, subtotal - discount.discountAmount + shippingFee);
 
-    const provider = getPaymentProvider(data.paymentMethod);
+    const provider = getPaymentProvider(paymentMethod);
     if (!provider) {
       return NextResponse.json({ error: "Invalid payment method" }, { status: 400 });
     }
@@ -212,7 +216,7 @@ export async function POST(request: Request) {
         shippingAddress: data.shippingAddress,
         shippingCity: data.shippingCity,
         shippingNotes: data.shippingNotes,
-        paymentMethod: methodMap[data.paymentMethod],
+        paymentMethod: methodMap[paymentMethod],
         paymentStatus: payment.paymentStatus as PaymentStatus,
         paymentRef: data.paymentRef || payment.referenceHint || null,
         trackingNumber: null,
@@ -248,7 +252,7 @@ export async function POST(request: Request) {
         customerName: data.customerName,
         customerPhone: data.customerPhone,
         total,
-        paymentMethod: data.paymentMethod,
+        paymentMethod,
       });
       void sendOrderConfirmationEmail({
         to: data.customerEmail,
@@ -256,7 +260,7 @@ export async function POST(request: Request) {
         customerName: data.customerName,
         total,
         currency: "PKR",
-        paymentMethod: methodMap[data.paymentMethod],
+        paymentMethod: methodMap[paymentMethod],
         itemsSummary,
         payUrl: notify.payUrl,
         whatsappCustomerUrl: notify.whatsappCustomerUrl,
@@ -267,7 +271,7 @@ export async function POST(request: Request) {
         orderId,
         orderNumber,
         instructions: payment.instructions,
-        // Advance-required orders go straight to the 30% pay/confirm link
+        // 30% advance required → land on pay/confirm link
         redirectUrl: needsAdvance
           ? notify.payUrl
           : payment.redirectUrl || `/order/${orderId}/confirmation`,
@@ -281,7 +285,7 @@ export async function POST(request: Request) {
     const order = await prisma.order.create({
       data: {
         orderNumber,
-        paymentMethod: methodMap[data.paymentMethod],
+        paymentMethod: methodMap[paymentMethod],
         paymentStatus: payment.paymentStatus as PaymentStatus,
         paymentRef: data.paymentRef || payment.referenceHint || null,
         customerId,
@@ -319,7 +323,7 @@ export async function POST(request: Request) {
       customerName: data.customerName,
       customerPhone: data.customerPhone,
       total,
-      paymentMethod: data.paymentMethod,
+      paymentMethod,
     });
     void sendOrderConfirmationEmail({
       to: data.customerEmail,
@@ -327,7 +331,7 @@ export async function POST(request: Request) {
       customerName: data.customerName,
       total,
       currency: "PKR",
-      paymentMethod: methodMap[data.paymentMethod],
+      paymentMethod: methodMap[paymentMethod],
       itemsSummary,
       payUrl: notify.payUrl,
       whatsappCustomerUrl: notify.whatsappCustomerUrl,

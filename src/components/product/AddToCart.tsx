@@ -159,9 +159,9 @@ export function AddToCart({ product }: Props) {
           <Icon icon={Hand} size={14} className="mt-0.5" />
           <span>
             {product.fulfillment === "MADE_TO_ORDER"
-              ? `Crocheted to order · ships in about ${product.leadTimeDays ?? "—"} days · 30% bank advance to confirm (no COD)`
+              ? `Crocheted to order · ships in about ${product.leadTimeDays ?? "—"} days`
               : available
-                ? "In stock · COD available · or bank/Raast with 30% advance"
+                ? "In stock · handmade & ready after confirmation"
                 : "Currently unavailable"}
           </span>
         </li>

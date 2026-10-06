@@ -8,7 +8,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { useCartStore } from "@/lib/cart-store";
-import { cartRequiresAdvance } from "@/lib/order-policy";
+import { cartRequiresAdvance, formatAdvance } from "@/lib/order-policy";
 import { formatPrice } from "@/lib/utils";
 
 type Provider = {
@@ -30,7 +30,23 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
   const discountCodeStore = useCartStore((s) => s.discountCode);
   const setDiscountCodeStore = useCartStore((s) => s.setDiscountCode);
   const clearCart = useCartStore((s) => s.clearCart);
-  const [paymentMethod, setPaymentMethod] = useState(providers[0]?.id || "cod");
+
+  // Made-to-order / custom in cart → bank + 30% only (no COD)
+  const requiresAdvance = useMemo(
+    () => cartRequiresAdvance(items),
+    [items]
+  );
+  const availableProviders = useMemo(
+    () =>
+      requiresAdvance
+        ? providers.filter((p) => p.id !== "cod")
+        : providers,
+    [providers, requiresAdvance]
+  );
+
+  const [paymentMethod, setPaymentMethod] = useState(
+    requiresAdvance ? "bank_transfer" : providers[0]?.id || "cod"
+  );
   const [paymentRef, setPaymentRef] = useState("");
   const [createAccount, setCreateAccount] = useState(false);
   const [password, setPassword] = useState("");
@@ -41,27 +57,20 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
+  useEffect(() => {
+    if (requiresAdvance && paymentMethod === "cod") {
+      setPaymentMethod("bank_transfer");
+    }
+  }, [requiresAdvance, paymentMethod]);
+
   const shippingAfter =
     subtotal - discountAmount >= 5000 ? 0 : shippingFee;
   const total = Math.max(0, subtotal - discountAmount + shippingAfter);
+  const advanceDue =
+    paymentMethod === "bank_transfer" || requiresAdvance
+      ? formatAdvance(total)
+      : 0;
   const signedIn = !!session?.user && session.user.role !== "admin";
-  const advanceRequired = useMemo(
-    () => cartRequiresAdvance(items),
-    [items]
-  );
-  const advanceAmount = Math.round(total * 0.3);
-  const availableProviders = useMemo(() => {
-    if (!advanceRequired) return providers;
-    // Made-to-order / custom: no COD — 30% bank advance before we start
-    return providers.filter((p) => p.id !== "cod");
-  }, [advanceRequired, providers]);
-
-  useEffect(() => {
-    if (!availableProviders.length) return;
-    if (!availableProviders.some((p) => p.id === paymentMethod)) {
-      setPaymentMethod(availableProviders[0].id);
-    }
-  }, [availableProviders, paymentMethod]);
 
   async function applyDiscount() {
     setError("");
@@ -306,22 +315,15 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
             Payment
           </legend>
 
-          {advanceRequired && (
-            <div className="border border-brass/40 bg-brass/10 px-4 py-3 text-sm leading-relaxed text-aubergine/80">
+          {requiresAdvance && (
+            <div className="border border-brass/40 bg-brass/10 px-4 py-3 text-sm text-aubergine/80">
               Your cart includes made-to-order / custom pieces. Once we start
-              crocheting there is no going back — so{" "}
-              <strong>Cash on Delivery is not available</strong>. Please pay a{" "}
-              <strong>30% bank/Raast advance</strong> (
-              {formatPrice(advanceAmount)}) to confirm. Remaining balance as
-              arranged / on delivery.
-            </div>
-          )}
-
-          {!advanceRequired && paymentMethod === "bank_transfer" && (
-            <div className="border border-stone bg-stone/20 px-4 py-3 text-sm text-aubergine/75">
-              Bank / Raast: confirm with a{" "}
-              <strong>30% advance ({formatPrice(advanceAmount)})</strong>. The
-              rest can be paid on delivery or as arranged.
+              crocheting there&apos;s no going back —{" "}
+              <strong>Cash on Delivery isn&apos;t available</strong>. Please
+              confirm with a <strong>30% bank/Raast advance</strong>
+              {advanceDue > 0
+                ? ` (about ${formatPrice(advanceDue)}).`
+                : "."}
             </div>
           )}
 
@@ -342,33 +344,33 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
                 <span>
                   <span className="block text-sm text-aubergine">{provider.label}</span>
                   <span className="mt-1 block text-xs text-aubergine/55 leading-relaxed">
-                    {provider.id === "bank_transfer"
-                      ? `Pay 30% advance (${formatPrice(advanceAmount)}) by bank/Raast to confirm. Remaining balance as arranged / on delivery.`
-                      : provider.id === "cod"
-                        ? "Pay when your ready-made piece arrives. Not available for made-to-order / custom."
-                        : provider.description}
+                    {provider.description}
                   </span>
                 </span>
               </label>
             ))}
           </div>
 
-          {paymentMethod === "bank_transfer" && (
-            <label className="block">
-              <span className="text-nav text-aubergine/55">
-                Payment reference / screenshot note
-              </span>
-              <input
-                value={paymentRef}
-                onChange={(e) => setPaymentRef(e.target.value)}
-                placeholder="Transaction ID or transfer note"
-                className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm outline-none focus:border-aubergine/40"
-              />
-              <span className="mt-2 block text-xs text-aubergine/50">
-                After placing the order you&apos;ll get a secure link with bank
-                details to pay the 30% advance.
-              </span>
-            </label>
+          {(paymentMethod === "bank_transfer" || requiresAdvance) && (
+            <div className="space-y-3">
+              <p className="text-sm text-aubergine/70">
+                After placing the order you&apos;ll get a secure link (also emailed)
+                with bank details. Pay{" "}
+                <strong>{formatPrice(advanceDue || formatAdvance(total))}</strong>{" "}
+                (30%) to confirm — remaining balance as arranged / on delivery.
+              </p>
+              <label className="block">
+                <span className="text-nav text-aubergine/55">
+                  Payment reference / screenshot note (optional)
+                </span>
+                <input
+                  value={paymentRef}
+                  onChange={(e) => setPaymentRef(e.target.value)}
+                  placeholder="Transaction ID or transfer note"
+                  className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm outline-none focus:border-aubergine/40"
+                />
+              </label>
+            </div>
           )}
         </fieldset>
       </div>
@@ -384,11 +386,6 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
               <span className="min-w-0 flex-1 text-aubergine/80">
                 {item.name}
                 {item.variantName ? ` · ${item.variantName}` : ""} × {item.quantity}
-                {item.fulfillment === "MADE_TO_ORDER" && (
-                  <span className="mt-0.5 block text-[10px] uppercase tracking-nav text-copper">
-                    Made to order · 30% advance
-                  </span>
-                )}
               </span>
               <span className="shrink-0">{formatPrice(item.price * item.quantity)}</span>
             </li>
@@ -437,8 +434,16 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
             <span>Total</span>
             <span>{formatPrice(total)}</span>
           </div>
+          {(paymentMethod === "bank_transfer" || requiresAdvance) && (
+            <div className="flex justify-between text-copper pt-1">
+              <span>30% advance due now</span>
+              <span>{formatPrice(advanceDue || formatAdvance(total))}</span>
+            </div>
+          )}
           <p className="pt-2 text-[11px] text-aubergine/45">
-            Final prices are confirmed securely on the server.
+            {requiresAdvance
+              ? "Made-to-order pieces need 30% advance before we start."
+              : "Final prices are confirmed securely on the server."}
           </p>
         </div>
 

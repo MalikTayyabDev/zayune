@@ -6,6 +6,8 @@
  * - In-stock ready pieces → COD allowed (pay on delivery, no advance)
  */
 
+export { formatAdvance } from "@/lib/bank-details";
+
 export type FulfillmentLike = string | null | undefined;
 
 export function isMadeToOrder(fulfillment: FulfillmentLike) {
