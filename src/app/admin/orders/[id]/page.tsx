@@ -78,6 +78,11 @@ export default async function AdminOrderDetailPage({ params }: Props) {
           trackingNumber: order.trackingNumber,
           trackingUrl: order.trackingUrl,
           adminNotes: order.adminNotes,
+          paymentRef: order.paymentRef,
+          paymentProofUrl:
+            "paymentProofUrl" in order
+              ? (order as { paymentProofUrl?: string | null }).paymentProofUrl
+              : null,
           subtotal: order.subtotal,
           shippingFee: order.shippingFee,
           total: order.total,

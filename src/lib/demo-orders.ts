@@ -23,6 +23,7 @@ export type DemoOrder = {
   paymentMethod: PaymentMethod;
   paymentStatus: PaymentStatus;
   paymentRef?: string | null;
+  paymentProofUrl?: string | null;
   trackingNumber?: string | null;
   trackingUrl?: string | null;
   adminNotes?: string | null;

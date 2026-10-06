@@ -18,6 +18,7 @@ const schema = z.object({
   trackingNumber: z.string().optional().nullable(),
   trackingUrl: z.string().optional().nullable(),
   adminNotes: z.string().optional().nullable(),
+  paymentProofUrl: z.string().optional().nullable(),
 });
 
 type Props = { params: { id: string } };
@@ -62,16 +63,19 @@ export async function PATCH(request: Request, { params }: Props) {
           : {}),
         ...(data.trackingUrl !== undefined ? { trackingUrl: data.trackingUrl } : {}),
         ...(data.adminNotes !== undefined ? { adminNotes: data.adminNotes } : {}),
+        ...(data.paymentProofUrl !== undefined
+          ? { paymentProofUrl: data.paymentProofUrl }
+          : {}),
       });
       if (!updated) {
         return NextResponse.json({ error: "Not found" }, { status: 404 });
       }
-      if (data.status) {
+      if (data.status || data.paymentStatus === "PAID") {
         await sendOrderStatusEmail({
           to: updated.customerEmail,
           orderNumber: updated.orderNumber,
           customerName: updated.customerName,
-          status: updated.status,
+          status: data.paymentStatus === "PAID" ? "CONFIRMED" : updated.status,
         });
       }
       return NextResponse.json(updated);
@@ -89,10 +93,17 @@ export async function PATCH(request: Request, { params }: Props) {
           : {}),
         ...(data.trackingUrl !== undefined ? { trackingUrl: data.trackingUrl } : {}),
         ...(data.adminNotes !== undefined ? { adminNotes: data.adminNotes } : {}),
+        ...(data.paymentProofUrl !== undefined
+          ? { paymentProofUrl: data.paymentProofUrl }
+          : {}),
+        // Verifying advance also confirms the order
+        ...(data.paymentStatus === "PAID"
+          ? { status: OrderStatus.CONFIRMED }
+          : {}),
       },
     });
 
-    if (data.status) {
+    if (data.status || data.paymentStatus === "PAID") {
       await sendOrderStatusEmail({
         to: order.customerEmail,
         orderNumber: order.orderNumber,

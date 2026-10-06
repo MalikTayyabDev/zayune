@@ -63,17 +63,16 @@ export default async function OrderPayPage({ params }: Props) {
         Order {order.orderNumber}
       </p>
       <h1 className="mt-2 text-center font-display text-4xl text-aubergine">
-        {isBank ? "Confirm with 30% advance" : "Confirm your order"}
+        {isBank ? "Pay 30% to confirm" : "Confirm your order"}
       </h1>
       <p className="mx-auto mt-3 max-w-md text-center text-sm text-aubergine/65">
-        Hi {order.customerName.split(" ")[0]} — total{" "}
-        {formatPrice(order.total, order.currency)}. Status on site:{" "}
-        <span className="text-aubergine">{order.status.replace("_", " ")}</span>
-        {" · "}
-        payment{" "}
-        <span className="text-aubergine">
-          {order.paymentStatus.replace("_", " ")}
-        </span>
+        Hi {order.customerName.split(" ")[0]} — we also emailed this link to{" "}
+        <strong>{order.customerEmail}</strong>. Total{" "}
+        {formatPrice(order.total, order.currency)}.
+      </p>
+      <p className="mx-auto mt-2 text-center text-xs uppercase tracking-nav text-aubergine/45">
+        Status: {order.status.replace("_", " ")} · Payment{" "}
+        {order.paymentStatus.replace("_", " ")}
       </p>
 
       {isBank && (

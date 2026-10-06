@@ -130,13 +130,21 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
         throw new Error(data.error || "Unable to place order");
       }
 
+      // Bank/Raast → pay link (set as redirectUrl). COD → thank-you page.
       const next =
-        data.redirectUrl || `/order/${data.orderId}/confirmation`;
-      if (data.whatsappConfirmUrl && typeof window !== "undefined") {
-        sessionStorage.setItem(
-          `zayune_wa_${data.orderId}`,
-          data.whatsappConfirmUrl
-        );
+        data.redirectUrl ||
+        data.payUrl ||
+        `/order/${data.orderId}/confirmation`;
+      if (typeof window !== "undefined") {
+        if (data.whatsappConfirmUrl) {
+          sessionStorage.setItem(
+            `zayune_wa_${data.orderId}`,
+            data.whatsappConfirmUrl
+          );
+        }
+        if (data.payUrl) {
+          sessionStorage.setItem(`zayune_pay_${data.orderId}`, data.payUrl);
+        }
       }
       setRedirecting(true);
       clearCart();

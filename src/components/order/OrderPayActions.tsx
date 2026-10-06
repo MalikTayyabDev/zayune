@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { ImageUpload } from "@/components/ui/ImageUpload";
 
 type Props = {
   token: string;
@@ -19,6 +20,7 @@ export function OrderPayActions({
 }: Props) {
   const router = useRouter();
   const [paymentRef, setPaymentRef] = useState("");
+  const [proofUrl, setProofUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -35,6 +37,7 @@ export function OrderPayActions({
           token,
           action,
           paymentRef: paymentRef || undefined,
+          paymentProofUrl: proofUrl || undefined,
         }),
       });
       const data = await res.json();
@@ -57,12 +60,11 @@ export function OrderPayActions({
   }
 
   if (isBank) {
-    if (advanceMarked || alreadyConfirmed) {
+    if (advanceMarked) {
       return (
         <p className="text-sm text-aubergine/65">
-          {advanceMarked
-            ? "Advance marked as sent — we’re verifying your transfer."
-            : "This order is already confirmed."}
+          Advance marked as sent — we’re verifying your transfer. You’ll get an
+          email when payment is confirmed.
         </p>
       );
     }
@@ -71,15 +73,21 @@ export function OrderPayActions({
       <div className="space-y-4">
         <label className="block">
           <span className="text-nav text-aubergine/55">
-            Transfer reference (optional)
+            Transfer reference (Raast / bank)
           </span>
           <input
             value={paymentRef}
             onChange={(e) => setPaymentRef(e.target.value)}
-            placeholder="Raast / bank reference"
+            placeholder="e.g. transaction ID"
             className="mt-2 w-full border border-stone bg-porcelain px-4 py-3 text-sm outline-none focus:border-aubergine/40"
           />
         </label>
+        <ImageUpload
+          guest
+          label="Upload transfer screenshot (optional)"
+          value={proofUrl}
+          onChange={setProofUrl}
+        />
         <Button
           type="button"
           disabled={loading}
@@ -88,9 +96,9 @@ export function OrderPayActions({
         >
           {loading ? "Updating…" : "I’ve sent the 30% advance"}
         </Button>
-        <p className="text-xs text-aubergine/50">
-          This confirms your order on the site and notifies ZAYUNE to verify the
-          payment.
+        <p className="text-xs leading-relaxed text-aubergine/50">
+          Bank transfers can’t be auto-checked for free. Uploading a receipt
+          helps us verify faster; then we mark your order Paid on the site.
         </p>
         {error && <p className="text-xs text-copper">{error}</p>}
       </div>

@@ -246,7 +246,11 @@ export async function POST(request: Request) {
         orderId,
         orderNumber,
         instructions: payment.instructions,
-        redirectUrl: payment.redirectUrl || `/order/${orderId}/confirmation`,
+        // Bank customers go straight to the 30% pay/confirm link
+        redirectUrl:
+          data.paymentMethod === "bank_transfer"
+            ? notify.payUrl
+            : payment.redirectUrl || `/order/${orderId}/confirmation`,
         payUrl: notify.payUrl,
         whatsappConfirmUrl: notify.whatsappConfirmUrl,
         whatsappCustomerUrl: notify.whatsappCustomerUrl,
@@ -313,7 +317,10 @@ export async function POST(request: Request) {
       orderId: order.id,
       orderNumber: order.orderNumber,
       instructions: payment.instructions,
-      redirectUrl: payment.redirectUrl || `/order/${order.id}/confirmation`,
+      redirectUrl:
+        data.paymentMethod === "bank_transfer"
+          ? notify.payUrl
+          : payment.redirectUrl || `/order/${order.id}/confirmation`,
       payUrl: notify.payUrl,
       whatsappConfirmUrl: notify.whatsappConfirmUrl,
       whatsappCustomerUrl: notify.whatsappCustomerUrl,

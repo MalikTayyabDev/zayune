@@ -12,6 +12,12 @@ const schema = z.object({
   token: z.string().min(10),
   action: z.enum(["confirm_order", "mark_advance_sent"]),
   paymentRef: z.string().max(120).optional().nullable(),
+  paymentProofUrl: z
+    .string()
+    .max(2_000_000)
+    .optional()
+    .nullable()
+    .or(z.literal("")),
 });
 
 async function notifyTeamAdvance(input: {
@@ -19,6 +25,7 @@ async function notifyTeamAdvance(input: {
   customerName: string;
   customerEmail: string;
   paymentRef?: string | null;
+  paymentProofUrl?: string | null;
 }) {
   const key = process.env.RESEND_API_KEY;
   if (!key) return;
@@ -44,7 +51,8 @@ async function notifyTeamAdvance(input: {
         `Order: ${input.orderNumber}`,
         `Email: ${input.customerEmail}`,
         input.paymentRef ? `Reference: ${input.paymentRef}` : "",
-        `Verify in admin: ${(process.env.NEXTAUTH_URL || siteConfig.url).replace(/\/$/, "")}/admin/orders`,
+        input.paymentProofUrl ? `Receipt: ${input.paymentProofUrl}` : "",
+        `Verify in admin (mark Paid when transfer appears): ${(process.env.NEXTAUTH_URL || siteConfig.url).replace(/\/$/, "")}/admin/orders`,
       ]
         .filter(Boolean)
         .join("\n"),
@@ -88,12 +96,14 @@ export async function POST(request: Request) {
             { status: 400 }
           );
         }
+        const proof = data.paymentProofUrl?.trim() || null;
         const updated = await prisma.order.update({
           where: { id: order.id },
           data: {
             status: OrderStatus.CONFIRMED,
             paymentStatus: PaymentStatus.AWAITING_VERIFICATION,
             paymentRef: data.paymentRef?.trim() || order.paymentRef,
+            ...(proof ? { paymentProofUrl: proof } : {}),
           },
         });
         void notifyTeamAdvance({
@@ -101,6 +111,7 @@ export async function POST(request: Request) {
           customerName: updated.customerName,
           customerEmail: updated.customerEmail,
           paymentRef: updated.paymentRef,
+          paymentProofUrl: updated.paymentProofUrl,
         });
         void sendOrderStatusEmail({
           to: updated.customerEmail,
@@ -113,7 +124,7 @@ export async function POST(request: Request) {
           status: updated.status,
           paymentStatus: updated.paymentStatus,
           message:
-            "Thank you — we’ve marked your advance as sent. We’ll verify the transfer and start your order.",
+            "Thank you — we’ve marked your advance as sent. We’ll verify the transfer (usually same day) and start your order.",
         });
       }
 
@@ -145,6 +156,8 @@ export async function POST(request: Request) {
         ? {
             paymentStatus: "AWAITING_VERIFICATION" as PaymentStatus,
             paymentRef: data.paymentRef?.trim() || demo.paymentRef,
+            paymentProofUrl:
+              data.paymentProofUrl?.trim() || demo.paymentProofUrl,
           }
         : {}),
     });

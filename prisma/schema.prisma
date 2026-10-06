@@ -156,6 +156,7 @@ model Order {
   paymentMethod   PaymentMethod
   paymentStatus   PaymentStatus @default(UNPAID)
   paymentRef      String?
+  paymentProofUrl String?
   customerId      String?
   customer        Customer?     @relation(fields: [customerId], references: [id], onDelete: SetNull)
   customerName    String

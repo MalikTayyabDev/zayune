@@ -38,6 +38,8 @@ type Order = {
   trackingNumber?: string | null;
   trackingUrl?: string | null;
   adminNotes?: string | null;
+  paymentRef?: string | null;
+  paymentProofUrl?: string | null;
   subtotal: number;
   shippingFee: number;
   total: number;
@@ -187,7 +189,53 @@ export function OrderManager({
         </label>
         <p className="text-xs text-aubergine/50">
           Method: {order.paymentMethod.replace("_", " ")}
+          {order.paymentRef ? ` · Ref: ${order.paymentRef}` : ""}
         </p>
+        {order.paymentProofUrl && (
+          <a
+            href={order.paymentProofUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="block text-nav text-copper"
+          >
+            View transfer receipt →
+          </a>
+        )}
+        {order.paymentMethod === "BANK_TRANSFER" &&
+          paymentStatus !== "PAID" && (
+            <Button
+              type="button"
+              variant="secondary"
+              className="w-full"
+              disabled={saving}
+              onClick={async () => {
+                setPaymentStatus("PAID");
+                setStatus("CONFIRMED");
+                setSaving(true);
+                setMessage("");
+                const res = await fetch(`/api/admin/orders/${order.id}`, {
+                  method: "PATCH",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    status: "CONFIRMED",
+                    paymentStatus: "PAID",
+                    trackingNumber: trackingNumber || null,
+                    trackingUrl: trackingUrl || null,
+                    adminNotes: adminNotes || null,
+                  }),
+                });
+                setSaving(false);
+                if (!res.ok) {
+                  setMessage("Unable to verify payment.");
+                  return;
+                }
+                setMessage("Advance verified — marked Paid.");
+                router.refresh();
+              }}
+            >
+              Verify advance (mark Paid)
+            </Button>
+          )}
         <label className="block text-sm">
           <span className="text-nav text-aubergine/50">Tracking number</span>
           <input
