@@ -106,7 +106,6 @@ export default async function HomePage() {
             <Image
               src={siteImages.studio.flowersBook}
               alt="Hands finishing crochet flowers in the ZAYUNE studio"
-              alt="Hands at work in the ZAYUNE studio"
               fill
               sizes="(max-width: 1024px) 100vw, 50vw"
               className="object-cover"
