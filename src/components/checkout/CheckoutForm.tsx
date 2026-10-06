@@ -384,6 +384,11 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
               <span className="min-w-0 flex-1 text-aubergine/80">
                 {item.name}
                 {item.variantName ? ` · ${item.variantName}` : ""} × {item.quantity}
+                {item.fulfillment === "MADE_TO_ORDER" && (
+                  <span className="mt-0.5 block text-[10px] uppercase tracking-nav text-copper">
+                    Made to order · 30% advance
+                  </span>
+                )}
               </span>
               <span className="shrink-0">{formatPrice(item.price * item.quantity)}</span>
             </li>
