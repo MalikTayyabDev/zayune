@@ -4,11 +4,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogIn, UserPlus } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { useCartStore } from "@/lib/cart-store";
-import { cartRequiresAdvance, formatAdvance } from "@/lib/order-policy";
+import {
+  formatAdvance,
+  formatBalanceOnDelivery,
+} from "@/lib/order-policy";
 import { formatPrice } from "@/lib/utils";
 
 type Provider = {
@@ -31,21 +34,13 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
   const setDiscountCodeStore = useCartStore((s) => s.setDiscountCode);
   const clearCart = useCartStore((s) => s.clearCart);
 
-  // Made-to-order / custom in cart → bank + 30% only (no COD)
-  const requiresAdvance = useMemo(
-    () => cartRequiresAdvance(items),
-    [items]
-  );
-  const availableProviders = useMemo(
-    () =>
-      requiresAdvance
-        ? providers.filter((p) => p.id !== "cod")
-        : providers,
-    [providers, requiresAdvance]
-  );
+  // All orders: 30% bank advance now, 70% on delivery
+  const availableProviders = useMemo(() => providers, [providers]);
 
   const [paymentMethod, setPaymentMethod] = useState(
-    requiresAdvance ? "bank_transfer" : providers[0]?.id || "cod"
+    providers.find((p) => p.id === "bank_transfer")?.id ||
+      providers[0]?.id ||
+      "bank_transfer"
   );
   const [paymentRef, setPaymentRef] = useState("");
   const [createAccount, setCreateAccount] = useState(false);
@@ -57,19 +52,11 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
   const [loading, setLoading] = useState(false);
   const [redirecting, setRedirecting] = useState(false);
 
-  useEffect(() => {
-    if (requiresAdvance && paymentMethod === "cod") {
-      setPaymentMethod("bank_transfer");
-    }
-  }, [requiresAdvance, paymentMethod]);
-
   const shippingAfter =
     subtotal - discountAmount >= 5000 ? 0 : shippingFee;
   const total = Math.max(0, subtotal - discountAmount + shippingAfter);
-  const advanceDue =
-    paymentMethod === "bank_transfer" || requiresAdvance
-      ? formatAdvance(total)
-      : 0;
+  const advanceDue = formatAdvance(total);
+  const balanceDue = formatBalanceOnDelivery(total);
   const signedIn = !!session?.user && session.user.role !== "admin";
 
   async function applyDiscount() {
@@ -315,17 +302,12 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
             Payment
           </legend>
 
-          {requiresAdvance && (
-            <div className="border border-brass/40 bg-brass/10 px-4 py-3 text-sm text-aubergine/80">
-              Your cart includes made-to-order / custom pieces. Once we start
-              crocheting there&apos;s no going back —{" "}
-              <strong>Cash on Delivery isn&apos;t available</strong>. Please
-              confirm with a <strong>30% bank/Raast advance</strong>
-              {advanceDue > 0
-                ? ` (about ${formatPrice(advanceDue)}).`
-                : "."}
-            </div>
-          )}
+          <div className="border border-brass/40 bg-brass/10 px-4 py-3 text-sm text-aubergine/80">
+            Every order is confirmed with a <strong>30% bank/Raast advance</strong>
+            {" "}({formatPrice(advanceDue)}). The remaining{" "}
+            <strong>70% ({formatPrice(balanceDue)})</strong> is paid on delivery.
+            You’ll get a secure link to transfer and attach your receipt.
+          </div>
 
           <div className="space-y-3">
             {availableProviders.map((provider) => (
@@ -351,27 +333,17 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
             ))}
           </div>
 
-          {(paymentMethod === "bank_transfer" || requiresAdvance) && (
-            <div className="space-y-3">
-              <p className="text-sm text-aubergine/70">
-                After placing the order you&apos;ll get a secure link (also emailed)
-                with bank details. Pay{" "}
-                <strong>{formatPrice(advanceDue || formatAdvance(total))}</strong>{" "}
-                (30%) to confirm — remaining balance as arranged / on delivery.
-              </p>
-              <label className="block">
-                <span className="text-nav text-aubergine/55">
-                  Payment reference / screenshot note (optional)
-                </span>
-                <input
-                  value={paymentRef}
-                  onChange={(e) => setPaymentRef(e.target.value)}
-                  placeholder="Transaction ID or transfer note"
-                  className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm outline-none focus:border-aubergine/40"
-                />
-              </label>
-            </div>
-          )}
+          <label className="block">
+            <span className="text-nav text-aubergine/55">
+              Payment reference (optional — or attach receipt after checkout)
+            </span>
+            <input
+              value={paymentRef}
+              onChange={(e) => setPaymentRef(e.target.value)}
+              placeholder="Transaction ID or transfer note"
+              className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm outline-none focus:border-aubergine/40"
+            />
+          </label>
         </fieldset>
       </div>
 
@@ -434,16 +406,16 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
             <span>Total</span>
             <span>{formatPrice(total)}</span>
           </div>
-          {(paymentMethod === "bank_transfer" || requiresAdvance) && (
-            <div className="flex justify-between text-copper pt-1">
-              <span>30% advance due now</span>
-              <span>{formatPrice(advanceDue || formatAdvance(total))}</span>
-            </div>
-          )}
+          <div className="flex justify-between text-copper pt-1">
+            <span>30% advance due now</span>
+            <span>{formatPrice(advanceDue)}</span>
+          </div>
+          <div className="flex justify-between text-aubergine/60 pt-0.5">
+            <span>70% on delivery</span>
+            <span>{formatPrice(balanceDue)}</span>
+          </div>
           <p className="pt-2 text-[11px] text-aubergine/45">
-            {requiresAdvance
-              ? "Made-to-order pieces need 30% advance before we start."
-              : "Final prices are confirmed securely on the server."}
+            After checkout, open your pay link to transfer 30% and attach the receipt.
           </p>
         </div>
 

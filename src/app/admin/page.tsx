@@ -111,7 +111,11 @@ export default async function AdminHomePage() {
       value: `${metrics.publishedCount}/${metrics.productCount}`,
       href: "/admin/products",
     },
-    { label: "Low stock", value: String(metrics.lowStockCount), href: "/admin/products" },
+    {
+      label: "Low stock",
+      value: String(metrics.lowStockCount),
+      href: "/admin/products?stock=low",
+    },
     {
       label: "Customers",
       value: String(metrics.customerEstimate),

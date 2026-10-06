@@ -2,23 +2,24 @@ import type { PaymentProvider } from "./types";
 
 const codProvider: PaymentProvider = {
   id: "cod",
-  label: "Cash on Delivery",
+  label: "Pay rest on delivery (after 30% advance)",
   description:
-    "Pay when your piece arrives. Only for ready in-stock items — not available for made-to-order / custom pieces.",
+    "Confirm with 30% bank/Raast advance first, then pay the remaining 70% when your order arrives.",
   async initiate() {
     return {
       provider: "cod",
       paymentStatus: "UNPAID",
-      instructions: "Please keep the exact amount ready for the courier.",
+      instructions:
+        "Please pay 30% advance by bank/Raast to confirm, then keep the remaining 70% ready for the courier.",
     };
   },
 };
 
 const bankTransferProvider: PaymentProvider = {
   id: "bank_transfer",
-  label: "Bank / Raast Transfer",
+  label: "Bank / Raast — 30% advance",
   description:
-    "30% advance to confirm (required for all bank payments and for made-to-order / custom pieces — once crocheted, there’s no going back). Remaining balance as arranged / on delivery.",
+    "Pay 30% now by bank/Raast to confirm your order. Remaining 70% on delivery. You can attach your transfer receipt on the pay link.",
   async initiate(input) {
     const bankName = process.env.BANK_NAME || "[Bank name — to be supplied]";
     const title = process.env.BANK_ACCOUNT_TITLE || "ZAYUNE";

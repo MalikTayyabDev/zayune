@@ -87,15 +87,7 @@ export async function POST(request: Request) {
         );
       }
 
-      const isBank = order.paymentMethod === "BANK_TRANSFER";
-
       if (data.action === "mark_advance_sent") {
-        if (!isBank) {
-          return NextResponse.json(
-            { error: "This order does not use bank transfer." },
-            { status: 400 }
-          );
-        }
         const proof = data.paymentProofUrl?.trim() || null;
         const updated = await prisma.order.update({
           where: { id: order.id },

@@ -10,6 +10,7 @@ import {
 } from "@/lib/demo-catalog";
 import { isDemoMode } from "@/lib/demo-data";
 import { prisma } from "@/lib/prisma";
+import { generateProductSku, generateVariantSku } from "@/lib/sku";
 
 const variantSchema = z.object({
   id: z.string().optional(),
@@ -32,6 +33,7 @@ const imageSchema = z.object({
 const schema = z.object({
   name: z.string().min(2),
   slug: z.string().min(2),
+  sku: z.string().optional().nullable(),
   oneLiner: z.string().min(2),
   story: z.string().min(2),
   materials: z.string().min(2),
@@ -64,6 +66,13 @@ export async function POST(request: Request) {
   try {
     const data = schema.parse(await request.json());
 
+    const productSku =
+      data.sku?.trim() || generateProductSku(data.slug || data.name);
+    const variants = data.variants.map((v) => ({
+      ...v,
+      sku: v.sku?.trim() || generateVariantSku(productSku, v.name),
+    }));
+
     if (isDemoMode()) {
       const category =
         getDemoCategories().find((c) => c.id === data.categoryId) ||
@@ -73,6 +82,7 @@ export async function POST(request: Request) {
         id,
         name: data.name,
         slug: data.slug,
+        sku: productSku,
         oneLiner: data.oneLiner,
         story: data.story,
         materials: data.materials,
@@ -105,7 +115,7 @@ export async function POST(request: Request) {
           kind: img.kind,
           sortOrder: i,
         })),
-        variants: data.variants.map((v, i) => ({
+        variants: variants.map((v, i) => ({
           id: `${id}_v_${i}`,
           productId: id,
           name: v.name,
@@ -126,6 +136,7 @@ export async function POST(request: Request) {
       data: {
         name: data.name,
         slug: data.slug,
+        sku: productSku,
         oneLiner: data.oneLiner,
         story: data.story,
         materials: data.materials,
@@ -155,7 +166,7 @@ export async function POST(request: Request) {
           })),
         },
         variants: {
-          create: data.variants.map((v) => ({
+          create: variants.map((v) => ({
             name: v.name,
             optionGroup: v.optionGroup,
             swatchHex: v.swatchHex || null,

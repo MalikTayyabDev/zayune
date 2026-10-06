@@ -60,7 +60,7 @@ export function FormSelect({
     <select
       {...props}
       className={cn(
-        "form-select mt-2 w-full appearance-none border border-stone bg-porcelain bg-[length:12px] bg-[right_0.9rem_center] bg-no-repeat px-4 py-3 pr-10 text-sm text-aubergine outline-none transition focus:border-aubergine/50 focus:ring-1 focus:ring-aubergine/20",
+        "form-select mt-2 w-full appearance-none border border-stone px-4 py-3 pr-10 text-sm text-aubergine outline-none transition focus:border-aubergine/50 focus:ring-1 focus:ring-aubergine/20",
         className
       )}
     >

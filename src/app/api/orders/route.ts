@@ -10,10 +10,6 @@ import { formatAdvance } from "@/lib/bank-details";
 import { sendOrderConfirmationEmail } from "@/lib/email";
 import { isServerlessRuntime } from "@/lib/env";
 import {
-  cartRequiresAdvance,
-  orderRequiresAdvance,
-} from "@/lib/order-policy";
-import {
   createOrderAccessToken,
   orderPayUrl,
 } from "@/lib/order-token";
@@ -129,26 +125,9 @@ export async function POST(request: Request) {
       }))
     );
 
-    const madeToOrder = cartRequiresAdvance(pricedItems);
-    // Made-to-order / custom: bank + 30% only — COD not allowed (no returns once made)
-    let paymentMethod = data.paymentMethod;
-    if (madeToOrder && paymentMethod === "cod") {
-      return NextResponse.json(
-        {
-          error:
-            "Made-to-order and custom pieces require a 30% bank/Raast advance — Cash on Delivery isn’t available for these items.",
-        },
-        { status: 400 }
-      );
-    }
-    if (madeToOrder) {
-      paymentMethod = "bank_transfer";
-    }
-
-    const needsAdvance = orderRequiresAdvance({
-      paymentMethod,
-      lines: pricedItems,
-    });
+    // All orders: 30% bank/Raast advance, then 70% on delivery (COD = rest on delivery)
+    const paymentMethod = data.paymentMethod;
+    const needsAdvance = true;
 
     const subtotal = pricedItems.reduce(
       (sum, item) => sum + item.price * item.quantity,

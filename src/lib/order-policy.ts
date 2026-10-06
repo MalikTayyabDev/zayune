@@ -1,9 +1,8 @@
 /**
- * Business rules:
- * - Bank / Raast → always 30% advance to confirm
- * - Made-to-order / custom pieces → 30% advance required (no COD);
- *   once crocheted there is no going back
- * - In-stock ready pieces → COD allowed (pay on delivery, no advance)
+ * Business rules (ZAYUNE):
+ * - Every order: 30% bank/Raast advance to confirm
+ * - Remaining 70% paid on delivery (or as arranged)
+ * - Bank transfer receipt can be attached on the pay/confirm link
  */
 
 export { formatAdvance } from "@/lib/bank-details";
@@ -14,26 +13,29 @@ export function isMadeToOrder(fulfillment: FulfillmentLike) {
   return fulfillment === "MADE_TO_ORDER";
 }
 
+/** All carts require 30% advance before fulfillment starts. */
 export function cartRequiresAdvance(
-  lines: Array<{ fulfillment?: FulfillmentLike }>
+  _lines?: Array<{ fulfillment?: FulfillmentLike }>
 ) {
-  return lines.some((line) => isMadeToOrder(line.fulfillment));
+  return true;
 }
 
 export function paymentRequiresAdvance(paymentMethod: string) {
   return (
     paymentMethod === "bank_transfer" ||
-    paymentMethod === "BANK_TRANSFER"
+    paymentMethod === "BANK_TRANSFER" ||
+    paymentMethod === "cod" // COD = remaining 70% on delivery after advance
   );
 }
 
-/** True when this order must collect 30% before production starts. */
-export function orderRequiresAdvance(input: {
-  paymentMethod: string;
-  lines: Array<{ fulfillment?: FulfillmentLike }>;
+/** True when this order must collect 30% before production / packing. */
+export function orderRequiresAdvance(_input?: {
+  paymentMethod?: string;
+  lines?: Array<{ fulfillment?: FulfillmentLike }>;
 }) {
-  return (
-    paymentRequiresAdvance(input.paymentMethod) ||
-    cartRequiresAdvance(input.lines)
-  );
+  return true;
+}
+
+export function formatBalanceOnDelivery(total: number) {
+  return Math.max(0, total - Math.round(total * 0.3));
 }

@@ -21,13 +21,8 @@ export function buildCustomerOrderWhatsAppText(input: {
   payUrl: string;
 }) {
   const currency = input.currency || "PKR";
-  const isBank =
-    input.paymentMethod === "BANK_TRANSFER" ||
-    input.paymentMethod === "bank_transfer";
   const advance = formatAdvance(input.total);
   const bank = getBankDetails();
-  // Bank (and made-to-order forced to bank) always get 30% instructions
-  const needsAdvance = isBank;
 
   const lines = [
     `Hi ${input.customerName.split(" ")[0]},`,
@@ -35,25 +30,20 @@ export function buildCustomerOrderWhatsAppText(input: {
     `Thank you for your ZAYUNE order ${input.orderNumber}.`,
     `Total: Rs ${input.total.toLocaleString("en-PK")} ${currency}`,
     "",
-    needsAdvance
-      ? [
-          `To confirm your order, please pay 30% advance: Rs ${advance.toLocaleString("en-PK")}`,
-          "(Required for bank payments and made-to-order / custom pieces.)",
-          "",
-          "Bank / Raast:",
-          `${bank.accountTitle}`,
-          `${bank.bankName}`,
-          `Account: ${bank.accountNumber}`,
-          `IBAN / Raast: ${bank.iban}`,
-          `Reference: ${input.orderNumber}`,
-          "",
-          "Open this link to confirm & mark your advance paid (updates your order on the site):",
-          input.payUrl,
-        ].join("\n")
-      : [
-          "Open this link to confirm your order on the site:",
-          input.payUrl,
-        ].join("\n"),
+    [
+      `To confirm your order, please pay 30% advance: Rs ${advance.toLocaleString("en-PK")}`,
+      `Remaining 70% (Rs ${Math.max(0, input.total - advance).toLocaleString("en-PK")}) is due on delivery.`,
+      "",
+      "Bank / Raast:",
+      `${bank.accountTitle}`,
+      `${bank.bankName}`,
+      `Account: ${bank.accountNumber}`,
+      `IBAN / Raast: ${bank.iban}`,
+      `Reference: ${input.orderNumber}`,
+      "",
+      "Open this link to transfer, attach your receipt, and update the order on the site:",
+      input.payUrl,
+    ].join("\n"),
     "",
     "Designed, not just made. — ZAYUNE",
   ];

@@ -79,13 +79,13 @@ export function OrderNextSteps({
           {isBank ? "Pay 30% advance & confirm" : "Confirm your order"}
         </p>
         <p className="mt-2 text-sm leading-relaxed text-aubergine/75">
-          {isBank
-            ? `Open your secure link for bank/Raast details and the 30% advance (Rs ${advanceAmount.toLocaleString("en-PK")}). When you tap “I’ve sent the 30% advance”, your order status updates on the site.`
-            : "Open your secure link and confirm the order — status updates on the site immediately."}
+          Open your secure link for bank/Raast details and the 30% advance (Rs{" "}
+          {advanceAmount.toLocaleString("en-PK")}). Attach your transfer receipt,
+          then tap “I’ve sent the 30% advance” — remaining 70% is due on delivery.
         </p>
         {payUrl && (
           <Button href={payUrl} className="mt-4 w-full sm:w-auto">
-            {isBank ? "Open bank details & confirm" : "Confirm order"}
+            Open bank details & attach receipt
           </Button>
         )}
       </div>

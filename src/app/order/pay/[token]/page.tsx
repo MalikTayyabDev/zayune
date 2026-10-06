@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { formatAdvance, getBankDetails } from "@/lib/bank-details";
 import { findDemoOrder } from "@/lib/demo-orders";
 import { ensureDatabaseUrl } from "@/lib/env";
+import { formatBalanceOnDelivery } from "@/lib/order-policy";
 import { verifyOrderAccessToken } from "@/lib/order-token";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
@@ -40,20 +41,15 @@ export default async function OrderPayPage({ params }: Props) {
   const order = await getOrderFromToken(token);
   if (!order) notFound();
 
-  const isBank = String(order.paymentMethod) === "BANK_TRANSFER";
   const advance = formatAdvance(order.total);
+  const balance = formatBalanceOnDelivery(order.total);
   const bank = getBankDetails();
-  const alreadyConfirmed = order.status !== "PENDING" && order.status !== "CANCELLED";
   const advanceMarked =
     order.paymentStatus === "AWAITING_VERIFICATION" ||
     order.paymentStatus === "PAID";
 
   const studioWa = whatsappToStudioUrl(
-    `Hi ZAYUNE — I’ve opened my payment link for order ${order.orderNumber}.${
-      isBank
-        ? ` I’m transferring the 30% advance (Rs ${advance.toLocaleString("en-PK")}).`
-        : " Please confirm my order."
-    }`
+    `Hi ZAYUNE — I’ve opened my payment link for order ${order.orderNumber}. I’m transferring the 30% advance (Rs ${advance.toLocaleString("en-PK")}). Remaining 70% on delivery.`
   );
 
   return (
@@ -63,55 +59,64 @@ export default async function OrderPayPage({ params }: Props) {
         Order {order.orderNumber}
       </p>
       <h1 className="mt-2 text-center font-display text-4xl text-aubergine">
-        {isBank ? "Pay 30% to confirm" : "Confirm your order"}
+        Pay 30% to confirm
       </h1>
       <p className="mx-auto mt-3 max-w-md text-center text-sm text-aubergine/65">
-        Hi {order.customerName.split(" ")[0]} — we also emailed this link to{" "}
-        <strong>{order.customerEmail}</strong>. Total{" "}
-        {formatPrice(order.total, order.currency)}.
+        Hi {order.customerName.split(" ")[0]} — we emailed this link to{" "}
+        <strong>{order.customerEmail}</strong>. Transfer the advance, attach your
+        receipt, and the remaining 70% is due on delivery.
       </p>
       <p className="mx-auto mt-2 text-center text-xs uppercase tracking-nav text-aubergine/45">
         Status: {order.status.replace("_", " ")} · Payment{" "}
         {order.paymentStatus.replace("_", " ")}
       </p>
 
-      {isBank && (
-        <div className="mt-10 border border-stone bg-stone/15 px-5 py-6">
-          <p className="text-nav text-aubergine/50">Bank / Raast</p>
-          <p className="mt-3 font-display text-2xl text-copper">
-            {formatPrice(advance, order.currency)}{" "}
-            <span className="text-base text-aubergine/55">30% advance due</span>
+      <div className="mt-8 grid grid-cols-2 gap-3 text-center text-sm">
+        <div className="border border-stone bg-stone/15 px-3 py-4">
+          <p className="text-nav text-aubergine/45">Due now (30%)</p>
+          <p className="mt-1 font-display text-2xl text-copper">
+            {formatPrice(advance, order.currency)}
           </p>
-          <dl className="mt-5 space-y-2 text-sm">
-            <div className="flex justify-between gap-4">
-              <dt className="text-aubergine/55">Account title</dt>
-              <dd>{bank.accountTitle}</dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-aubergine/55">Bank</dt>
-              <dd>{bank.bankName}</dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-aubergine/55">Account</dt>
-              <dd>{bank.accountNumber}</dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-aubergine/55">IBAN / Raast</dt>
-              <dd className="text-right">{bank.iban}</dd>
-            </div>
-            <div className="flex justify-between gap-4">
-              <dt className="text-aubergine/55">Payment reference</dt>
-              <dd className="font-medium">{order.orderNumber}</dd>
-            </div>
-          </dl>
         </div>
-      )}
+        <div className="border border-stone bg-stone/15 px-3 py-4">
+          <p className="text-nav text-aubergine/45">On delivery (70%)</p>
+          <p className="mt-1 font-display text-2xl text-aubergine">
+            {formatPrice(balance, order.currency)}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-6 border border-stone bg-stone/15 px-5 py-6">
+        <p className="text-nav text-aubergine/50">Bank / Raast</p>
+        <dl className="mt-4 space-y-2 text-sm">
+          <div className="flex justify-between gap-4">
+            <dt className="text-aubergine/55">Account title</dt>
+            <dd>{bank.accountTitle}</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-aubergine/55">Bank</dt>
+            <dd>{bank.bankName}</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-aubergine/55">Account</dt>
+            <dd>{bank.accountNumber}</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-aubergine/55">IBAN / Raast</dt>
+            <dd className="text-right">{bank.iban}</dd>
+          </div>
+          <div className="flex justify-between gap-4">
+            <dt className="text-aubergine/55">Payment reference</dt>
+            <dd className="font-medium">{order.orderNumber}</dd>
+          </div>
+        </dl>
+      </div>
 
       <div className="mt-8">
         <OrderPayActions
           token={token}
-          isBank={isBank}
-          alreadyConfirmed={alreadyConfirmed && !isBank}
+          isBank
+          alreadyConfirmed={false}
           advanceMarked={advanceMarked}
         />
       </div>

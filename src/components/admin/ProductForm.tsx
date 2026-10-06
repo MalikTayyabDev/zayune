@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
+import { FormSelect } from "@/components/ui/FormControls";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { generateProductSku, generateVariantSku } from "@/lib/sku";
 
 type Category = { id: string; name: string };
 type CatalogOption = { id: string; name: string };
@@ -24,6 +26,7 @@ export type ProductFormValues = {
   id?: string;
   name: string;
   slug: string;
+  sku: string;
   oneLiner: string;
   story: string;
   materials: string;
@@ -56,6 +59,7 @@ type Props = {
 const empty: ProductFormValues = {
   name: "",
   slug: "",
+  sku: "",
   oneLiner: "",
   story: "",
   materials: "[materials — to be supplied]",
@@ -89,15 +93,16 @@ const empty: ProductFormValues = {
   ],
 };
 
-const imageKinds = [
-  "hero",
-  "worn",
-  "detail",
-  "macro",
-  "alt",
-  "styled",
-  "process",
-  "packaging",
+const imageKinds: { value: string; label: string }[] = [
+  { value: "hero", label: "Hero (main)" },
+  { value: "gallery", label: "Gallery" },
+  { value: "detail", label: "Detail" },
+  { value: "worn", label: "Worn / lifestyle" },
+  { value: "macro", label: "Macro / close-up" },
+  { value: "styled", label: "Styled shot" },
+  { value: "process", label: "Process / making" },
+  { value: "packaging", label: "Packaging" },
+  { value: "alt", label: "Alternate angle" },
 ];
 
 export function ProductForm({ categories, catalog = [], initial }: Props) {
@@ -106,6 +111,7 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
     ...empty,
     categoryId: categories[0]?.id || "",
     ...initial,
+    sku: initial?.sku || "",
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -117,19 +123,35 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
     setValues((prev) => ({ ...prev, [key]: value }));
   }
 
+  function ensureSkus() {
+    const productSku =
+      values.sku.trim() ||
+      generateProductSku(values.slug || values.name || "ITEM");
+    const variants = values.variants.map((v) => ({
+      ...v,
+      sku:
+        v.sku.trim() ||
+        generateVariantSku(productSku, v.name || "VAR"),
+    }));
+    return { productSku, variants };
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError("");
 
+    const { productSku, variants } = ensureSkus();
+
     const payload = {
       ...values,
+      sku: productSku,
       tags: values.tags
         .split(",")
         .map((t) => t.trim())
         .filter(Boolean),
       images: values.images.filter((img) => img.url.trim()),
-      variants: values.variants
+      variants: variants
         .filter((v) => v.name.trim())
         .map((v) => ({
           ...v,
@@ -162,7 +184,8 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
   }
 
   const panel = "border border-stone bg-porcelain";
-  const panelHead = "border-b border-stone px-5 py-3 text-sm font-medium text-aubergine";
+  const panelHead =
+    "border-b border-stone px-5 py-3 text-sm font-medium text-aubergine";
 
   return (
     <form onSubmit={onSubmit} className="pb-24">
@@ -190,7 +213,6 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
-        {/* Main column — Shopify-style */}
         <div className="space-y-6">
           <section className={panel}>
             <div className={panelHead}>Title & description</div>
@@ -209,13 +231,42 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                         .replace(/(^-|-$)/g, "")
                     );
                   }
+                  if (!values.sku && !initial?.sku) {
+                    setField("sku", generateProductSku(v || "ITEM"));
+                  }
                 }}
               />
-              <Field
-                label="One-liner"
-                value={values.oneLiner}
-                onChange={(v) => setField("oneLiner", v)}
-              />
+              <div className="grid gap-4 sm:grid-cols-2">
+                <label className="block">
+                  <span className="text-nav text-aubergine/55">
+                    Product SKU (auto)
+                  </span>
+                  <div className="mt-2 flex gap-2">
+                    <input
+                      value={values.sku}
+                      readOnly
+                      className="w-full border border-stone bg-stone/20 px-4 py-3 text-sm text-aubergine/80"
+                    />
+                    <button
+                      type="button"
+                      className="shrink-0 border border-aubergine px-3 text-[10px] uppercase tracking-nav text-aubergine hover:bg-aubergine hover:text-porcelain"
+                      onClick={() =>
+                        setField(
+                          "sku",
+                          generateProductSku(values.slug || values.name || "ITEM")
+                        )
+                      }
+                    >
+                      Regenerate
+                    </button>
+                  </div>
+                </label>
+                <Field
+                  label="One-liner"
+                  value={values.oneLiner}
+                  onChange={(v) => setField("oneLiner", v)}
+                />
+              </div>
               <TextArea
                 label="Description / story"
                 value={values.story}
@@ -243,8 +294,13 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
           </section>
 
           <section className={panel}>
-            <div className="flex items-center justify-between border-b border-stone px-5 py-3">
-              <p className="text-sm font-medium text-aubergine">Media</p>
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-stone px-5 py-3">
+              <div>
+                <p className="text-sm font-medium text-aubergine">Media</p>
+                <p className="mt-0.5 text-xs text-aubergine/50">
+                  Add hero, gallery, detail, lifestyle — not only swatches
+                </p>
+              </div>
               <button
                 type="button"
                 className="text-nav text-copper"
@@ -254,7 +310,7 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                     {
                       url: "",
                       alt: values.name,
-                      kind: "detail",
+                      kind: values.images.length === 0 ? "hero" : "gallery",
                       sortOrder: values.images.length,
                     },
                   ])
@@ -264,6 +320,11 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
               </button>
             </div>
             <div className="space-y-4 p-5">
+              {values.images.length === 0 && (
+                <p className="text-sm text-aubergine/55">
+                  No images yet. Add a hero image, then more gallery shots.
+                </p>
+              )}
               {values.images.map((image, index) => (
                 <div
                   key={index}
@@ -271,7 +332,9 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                 >
                   <div className="sm:col-span-2">
                     <ImageUpload
-                      label={`Image ${index + 1}`}
+                      label={`Image ${index + 1}${
+                        image.kind === "hero" ? " · Hero" : ""
+                      }`}
                       value={image.url}
                       onChange={(url) => {
                         const next = [...values.images];
@@ -300,21 +363,20 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                   />
                   <label className="block">
                     <span className="text-nav text-aubergine/55">Kind</span>
-                    <select
+                    <FormSelect
                       value={image.kind}
                       onChange={(e) => {
                         const next = [...values.images];
                         next[index] = { ...image, kind: e.target.value };
                         setField("images", next);
                       }}
-                      className="form-select mt-2 w-full appearance-none border border-stone bg-porcelain px-4 py-3 pr-10 text-sm"
                     >
                       {imageKinds.map((kind) => (
-                        <option key={kind} value={kind}>
-                          {kind}
+                        <option key={kind.value} value={kind.value}>
+                          {kind.label}
                         </option>
                       ))}
-                    </select>
+                    </FormSelect>
                   </label>
                   <div className="flex items-end">
                     <button
@@ -337,11 +399,21 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
 
           <section className={panel}>
             <div className="flex items-center justify-between border-b border-stone px-5 py-3">
-              <p className="text-sm font-medium text-aubergine">Variants</p>
+              <div>
+                <p className="text-sm font-medium text-aubergine">
+                  Variants & swatches
+                </p>
+                <p className="mt-0.5 text-xs text-aubergine/50">
+                  Colors / options — SKUs auto-fill from product SKU
+                </p>
+              </div>
               <button
                 type="button"
                 className="text-nav text-copper"
-                onClick={() =>
+                onClick={() => {
+                  const base =
+                    values.sku ||
+                    generateProductSku(values.slug || values.name || "ITEM");
                   setField("variants", [
                     ...values.variants,
                     {
@@ -351,10 +423,10 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                       imageUrl: "",
                       priceDelta: 0,
                       stock: "",
-                      sku: "",
+                      sku: generateVariantSku(base, "New color"),
                     },
-                  ])
-                }
+                  ]);
+                }}
               >
                 + Add variant
               </button>
@@ -370,7 +442,14 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                     value={variant.name}
                     onChange={(v) => {
                       const next = [...values.variants];
-                      next[index] = { ...variant, name: v };
+                      const base =
+                        values.sku ||
+                        generateProductSku(values.slug || values.name || "ITEM");
+                      next[index] = {
+                        ...variant,
+                        name: v,
+                        sku: generateVariantSku(base, v),
+                      };
                       setField("variants", next);
                     }}
                   />
@@ -384,7 +463,7 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                     }}
                   />
                   <label className="block">
-                    <span className="text-nav text-aubergine/55">Swatch</span>
+                    <span className="text-nav text-aubergine/55">Swatch color</span>
                     <div className="mt-2 flex gap-2">
                       <input
                         type="color"
@@ -409,7 +488,7 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                   </label>
                   <div className="sm:col-span-2">
                     <ImageUpload
-                      label="Variant / swatch image"
+                      label="Variant / swatch image (optional)"
                       value={variant.imageUrl}
                       onChange={(url) => {
                         const next = [...values.variants];
@@ -438,7 +517,7 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                     }}
                   />
                   <Field
-                    label="SKU"
+                    label="Variant SKU (auto)"
                     value={variant.sku}
                     onChange={(v) => {
                       const next = [...values.variants];
@@ -492,7 +571,6 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
           </section>
         </div>
 
-        {/* Sidebar */}
         <aside className="space-y-6 lg:sticky lg:top-24 lg:self-start">
           <section className={panel}>
             <div className={panelHead}>Status</div>
@@ -541,6 +619,14 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                   setField("introOfferPercent", v === "" ? null : Number(v))
                 }
               />
+              {values.price > 0 && (
+                <p className="text-xs text-aubergine/55">
+                  Checkout: 30% advance (
+                  {Math.round(values.price * 0.3).toLocaleString("en-PK")} PKR) ·
+                  70% on delivery (
+                  {Math.round(values.price * 0.7).toLocaleString("en-PK")} PKR)
+                </p>
+              )}
             </div>
           </section>
 
@@ -549,17 +635,16 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
             <div className="space-y-4 p-5">
               <label className="block">
                 <span className="text-nav text-aubergine/55">Category</span>
-                <select
+                <FormSelect
                   value={values.categoryId}
                   onChange={(e) => setField("categoryId", e.target.value)}
-                  className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm"
                 >
                   {categories.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
                     </option>
                   ))}
-                </select>
+                </FormSelect>
               </label>
             </div>
           </section>
@@ -569,7 +654,7 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
             <div className="space-y-4 p-5">
               <label className="block">
                 <span className="text-nav text-aubergine/55">Fulfillment</span>
-                <select
+                <FormSelect
                   value={values.fulfillment}
                   onChange={(e) =>
                     setField(
@@ -577,11 +662,10 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                       e.target.value as ProductFormValues["fulfillment"]
                     )
                   }
-                  className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm"
                 >
                   <option value="MADE_TO_ORDER">Made to order</option>
                   <option value="IN_STOCK">In stock</option>
-                </select>
+                </FormSelect>
               </label>
               {values.fulfillment === "IN_STOCK" ? (
                 <Field
@@ -617,7 +701,9 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                   {catalog
                     .filter((p) => p.id !== values.id)
                     .map((product) => {
-                      const checked = values.bundleProductIds.includes(product.id);
+                      const checked = values.bundleProductIds.includes(
+                        product.id
+                      );
                       return (
                         <label
                           key={product.id}
@@ -695,7 +781,7 @@ function Field({
         type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm outline-none focus:border-aubergine/40"
+        className="mt-2 w-full border border-stone bg-porcelain px-4 py-3 text-sm outline-none focus:border-aubergine/40"
       />
     </label>
   );
@@ -719,7 +805,7 @@ function TextArea({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
-        className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm outline-none focus:border-aubergine/40"
+        className="mt-2 w-full border border-stone bg-porcelain px-4 py-3 text-sm outline-none focus:border-aubergine/40"
       />
     </label>
   );

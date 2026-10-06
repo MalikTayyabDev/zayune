@@ -11,6 +11,7 @@ import {
 } from "@/lib/demo-catalog";
 import { isDemoMode } from "@/lib/demo-data";
 import { prisma } from "@/lib/prisma";
+import { generateProductSku, generateVariantSku } from "@/lib/sku";
 
 const variantSchema = z.object({
   id: z.string().optional(),
@@ -33,6 +34,7 @@ const imageSchema = z.object({
 const schema = z.object({
   name: z.string().min(2),
   slug: z.string().min(2),
+  sku: z.string().optional().nullable(),
   oneLiner: z.string().min(2),
   story: z.string().min(2),
   materials: z.string().min(2),
@@ -66,6 +68,12 @@ export async function PUT(request: Request, { params }: Props) {
 
   try {
     const data = schema.parse(await request.json());
+    const productSku =
+      data.sku?.trim() || generateProductSku(data.slug || data.name);
+    const variants = data.variants.map((v) => ({
+      ...v,
+      sku: v.sku?.trim() || generateVariantSku(productSku, v.name),
+    }));
 
     if (isDemoMode()) {
       const existing = findDemoProduct(params.id);
@@ -80,6 +88,7 @@ export async function PUT(request: Request, { params }: Props) {
         ...existing,
         name: data.name,
         slug: data.slug,
+        sku: productSku,
         oneLiner: data.oneLiner,
         story: data.story,
         materials: data.materials,
@@ -110,7 +119,7 @@ export async function PUT(request: Request, { params }: Props) {
           kind: img.kind,
           sortOrder: i,
         })),
-        variants: data.variants.map((v, i) => ({
+        variants: variants.map((v, i) => ({
           id: v.id || `${params.id}_v_${i}`,
           productId: params.id,
           name: v.name,
@@ -135,6 +144,7 @@ export async function PUT(request: Request, { params }: Props) {
       data: {
         name: data.name,
         slug: data.slug,
+        sku: productSku,
         oneLiner: data.oneLiner,
         story: data.story,
         materials: data.materials,
@@ -164,7 +174,7 @@ export async function PUT(request: Request, { params }: Props) {
           })),
         },
         variants: {
-          create: data.variants.map((v) => ({
+          create: variants.map((v) => ({
             name: v.name,
             optionGroup: v.optionGroup,
             swatchHex: v.swatchHex || null,
