@@ -437,7 +437,7 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                   key={index}
                   className="space-y-4 border border-stone/80 bg-stone/10 p-4"
                 >
-                  <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <Field
                       label="Name"
                       value={variant.name}
@@ -463,9 +463,9 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                         setField("variants", next);
                       }}
                     />
-                    <label className="block">
+                    <label className="block sm:col-span-2">
                       <span className="text-nav text-aubergine/55">Swatch color</span>
-                      <div className="mt-2 flex h-[2.75rem] items-stretch gap-2">
+                      <div className="mt-2 flex h-[2.75rem] max-w-xs items-stretch gap-2">
                         <input
                           type="color"
                           value={variant.swatchHex || "#B85F45"}
@@ -489,7 +489,7 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                     </label>
                   </div>
 
-                  <div className="grid gap-3 sm:grid-cols-3">
+                  <div className="grid gap-3 sm:grid-cols-2">
                     <Field
                       label="Price delta"
                       type="number"

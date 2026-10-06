@@ -234,8 +234,8 @@ export default async function AdminHomePage() {
         </div>
       </section>
 
-      <div className="grid gap-8 lg:grid-cols-2">
-        <section className="min-w-0">
+      <div className="space-y-10">
+        <section>
           <div className="mb-4 flex items-baseline justify-between gap-3">
             <h2 className="font-display text-2xl text-aubergine">Best sellers</h2>
             <Link href="/admin/products" className="text-nav text-copper">
@@ -251,12 +251,14 @@ export default async function AdminHomePage() {
               {metrics.bestSellers.map((item, i) => (
                 <li
                   key={item.name}
-                  className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-5 py-4 text-sm"
+                  className="flex items-center justify-between gap-4 px-5 py-4 text-sm"
                 >
-                  <span className="text-nav text-brass">
-                    {String(i + 1).padStart(2, "0")}
+                  <span className="min-w-0">
+                    <span className="mr-3 text-nav text-brass">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-aubergine">{item.name}</span>
                   </span>
-                  <span className="truncate text-aubergine">{item.name}</span>
                   <span className="shrink-0 text-aubergine/55">{item.qty} sold</span>
                 </li>
               ))}
@@ -264,7 +266,7 @@ export default async function AdminHomePage() {
           )}
         </section>
 
-        <section className="min-w-0">
+        <section>
           <div className="mb-4 flex items-baseline justify-between gap-3">
             <h2 className="font-display text-2xl text-aubergine">Recent orders</h2>
             <Link href="/admin/orders" className="text-nav text-copper">
@@ -279,16 +281,16 @@ export default async function AdminHomePage() {
             <ul className="divide-y divide-stone border border-stone bg-porcelain">
               {recentOrders.map((order) => (
                 <li key={order.id} className="px-5 py-4">
-                  <div className="flex items-start justify-between gap-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="truncate font-medium tracking-wide text-aubergine">
+                      <p className="font-medium tracking-wide text-aubergine">
                         {order.orderNumber}
                       </p>
-                      <p className="mt-1 truncate text-sm text-aubergine/60">
+                      <p className="mt-1 text-sm text-aubergine/60">
                         {order.customerName}
                       </p>
                     </div>
-                    <div className="shrink-0 text-right">
+                    <div className="text-right">
                       <p className="text-sm text-aubergine">
                         {formatPrice(order.total, order.currency)}
                       </p>
