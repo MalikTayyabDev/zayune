@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
-import { isDemoMode } from "@/lib/demo-data";
 import { findDemoOrder } from "@/lib/demo-orders";
+import { ensureDatabaseUrl, isServerlessRuntime } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 import { siteConfig } from "@/lib/site";
@@ -10,25 +10,29 @@ type Props = {
   searchParams: { email?: string };
 };
 
+export const dynamic = "force-dynamic";
+
 async function getOrder(idOrNumber: string, email?: string) {
-  if (isDemoMode()) {
-    const order = findDemoOrder(idOrNumber);
-    if (!order) return null;
-    if (email && order.customerEmail.toLowerCase() !== email.toLowerCase()) {
-      return null;
-    }
-    return order;
+  if (ensureDatabaseUrl()) {
+    const order = await prisma.order.findFirst({
+      where: {
+        OR: [{ id: idOrNumber }, { orderNumber: idOrNumber }],
+        ...(email
+          ? { customerEmail: { equals: email, mode: "insensitive" } }
+          : {}),
+      },
+      include: { items: true },
+    });
+    if (order) return order;
   }
 
-  const order = await prisma.order.findFirst({
-    where: {
-      OR: [{ id: idOrNumber }, { orderNumber: idOrNumber }],
-      ...(email
-        ? { customerEmail: { equals: email, mode: "insensitive" } }
-        : {}),
-    },
-    include: { items: true },
-  });
+  if (isServerlessRuntime()) return null;
+
+  const order = findDemoOrder(idOrNumber);
+  if (!order) return null;
+  if (email && order.customerEmail.toLowerCase() !== email.toLowerCase()) {
+    return null;
+  }
   return order;
 }
 

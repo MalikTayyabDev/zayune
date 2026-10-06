@@ -1,4 +1,5 @@
 import type { FulfillmentType } from "@prisma/client";
+import { ensureDatabaseUrl, isServerlessRuntime } from "@/lib/env";
 import { img, siteImages } from "@/lib/site-images";
 
 export const demoCategories = [
@@ -355,10 +356,14 @@ export const demoSettings = {
 };
 
 export function isDemoMode() {
-  // With a real DATABASE_URL, only use in-memory demo if explicitly forced.
-  // Prevents "Order not found" on Vercel when USE_DEMO_DATA was left true.
-  if (process.env.DATABASE_URL) {
+  // With a real DB URL (incl. Neon POSTGRES_* aliases), only force-demo opts in.
+  // In-memory demo orders do not persist across Vercel serverless invocations.
+  const dbUrl = ensureDatabaseUrl();
+  if (dbUrl) {
     return process.env.FORCE_DEMO_DATA === "true";
   }
-  return process.env.USE_DEMO_DATA === "true" || !process.env.DATABASE_URL;
+  if (isServerlessRuntime()) {
+    return true;
+  }
+  return process.env.USE_DEMO_DATA === "true" || !dbUrl;
 }

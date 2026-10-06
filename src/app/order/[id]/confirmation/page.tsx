@@ -3,7 +3,7 @@ import { CopperStar } from "@/components/brand/CopperStar";
 import { OrderNextSteps } from "@/components/order/OrderNextSteps";
 import { Button } from "@/components/ui/Button";
 import { findDemoOrder } from "@/lib/demo-orders";
-import { isDemoMode } from "@/lib/demo-data";
+import { ensureDatabaseUrl, isServerlessRuntime } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 import { getPaymentProvider } from "@/lib/payments/providers";
@@ -12,23 +12,34 @@ type Props = {
   params: { id: string };
 };
 
-async function getOrder(id: string) {
-  // Prefer database whenever available (Vercel + Neon)
-  if (process.env.DATABASE_URL && !isDemoMode()) {
-    const byId = await prisma.order.findUnique({
-      where: { id },
-      include: { items: true },
-    });
-    if (byId) return byId;
+export const dynamic = "force-dynamic";
 
-    const byNumber = await prisma.order.findFirst({
-      where: { orderNumber: id },
-      include: { items: true },
-    });
-    if (byNumber) return byNumber;
+async function getOrder(id: string) {
+  // Always prefer the database when a URL is available (incl. Neon aliases).
+  if (ensureDatabaseUrl()) {
+    try {
+      const byId = await prisma.order.findUnique({
+        where: { id },
+        include: { items: true },
+      });
+      if (byId) return byId;
+
+      const byNumber = await prisma.order.findFirst({
+        where: { orderNumber: id },
+        include: { items: true },
+      });
+      if (byNumber) return byNumber;
+    } catch (err) {
+      console.error("[confirmation] order lookup failed", err);
+    }
   }
 
-  return findDemoOrder(id) || null;
+  // Local-only memory fallback — never reliable on serverless.
+  if (!isServerlessRuntime()) {
+    return findDemoOrder(id) || null;
+  }
+
+  return null;
 }
 
 export default async function OrderConfirmationPage({ params }: Props) {
@@ -39,9 +50,13 @@ export default async function OrderConfirmationPage({ params }: Props) {
       <div className="container-content py-24 text-center">
         <p className="font-display text-3xl">Order not found</p>
         <p className="mx-auto mt-3 max-w-md text-sm text-aubergine/60">
-          If you just placed an order, your confirmation email has the order
-          number — or open Track order. Older demo orders may not persist on the
-          live server.
+          This usually means the live site is not writing orders to Neon. In
+          Vercel → Settings → Environment Variables, set{" "}
+          <span className="text-aubergine">DATABASE_URL</span> to your Neon
+          connection string, keep{" "}
+          <span className="text-aubergine">FORCE_DEMO_DATA</span> unset/false,
+          redeploy, then place the order again. You can also use Track order
+          with your order number from email.
         </p>
         <div className="mt-8 flex flex-wrap justify-center gap-3">
           <Button href="/track">Track order</Button>

@@ -7,6 +7,7 @@ import { getDemoCustomers } from "@/lib/demo-customers";
 import { isDemoMode } from "@/lib/demo-data";
 import { getDemoOrdersStore } from "@/lib/demo-orders";
 import { sendOrderConfirmationEmail } from "@/lib/email";
+import { isServerlessRuntime } from "@/lib/env";
 import {
   incrementDiscountUse,
   priceCartLines,
@@ -115,7 +116,18 @@ export async function POST(request: Request) {
       }
     }
 
+    // Never accept in-memory “demo” orders on Vercel — they vanish on the next request.
     if (isDemoMode()) {
+      if (isServerlessRuntime()) {
+        return NextResponse.json(
+          {
+            error:
+              "Orders cannot be saved: add DATABASE_URL (Neon) on Vercel, ensure FORCE_DEMO_DATA is false, run prisma db push, and redeploy.",
+          },
+          { status: 503 }
+        );
+      }
+
       const now = new Date();
       getDemoOrdersStore().set(orderId, {
         id: orderId,

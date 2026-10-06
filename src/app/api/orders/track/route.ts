@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { isDemoMode } from "@/lib/demo-data";
 import { findDemoOrder } from "@/lib/demo-orders";
+import { ensureDatabaseUrl, isServerlessRuntime } from "@/lib/env";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
@@ -15,14 +15,21 @@ export async function POST(request: Request) {
     const email = data.email.toLowerCase();
     const orderNumber = data.orderNumber.trim();
 
-    if (isDemoMode()) {
-      const order = findDemoOrder(orderNumber);
-      if (!order || order.customerEmail.toLowerCase() !== email) {
+    if (ensureDatabaseUrl()) {
+      const order = await prisma.order.findFirst({
+        where: {
+          orderNumber,
+          customerEmail: { equals: email, mode: "insensitive" },
+        },
+      });
+
+      if (!order) {
         return NextResponse.json(
           { error: "We couldn’t find an order with those details." },
           { status: 404 }
         );
       }
+
       return NextResponse.json({
         id: order.id,
         orderNumber: order.orderNumber,
@@ -37,20 +44,20 @@ export async function POST(request: Request) {
       });
     }
 
-    const order = await prisma.order.findFirst({
-      where: {
-        orderNumber,
-        customerEmail: { equals: email, mode: "insensitive" },
-      },
-    });
+    if (isServerlessRuntime()) {
+      return NextResponse.json(
+        { error: "Order tracking requires DATABASE_URL on the server." },
+        { status: 503 }
+      );
+    }
 
-    if (!order) {
+    const order = findDemoOrder(orderNumber);
+    if (!order || order.customerEmail.toLowerCase() !== email) {
       return NextResponse.json(
         { error: "We couldn’t find an order with those details." },
         { status: 404 }
       );
     }
-
     return NextResponse.json({
       id: order.id,
       orderNumber: order.orderNumber,
