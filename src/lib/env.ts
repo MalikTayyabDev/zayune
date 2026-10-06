@@ -1,24 +1,49 @@
 /**
  * Neon / Vercel often inject POSTGRES_* instead of DATABASE_URL.
- * Normalize so Prisma and isDemoMode see one source of truth.
+ * The Neon marketplace integration may also prefix them, e.g.
+ * zayune_web_POSTGRES_PRISMA_URL — pick those up too.
  */
-export function ensureDatabaseUrl(): string | undefined {
-  if (process.env.DATABASE_URL?.trim()) {
-    return process.env.DATABASE_URL.trim();
+function pickUrl(...candidates: Array<string | undefined>): string | undefined {
+  return candidates.map((v) => v?.trim()).find(Boolean);
+}
+
+function findPrefixedNeonUrl(): string | undefined {
+  const preferredSuffixes = [
+    "POSTGRES_PRISMA_URL",
+    "DATABASE_URL",
+    "POSTGRES_URL",
+    "DATABASE_URL_UNPOOLED",
+    "POSTGRES_URL_NON_POOLING",
+  ];
+
+  for (const suffix of preferredSuffixes) {
+    const exact = process.env[suffix]?.trim();
+    if (exact) return exact;
+
+    for (const [key, value] of Object.entries(process.env)) {
+      if (!value?.trim()) continue;
+      if (key === suffix || key.endsWith(`_${suffix}`)) {
+        return value.trim();
+      }
+    }
   }
 
-  const alt = [
-    process.env.POSTGRES_PRISMA_URL,
-    process.env.POSTGRES_URL,
-    process.env.DATABASE_URL_UNPOOLED,
-    process.env.POSTGRES_URL_NON_POOLING,
-  ]
-    .map((v) => v?.trim())
-    .find(Boolean);
+  return undefined;
+}
 
-  if (alt) {
-    process.env.DATABASE_URL = alt;
-    return alt;
+export function ensureDatabaseUrl(): string | undefined {
+  const found =
+    pickUrl(
+      process.env.DATABASE_URL,
+      process.env.POSTGRES_PRISMA_URL,
+      process.env.POSTGRES_URL,
+      process.env.DATABASE_URL_UNPOOLED,
+      process.env.POSTGRES_URL_NON_POOLING
+    ) || findPrefixedNeonUrl();
+
+  if (found) {
+    process.env.DATABASE_URL = found;
+    return found;
   }
 
   return undefined;
