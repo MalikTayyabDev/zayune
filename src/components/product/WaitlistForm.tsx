@@ -7,9 +7,16 @@ type Props = {
   productId: string;
   productName: string;
   variantId?: string;
+  /** Force email + button stacked (e.g. Quick View) */
+  stacked?: boolean;
 };
 
-export function WaitlistForm({ productId, productName, variantId }: Props) {
+export function WaitlistForm({
+  productId,
+  productName,
+  variantId,
+  stacked = false,
+}: Props) {
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "done" | "error">("idle");
   const [message, setMessage] = useState("");
@@ -47,16 +54,24 @@ export function WaitlistForm({ productId, productName, variantId }: Props) {
           Get notified when it&apos;s back — join the waitlist and we&apos;ll email you.
         </p>
       </div>
-      <div className="flex flex-col gap-2 sm:flex-row">
+      <div
+        className={
+          stacked ? "flex flex-col gap-2" : "flex flex-col gap-2 sm:flex-row"
+        }
+      >
         <input
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="Email address"
-          className="flex-1 border border-stone bg-porcelain px-4 py-3 text-sm outline-none focus:border-aubergine/40"
+          className="w-full min-w-0 flex-1 border border-stone bg-porcelain px-4 py-3 text-sm outline-none focus:border-aubergine/40"
         />
-        <Button type="submit" disabled={status === "loading"} className="sm:w-auto">
+        <Button
+          type="submit"
+          disabled={status === "loading"}
+          className={stacked ? "w-full" : "sm:w-auto"}
+        >
           {status === "loading" ? "Saving…" : "Get notified"}
         </Button>
       </div>

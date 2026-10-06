@@ -69,12 +69,8 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
     [product, variantId]
   );
 
-  const oos = product
-    ? isOutOfStock(product, selected?.stock)
-    : true;
-  const maxQty = product
-    ? maxPurchasableQty(product, selected?.stock)
-    : 1;
+  const oos = product ? isOutOfStock(product, selected?.stock) : true;
+  const maxQty = product ? maxPurchasableQty(product, selected?.stock) : 1;
 
   useEffect(() => {
     setQty((q) => Math.min(q, Math.max(1, maxQty || 1)));
@@ -82,14 +78,11 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
 
   if (!open || !product) return null;
 
-  const image =
-    selected?.imageUrl ||
-    product.images[0]?.url ||
-    "";
+  const image = selected?.imageUrl || product.images[0]?.url || "";
   const price = product.price + (selected?.priceDelta || 0);
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[110] flex items-end justify-center p-0 sm:items-center sm:p-4">
       <button
         type="button"
         className="absolute inset-0 bg-aubergine/40"
@@ -100,16 +93,24 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
         role="dialog"
         aria-modal="true"
         aria-label={`Quick view: ${product.name}`}
-        className="relative z-10 grid max-h-[90vh] w-full max-w-3xl overflow-hidden bg-porcelain shadow-2xl md:grid-cols-2"
+        className="relative z-10 flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden bg-porcelain shadow-2xl sm:max-h-[90vh]"
       >
-        <div className="relative aspect-[4/5] bg-stone/40 md:aspect-auto md:min-h-[420px]">
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute right-3 top-3 z-20 bg-porcelain/90 px-2.5 py-1.5 text-nav text-aubergine/60 hover:text-copper"
+        >
+          Close
+        </button>
+
+        <div className="relative aspect-[4/5] w-full shrink-0 bg-stone/40 sm:aspect-[5/4]">
           {image && (
             <Image
               src={image}
               alt={product.name}
               fill
               className="object-cover"
-              sizes="(max-width:768px) 100vw, 50vw"
+              sizes="(max-width:640px) 100vw, 28rem"
             />
           )}
           {oos && (
@@ -118,22 +119,18 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
             </span>
           )}
         </div>
-        <div className="flex flex-col overflow-y-auto p-6 sm:p-8">
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute right-4 top-4 text-nav text-aubergine/50 hover:text-copper"
-          >
-            Close
-          </button>
+
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-5 sm:p-6">
           <p className="text-nav text-aubergine/45">{product.category.name}</p>
           <h2 className="mt-2 font-display text-3xl text-aubergine">{product.name}</h2>
-          <p className="mt-2 font-editorial italic text-aubergine/70">{product.oneLiner}</p>
+          <p className="mt-2 font-editorial italic text-aubergine/70">
+            {product.oneLiner}
+          </p>
           <p className="mt-4 text-lg">{formatPrice(price, product.currency)}</p>
 
           {product.variants && product.variants.length > 0 && (
-            <div className="mt-6">
-              <p className="text-nav text-aubergine/50 mb-3">
+            <div className="mt-5">
+              <p className="mb-3 text-nav text-aubergine/50">
                 {selected?.name || "Option"}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -148,9 +145,9 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
                       title={variant.name}
                       onClick={() => setVariantId(variant.id)}
                       className={cn(
-                        "relative h-8 w-8 rounded-full border-2 transition",
+                        "h-8 w-8 rounded-full border-2 transition",
                         variantId === variant.id
-                          ? "border-aubergine scale-110"
+                          ? "scale-110 border-aubergine"
                           : "border-stone hover:border-aubergine/40",
                         variantOos && "opacity-50"
                       )}
@@ -165,27 +162,30 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
           )}
 
           {oos ? (
-            <div className="mt-6">
+            <div className="mt-5">
               <WaitlistForm
+                stacked
                 productId={product.id}
                 productName={product.name}
                 variantId={selected?.id}
               />
             </div>
           ) : (
-            <div className="mt-6 flex items-center gap-3">
-              <div className="inline-flex border border-stone">
+            <div className="mt-5 flex flex-col gap-3">
+              <div className="inline-flex w-fit border border-stone">
                 <button
                   type="button"
-                  className="h-10 w-10"
+                  className="h-11 w-11"
                   onClick={() => setQty((q) => Math.max(1, q - 1))}
                 >
                   −
                 </button>
-                <span className="flex w-8 items-center justify-center text-sm">{qty}</span>
+                <span className="flex w-10 items-center justify-center text-sm">
+                  {qty}
+                </span>
                 <button
                   type="button"
-                  className="h-10 w-10"
+                  className="h-11 w-11"
                   onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
                 >
                   +
@@ -193,7 +193,7 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
               </div>
               <Button
                 type="button"
-                className="flex-1"
+                className="w-full"
                 onClick={() => {
                   addItem({
                     productId: product.id,
@@ -215,7 +215,7 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
             </div>
           )}
 
-          <div className="mt-4 flex items-center justify-between">
+          <div className="mt-5 flex items-center justify-between gap-3 border-t border-stone pt-4">
             <WishlistButton
               label
               product={{
