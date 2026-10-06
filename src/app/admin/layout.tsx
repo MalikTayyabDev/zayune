@@ -26,13 +26,11 @@ export default async function AdminLayout({
 
   return (
     <DashboardShell title="Admin" eyebrow="ZAYUNE Studio" links={links} tone="admin">
-      <div className="mb-4 flex justify-end lg:hidden">
-        <Link href="/" className="text-nav text-copper">
-          View store →
-        </Link>
-      </div>
-      <div className="hidden justify-end lg:flex">
-        <Link href="/" className="text-nav text-copper hover:text-aubergine">
+      <div className="mb-6 flex justify-end">
+        <Link
+          href="/"
+          className="text-nav text-copper hover:text-aubergine"
+        >
           View store →
         </Link>
       </div>

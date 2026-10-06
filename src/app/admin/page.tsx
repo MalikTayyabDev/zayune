@@ -6,7 +6,6 @@ import { getDemoMetrics, isDemoMode } from "@/lib/demo-catalog";
 import { listDemoOrders } from "@/lib/demo-orders";
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
-import { SectionHeading } from "@/components/ui/SectionHeading";
 
 export default async function AdminHomePage() {
   const session = await getServerSession(authOptions);
@@ -101,20 +100,45 @@ export default async function AdminHomePage() {
     recentOrders = recent;
   }
 
-  const cards = [
-    { label: "Revenue", value: formatPrice(metrics.revenue), href: "/admin/orders" },
-    { label: "Orders", value: String(metrics.orderCount), href: "/admin/orders" },
-    { label: "Pending", value: String(metrics.pendingCount), href: "/admin/orders" },
-    { label: "Shipped", value: String(metrics.shippedCount), href: "/admin/orders" },
+  const primary = [
+    {
+      label: "Revenue",
+      value: formatPrice(metrics.revenue),
+      href: "/admin/orders",
+      hint: "Paid & delivered",
+    },
+    {
+      label: "Orders",
+      value: String(metrics.orderCount),
+      href: "/admin/orders",
+      hint: "All time",
+    },
+    {
+      label: "Pending",
+      value: String(metrics.pendingCount),
+      href: "/admin/orders",
+      hint: "Needs attention",
+      alert: metrics.pendingCount > 0,
+    },
+    {
+      label: "Low stock",
+      value: String(metrics.lowStockCount),
+      href: "/admin/products?stock=low",
+      hint: "In-stock ≤ 2",
+      alert: metrics.lowStockCount > 0,
+    },
+  ];
+
+  const secondary = [
     {
       label: "Products",
       value: `${metrics.publishedCount}/${metrics.productCount}`,
       href: "/admin/products",
     },
     {
-      label: "Low stock",
-      value: String(metrics.lowStockCount),
-      href: "/admin/products?stock=low",
+      label: "Shipped",
+      value: String(metrics.shippedCount),
+      href: "/admin/orders",
     },
     {
       label: "Customers",
@@ -134,121 +158,170 @@ export default async function AdminHomePage() {
   ];
 
   return (
-    <div className="py-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-        <SectionHeading
-          eyebrow="Dashboard"
-          title="Store metrics"
-          description={
-            isDemoMode()
-              ? "Demo mode — orders & product edits persist in memory until restart. Connect Postgres for production."
-              : "Live snapshot of your ZAYUNE storefront."
-          }
-        />
-        <div className="flex gap-3">
+    <div className="space-y-10">
+      <header className="flex flex-col gap-5 border-b border-stone pb-6 sm:flex-row sm:items-end sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-nav text-aubergine/45">Dashboard</p>
+          <h1 className="mt-1 font-display text-3xl text-aubergine sm:text-4xl">
+            Store overview
+          </h1>
+          <p className="mt-2 max-w-lg text-sm leading-relaxed text-aubergine/60">
+            {isDemoMode()
+              ? "Demo mode — connect Postgres for production metrics."
+              : "Live snapshot of orders, stock, and sales."}
+          </p>
+        </div>
+        <div className="flex shrink-0 flex-wrap gap-2">
           <Link
             href="/admin/products/new"
-            className="bg-aubergine px-4 py-2 text-nav text-porcelain"
+            className="inline-flex items-center justify-center bg-aubergine px-5 py-2.5 text-[11px] uppercase tracking-nav text-porcelain"
           >
             New product
           </Link>
           <Link
             href="/admin/orders"
-            className="border border-stone px-4 py-2 text-nav"
+            className="inline-flex items-center justify-center border border-stone bg-porcelain px-5 py-2.5 text-[11px] uppercase tracking-nav text-aubergine"
           >
             Manage orders
           </Link>
         </div>
-      </div>
+      </header>
 
-      <div className="card-grid-stat mt-8 lg:grid-cols-4">
-        {cards.map((card) => (
-          <Link
-            key={card.label}
-            href={card.href}
-            className="flex min-h-[4.5rem] flex-col justify-center border border-stone bg-porcelain p-3 transition hover:border-aubergine/30 sm:min-h-0 sm:p-5"
-          >
-            <p className="text-[10px] uppercase tracking-nav text-aubergine/45 sm:text-nav">
-              {card.label}
-            </p>
-            <p className="mt-1.5 font-display text-xl leading-none sm:mt-3 sm:text-3xl">
-              {card.value}
-            </p>
-          </Link>
-        ))}
-      </div>
-
-      <section className="mt-14">
-        <h2 className="mb-6 font-display text-2xl">Best sellers</h2>
-        {metrics.bestSellers.length === 0 ? (
-          <p className="border border-stone p-6 text-sm text-aubergine/60">
-            Best sellers appear after orders are placed.
-          </p>
-        ) : (
-          <ul className="divide-y divide-stone border border-stone">
-            {metrics.bestSellers.map((item, i) => (
-              <li
-                key={item.name}
-                className="flex items-center justify-between gap-4 p-4 text-sm"
-              >
-                <span>
-                  <span className="text-nav text-brass mr-3">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  {item.name}
-                </span>
-                <span className="text-aubergine/60">
-                  {item.qty} sold
-                  {item.revenue > 0 ? ` · ${formatPrice(item.revenue)}` : ""}
-                </span>
-              </li>
-            ))}
-          </ul>
-        )}
+      {/* Primary metrics — roomy */}
+      <section>
+        <p className="mb-3 text-nav text-aubergine/40">Key metrics</p>
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {primary.map((card) => (
+            <Link
+              key={card.label}
+              href={card.href}
+              className={`flex min-h-[7.5rem] flex-col justify-between border bg-porcelain p-5 transition hover:border-aubergine/35 ${
+                card.alert
+                  ? "border-copper/50 shadow-[inset_3px_0_0_0_var(--copper,#B85F45)]"
+                  : "border-stone"
+              }`}
+            >
+              <p className="text-[10px] uppercase tracking-nav text-aubergine/45">
+                {card.label}
+              </p>
+              <p className="font-display text-3xl leading-none text-aubergine sm:text-4xl">
+                {card.value}
+              </p>
+              <p className="text-xs text-aubergine/40">{card.hint}</p>
+            </Link>
+          ))}
+        </div>
       </section>
 
-      <section className="mt-14">
-        <h2 className="font-display text-2xl mb-6">Recent orders</h2>
-        {recentOrders.length === 0 ? (
-          <p className="text-sm text-aubergine/60 border border-stone p-6">
-            No orders yet. Place a test checkout to see metrics populate.
-          </p>
-        ) : (
-          <div className="overflow-x-auto border border-stone">
-            <table className="w-full text-left text-sm">
-              <thead className="border-b border-stone text-nav text-aubergine/45">
-                <tr>
-                  <th className="p-4 font-normal">Order</th>
-                  <th className="p-4 font-normal">Customer</th>
-                  <th className="p-4 font-normal">Total</th>
-                  <th className="p-4 font-normal">Status</th>
-                  <th className="p-4 font-normal">Payment</th>
-                  <th className="p-4 font-normal"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {recentOrders.map((order) => (
-                  <tr key={order.id} className="border-b border-stone/70">
-                    <td className="p-4">{order.orderNumber}</td>
-                    <td className="p-4">{order.customerName}</td>
-                    <td className="p-4">{formatPrice(order.total, order.currency)}</td>
-                    <td className="p-4">{order.status}</td>
-                    <td className="p-4">{order.paymentStatus.replace("_", " ")}</td>
-                    <td className="p-4 text-right">
-                      <Link
-                        href={`/admin/orders/${order.id}`}
-                        className="text-nav text-copper"
-                      >
-                        Open
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+      {/* Secondary — compact strip */}
+      <section>
+        <p className="mb-3 text-nav text-aubergine/40">More</p>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+          {secondary.map((card) => (
+            <Link
+              key={card.label}
+              href={card.href}
+              className="border border-stone bg-porcelain px-4 py-4 transition hover:border-aubergine/30"
+            >
+              <p className="text-[10px] uppercase tracking-nav text-aubergine/40">
+                {card.label}
+              </p>
+              <p className="mt-2 font-display text-xl text-aubergine sm:text-2xl">
+                {card.value}
+              </p>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Two-column bottom */}
+      <div className="grid gap-8 xl:grid-cols-5">
+        <section className="xl:col-span-2">
+          <div className="mb-4 flex items-baseline justify-between gap-3">
+            <h2 className="font-display text-2xl text-aubergine">Best sellers</h2>
+            <Link href="/admin/products" className="text-nav text-copper">
+              Products
+            </Link>
           </div>
-        )}
-      </section>
+          {metrics.bestSellers.length === 0 ? (
+            <p className="border border-stone bg-porcelain p-6 text-sm text-aubergine/55">
+              Best sellers appear after orders are placed.
+            </p>
+          ) : (
+            <ul className="divide-y divide-stone border border-stone bg-porcelain">
+              {metrics.bestSellers.map((item, i) => (
+                <li
+                  key={item.name}
+                  className="flex items-center justify-between gap-4 px-5 py-4 text-sm"
+                >
+                  <span className="min-w-0">
+                    <span className="mr-3 text-nav text-brass">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-aubergine">{item.name}</span>
+                  </span>
+                  <span className="shrink-0 text-aubergine/55">{item.qty} sold</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+
+        <section className="xl:col-span-3">
+          <div className="mb-4 flex items-baseline justify-between gap-3">
+            <h2 className="font-display text-2xl text-aubergine">Recent orders</h2>
+            <Link href="/admin/orders" className="text-nav text-copper">
+              All orders
+            </Link>
+          </div>
+          {recentOrders.length === 0 ? (
+            <p className="border border-stone bg-porcelain p-6 text-sm text-aubergine/55">
+              No orders yet. Place a test checkout to see metrics populate.
+            </p>
+          ) : (
+            <div className="overflow-x-auto border border-stone bg-porcelain">
+              <table className="w-full min-w-[520px] text-left text-sm">
+                <thead className="border-b border-stone text-nav text-aubergine/40">
+                  <tr>
+                    <th className="px-5 py-3.5 font-normal">Order</th>
+                    <th className="px-5 py-3.5 font-normal">Customer</th>
+                    <th className="px-5 py-3.5 font-normal">Total</th>
+                    <th className="px-5 py-3.5 font-normal">Status</th>
+                    <th className="px-5 py-3.5 font-normal" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {recentOrders.map((order) => (
+                    <tr key={order.id} className="border-b border-stone/60 last:border-0">
+                      <td className="px-5 py-3.5 font-medium">{order.orderNumber}</td>
+                      <td className="px-5 py-3.5 text-aubergine/70">
+                        {order.customerName}
+                      </td>
+                      <td className="px-5 py-3.5">
+                        {formatPrice(order.total, order.currency)}
+                      </td>
+                      <td className="px-5 py-3.5 text-aubergine/65">
+                        <span className="block">{order.status}</span>
+                        <span className="text-xs text-aubergine/40">
+                          {order.paymentStatus.replace("_", " ")}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5 text-right">
+                        <Link
+                          href={`/admin/orders/${order.id}`}
+                          className="text-nav text-copper"
+                        >
+                          Open
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
+      </div>
     </div>
   );
 }
