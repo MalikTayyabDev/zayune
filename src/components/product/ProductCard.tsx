@@ -73,6 +73,7 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
       image: activeImage,
       variantId: selected?.id,
       variantName: selected?.name,
+      fulfillment: product.fulfillment || undefined,
     });
     window.setTimeout(() => setAdding(false), 1200);
   }

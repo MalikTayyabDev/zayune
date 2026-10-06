@@ -22,6 +22,7 @@ export type PricedLine = {
   quantity: number;
   image?: string;
   slug?: string;
+  fulfillment?: string;
 };
 
 const MAX_QTY = 20;
@@ -68,6 +69,7 @@ export async function priceCartLines(lines: CartLineInput[]): Promise<PricedLine
         quantity: qty,
         image: variant?.imageUrl || product.images[0]?.url,
         slug: product.slug,
+        fulfillment: product.fulfillment,
       });
       continue;
     }
@@ -105,6 +107,7 @@ export async function priceCartLines(lines: CartLineInput[]): Promise<PricedLine
       quantity: qty,
       image: variant?.imageUrl || product.images[0]?.url,
       slug: product.slug,
+      fulfillment: product.fulfillment,
     });
   }
 

@@ -14,6 +14,10 @@ import {
   orderPayUrl,
 } from "@/lib/order-token";
 import {
+  cartRequiresAdvance,
+  orderRequiresAdvance,
+} from "@/lib/order-policy";
+import {
   incrementDiscountUse,
   priceCartLines,
   resolveDiscount,
@@ -124,6 +128,23 @@ export async function POST(request: Request) {
         quantity: item.quantity,
       }))
     );
+
+    const madeToOrderCart = cartRequiresAdvance(pricedItems);
+    // Custom / made-to-order cannot use COD — need 30% bank advance first
+    if (madeToOrderCart && data.paymentMethod === "cod") {
+      return NextResponse.json(
+        {
+          error:
+            "Made-to-order and custom pieces need a 30% bank/Raast advance before we start. Cash on Delivery is only for ready in-stock items.",
+        },
+        { status: 400 }
+      );
+    }
+
+    const needsAdvance = orderRequiresAdvance({
+      paymentMethod: data.paymentMethod,
+      lines: pricedItems,
+    });
 
     const subtotal = pricedItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
@@ -246,14 +267,14 @@ export async function POST(request: Request) {
         orderId,
         orderNumber,
         instructions: payment.instructions,
-        // Bank customers go straight to the 30% pay/confirm link
-        redirectUrl:
-          data.paymentMethod === "bank_transfer"
-            ? notify.payUrl
-            : payment.redirectUrl || `/order/${orderId}/confirmation`,
+        // Advance-required orders go straight to the 30% pay/confirm link
+        redirectUrl: needsAdvance
+          ? notify.payUrl
+          : payment.redirectUrl || `/order/${orderId}/confirmation`,
         payUrl: notify.payUrl,
         whatsappConfirmUrl: notify.whatsappConfirmUrl,
         whatsappCustomerUrl: notify.whatsappCustomerUrl,
+        requiresAdvance: needsAdvance,
       });
     }
 
@@ -317,13 +338,13 @@ export async function POST(request: Request) {
       orderId: order.id,
       orderNumber: order.orderNumber,
       instructions: payment.instructions,
-      redirectUrl:
-        data.paymentMethod === "bank_transfer"
-          ? notify.payUrl
-          : payment.redirectUrl || `/order/${order.id}/confirmation`,
+      redirectUrl: needsAdvance
+        ? notify.payUrl
+        : payment.redirectUrl || `/order/${order.id}/confirmation`,
       payUrl: notify.payUrl,
       whatsappConfirmUrl: notify.whatsappConfirmUrl,
       whatsappCustomerUrl: notify.whatsappCustomerUrl,
+      requiresAdvance: needsAdvance,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {

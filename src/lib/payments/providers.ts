@@ -3,7 +3,8 @@ import type { PaymentProvider } from "./types";
 const codProvider: PaymentProvider = {
   id: "cod",
   label: "Cash on Delivery",
-  description: "Pay when your piece arrives. Available for selected cities.",
+  description:
+    "Pay when your ready-made piece arrives. Not available for made-to-order / custom (those need 30% advance).",
   async initiate() {
     return {
       provider: "cod",

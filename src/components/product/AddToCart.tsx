@@ -59,6 +59,7 @@ export function AddToCart({ product }: Props) {
       quantity: Math.min(quantity, maxQty),
       variantId: selected?.id,
       variantName: selected?.name,
+      fulfillment: product.fulfillment,
     });
     setAdded(true);
     openCart?.();
@@ -158,9 +159,9 @@ export function AddToCart({ product }: Props) {
           <Icon icon={Hand} size={14} className="mt-0.5" />
           <span>
             {product.fulfillment === "MADE_TO_ORDER"
-              ? `Crocheted to order · ships in about ${product.leadTimeDays ?? "—"} days`
+              ? `Crocheted to order · ships in about ${product.leadTimeDays ?? "—"} days · 30% bank advance to confirm (no COD)`
               : available
-                ? "In stock · handmade & ready after confirmation"
+                ? "In stock · COD available · or bank/Raast with 30% advance"
                 : "Currently unavailable"}
           </span>
         </li>

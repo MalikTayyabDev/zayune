@@ -204,6 +204,7 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
                     quantity: qty,
                     variantId: selected?.id,
                     variantName: selected?.name,
+                    fulfillment: product.fulfillment || undefined,
                   });
                   onClose();
                   openCart();

@@ -12,6 +12,8 @@ export type CartItem = {
   quantity: number;
   variantId?: string;
   variantName?: string;
+  /** IN_STOCK | MADE_TO_ORDER — used for 30% advance / COD rules */
+  fulfillment?: string;
 };
 
 type CartState = {

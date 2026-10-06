@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LogIn, UserPlus } from "lucide-react";
 import { signIn, useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { useCartStore } from "@/lib/cart-store";
+import { cartRequiresAdvance } from "@/lib/order-policy";
 import { formatPrice } from "@/lib/utils";
 
 type Provider = {
@@ -44,6 +45,23 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
     subtotal - discountAmount >= 5000 ? 0 : shippingFee;
   const total = Math.max(0, subtotal - discountAmount + shippingAfter);
   const signedIn = !!session?.user && session.user.role !== "admin";
+  const advanceRequired = useMemo(
+    () => cartRequiresAdvance(items),
+    [items]
+  );
+  const advanceAmount = Math.round(total * 0.3);
+  const availableProviders = useMemo(() => {
+    if (!advanceRequired) return providers;
+    // Made-to-order / custom: no COD — 30% bank advance before we start
+    return providers.filter((p) => p.id !== "cod");
+  }, [advanceRequired, providers]);
+
+  useEffect(() => {
+    if (!availableProviders.length) return;
+    if (!availableProviders.some((p) => p.id === paymentMethod)) {
+      setPaymentMethod(availableProviders[0].id);
+    }
+  }, [availableProviders, paymentMethod]);
 
   async function applyDiscount() {
     setError("");
@@ -287,8 +305,28 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
           <legend className="font-display text-2xl text-aubergine mb-2">
             Payment
           </legend>
+
+          {advanceRequired && (
+            <div className="border border-brass/40 bg-brass/10 px-4 py-3 text-sm leading-relaxed text-aubergine/80">
+              Your cart includes made-to-order / custom pieces. Once we start
+              crocheting there is no going back — so{" "}
+              <strong>Cash on Delivery is not available</strong>. Please pay a{" "}
+              <strong>30% bank/Raast advance</strong> (
+              {formatPrice(advanceAmount)}) to confirm. Remaining balance as
+              arranged / on delivery.
+            </div>
+          )}
+
+          {!advanceRequired && paymentMethod === "bank_transfer" && (
+            <div className="border border-stone bg-stone/20 px-4 py-3 text-sm text-aubergine/75">
+              Bank / Raast: confirm with a{" "}
+              <strong>30% advance ({formatPrice(advanceAmount)})</strong>. The
+              rest can be paid on delivery or as arranged.
+            </div>
+          )}
+
           <div className="space-y-3">
-            {providers.map((provider) => (
+            {availableProviders.map((provider) => (
               <label
                 key={provider.id}
                 className="flex cursor-pointer gap-3 border border-stone p-4 has-[:checked]:border-aubergine"
@@ -304,7 +342,11 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
                 <span>
                   <span className="block text-sm text-aubergine">{provider.label}</span>
                   <span className="mt-1 block text-xs text-aubergine/55 leading-relaxed">
-                    {provider.description}
+                    {provider.id === "bank_transfer"
+                      ? `Pay 30% advance (${formatPrice(advanceAmount)}) by bank/Raast to confirm. Remaining balance as arranged / on delivery.`
+                      : provider.id === "cod"
+                        ? "Pay when your ready-made piece arrives. Not available for made-to-order / custom."
+                        : provider.description}
                   </span>
                 </span>
               </label>
@@ -323,7 +365,8 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
                 className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm outline-none focus:border-aubergine/40"
               />
               <span className="mt-2 block text-xs text-aubergine/50">
-                Bank details appear on your confirmation page after placing the order.
+                After placing the order you&apos;ll get a secure link with bank
+                details to pay the 30% advance.
               </span>
             </label>
           )}
