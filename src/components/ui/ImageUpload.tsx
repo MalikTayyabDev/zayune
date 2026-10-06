@@ -11,6 +11,7 @@ type Props = {
   onChange: (url: string) => void;
   label?: string;
   guest?: boolean;
+  compact?: boolean;
   className?: string;
 };
 
@@ -19,6 +20,7 @@ export function ImageUpload({
   onChange,
   label = "Upload image",
   guest = false,
+  compact = false,
   className,
 }: Props) {
   const [loading, setLoading] = useState(false);
@@ -48,7 +50,12 @@ export function ImageUpload({
       <span className="text-nav text-aubergine/55">{label}</span>
       <div className="flex items-start gap-3">
         {value ? (
-          <div className="relative h-24 w-24 shrink-0 overflow-hidden border border-stone bg-stone/30">
+          <div
+            className={cn(
+              "relative shrink-0 overflow-hidden border border-stone bg-stone/30",
+              compact ? "h-16 w-16" : "h-24 w-24"
+            )}
+          >
             <Image src={value} alt="" fill className="object-cover" unoptimized />
             <button
               type="button"
@@ -60,7 +67,12 @@ export function ImageUpload({
             </button>
           </div>
         ) : null}
-        <label className="flex min-h-[6rem] flex-1 cursor-pointer flex-col items-center justify-center gap-2 border border-dashed border-aubergine/25 bg-stone/10 px-4 py-5 text-center transition hover:border-copper hover:bg-stone/20">
+        <label
+          className={cn(
+            "flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 border border-dashed border-aubergine/25 bg-stone/10 text-center transition hover:border-copper hover:bg-stone/20",
+            compact ? "min-h-[4rem] px-3 py-3" : "min-h-[6rem] px-4 py-5"
+          )}
+        >
           {loading ? (
             <Icon icon={Loader2} size={18} className="animate-spin text-copper" />
           ) : (

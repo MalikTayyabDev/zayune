@@ -435,110 +435,114 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
               {values.variants.map((variant, index) => (
                 <div
                   key={index}
-                  className="grid gap-3 border border-stone/80 bg-stone/10 p-4 sm:grid-cols-3"
+                  className="space-y-4 border border-stone/80 bg-stone/10 p-4"
                 >
-                  <Field
-                    label="Name"
-                    value={variant.name}
-                    onChange={(v) => {
-                      const next = [...values.variants];
-                      const base =
-                        values.sku ||
-                        generateProductSku(values.slug || values.name || "ITEM");
-                      next[index] = {
-                        ...variant,
-                        name: v,
-                        sku: generateVariantSku(base, v),
-                      };
-                      setField("variants", next);
-                    }}
-                  />
-                  <Field
-                    label="Option group"
-                    value={variant.optionGroup}
-                    onChange={(v) => {
-                      const next = [...values.variants];
-                      next[index] = { ...variant, optionGroup: v };
-                      setField("variants", next);
-                    }}
-                  />
-                  <label className="block">
-                    <span className="text-nav text-aubergine/55">Swatch color</span>
-                    <div className="mt-2 flex gap-2">
-                      <input
-                        type="color"
-                        value={variant.swatchHex || "#B85F45"}
-                        onChange={(e) => {
-                          const next = [...values.variants];
-                          next[index] = { ...variant, swatchHex: e.target.value };
-                          setField("variants", next);
-                        }}
-                        className="h-11 w-14 border border-stone bg-transparent"
-                      />
-                      <input
-                        value={variant.swatchHex}
-                        onChange={(e) => {
-                          const next = [...values.variants];
-                          next[index] = { ...variant, swatchHex: e.target.value };
-                          setField("variants", next);
-                        }}
-                        className="w-full border border-stone bg-transparent px-3 py-2 text-sm"
-                      />
-                    </div>
-                  </label>
-                  <div className="sm:col-span-2">
-                    <ImageUpload
-                      label="Variant / swatch image (optional)"
-                      value={variant.imageUrl}
-                      onChange={(url) => {
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <Field
+                      label="Name"
+                      value={variant.name}
+                      onChange={(v) => {
                         const next = [...values.variants];
-                        next[index] = { ...variant, imageUrl: url };
+                        const base =
+                          values.sku ||
+                          generateProductSku(values.slug || values.name || "ITEM");
+                        next[index] = {
+                          ...variant,
+                          name: v,
+                          sku: generateVariantSku(base, v),
+                        };
+                        setField("variants", next);
+                      }}
+                    />
+                    <Field
+                      label="Option group"
+                      value={variant.optionGroup}
+                      onChange={(v) => {
+                        const next = [...values.variants];
+                        next[index] = { ...variant, optionGroup: v };
+                        setField("variants", next);
+                      }}
+                    />
+                    <label className="block">
+                      <span className="text-nav text-aubergine/55">Swatch color</span>
+                      <div className="mt-2 flex h-[2.75rem] items-stretch gap-2">
+                        <input
+                          type="color"
+                          value={variant.swatchHex || "#B85F45"}
+                          onChange={(e) => {
+                            const next = [...values.variants];
+                            next[index] = { ...variant, swatchHex: e.target.value };
+                            setField("variants", next);
+                          }}
+                          className="h-full w-12 shrink-0 border border-stone bg-porcelain p-1"
+                        />
+                        <input
+                          value={variant.swatchHex}
+                          onChange={(e) => {
+                            const next = [...values.variants];
+                            next[index] = { ...variant, swatchHex: e.target.value };
+                            setField("variants", next);
+                          }}
+                          className="h-full w-full border border-stone bg-porcelain px-3 text-sm outline-none focus:border-aubergine/40"
+                        />
+                      </div>
+                    </label>
+                  </div>
+
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <Field
+                      label="Price delta"
+                      type="number"
+                      value={String(variant.priceDelta)}
+                      onChange={(v) => {
+                        const next = [...values.variants];
+                        next[index] = { ...variant, priceDelta: Number(v) };
+                        setField("variants", next);
+                      }}
+                    />
+                    <Field
+                      label="Stock"
+                      value={variant.stock}
+                      onChange={(v) => {
+                        const next = [...values.variants];
+                        next[index] = { ...variant, stock: v };
+                        setField("variants", next);
+                      }}
+                    />
+                    <Field
+                      label="Variant SKU (auto)"
+                      value={variant.sku}
+                      onChange={(v) => {
+                        const next = [...values.variants];
+                        next[index] = { ...variant, sku: v };
                         setField("variants", next);
                       }}
                     />
                   </div>
-                  <Field
-                    label="Price delta"
-                    type="number"
-                    value={String(variant.priceDelta)}
-                    onChange={(v) => {
+
+                  <ImageUpload
+                    compact
+                    label="Variant / swatch image (optional)"
+                    value={variant.imageUrl}
+                    onChange={(url) => {
                       const next = [...values.variants];
-                      next[index] = { ...variant, priceDelta: Number(v) };
+                      next[index] = { ...variant, imageUrl: url };
                       setField("variants", next);
                     }}
                   />
-                  <Field
-                    label="Stock"
-                    value={variant.stock}
-                    onChange={(v) => {
-                      const next = [...values.variants];
-                      next[index] = { ...variant, stock: v };
-                      setField("variants", next);
-                    }}
-                  />
-                  <Field
-                    label="Variant SKU (auto)"
-                    value={variant.sku}
-                    onChange={(v) => {
-                      const next = [...values.variants];
-                      next[index] = { ...variant, sku: v };
-                      setField("variants", next);
-                    }}
-                  />
-                  <div className="flex items-end sm:col-span-3">
-                    <button
-                      type="button"
-                      className="text-nav text-aubergine/40 hover:text-copper"
-                      onClick={() =>
-                        setField(
-                          "variants",
-                          values.variants.filter((_, i) => i !== index)
-                        )
-                      }
-                    >
-                      Remove variant
-                    </button>
-                  </div>
+
+                  <button
+                    type="button"
+                    className="text-nav text-aubergine/40 hover:text-copper"
+                    onClick={() =>
+                      setField(
+                        "variants",
+                        values.variants.filter((_, i) => i !== index)
+                      )
+                    }
+                  >
+                    Remove variant
+                  </button>
                 </div>
               ))}
             </div>

@@ -234,9 +234,8 @@ export default async function AdminHomePage() {
         </div>
       </section>
 
-      {/* Two-column bottom */}
-      <div className="grid gap-8 xl:grid-cols-5">
-        <section className="xl:col-span-2">
+      <div className="grid gap-8 lg:grid-cols-2">
+        <section className="min-w-0">
           <div className="mb-4 flex items-baseline justify-between gap-3">
             <h2 className="font-display text-2xl text-aubergine">Best sellers</h2>
             <Link href="/admin/products" className="text-nav text-copper">
@@ -252,14 +251,12 @@ export default async function AdminHomePage() {
               {metrics.bestSellers.map((item, i) => (
                 <li
                   key={item.name}
-                  className="flex items-center justify-between gap-4 px-5 py-4 text-sm"
+                  className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-5 py-4 text-sm"
                 >
-                  <span className="min-w-0">
-                    <span className="mr-3 text-nav text-brass">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                    <span className="text-aubergine">{item.name}</span>
+                  <span className="text-nav text-brass">
+                    {String(i + 1).padStart(2, "0")}
                   </span>
+                  <span className="truncate text-aubergine">{item.name}</span>
                   <span className="shrink-0 text-aubergine/55">{item.qty} sold</span>
                 </li>
               ))}
@@ -267,7 +264,7 @@ export default async function AdminHomePage() {
           )}
         </section>
 
-        <section className="xl:col-span-3">
+        <section className="min-w-0">
           <div className="mb-4 flex items-baseline justify-between gap-3">
             <h2 className="font-display text-2xl text-aubergine">Recent orders</h2>
             <Link href="/admin/orders" className="text-nav text-copper">
@@ -279,46 +276,36 @@ export default async function AdminHomePage() {
               No orders yet. Place a test checkout to see metrics populate.
             </p>
           ) : (
-            <div className="overflow-x-auto border border-stone bg-porcelain">
-              <table className="w-full min-w-[520px] text-left text-sm">
-                <thead className="border-b border-stone text-nav text-aubergine/40">
-                  <tr>
-                    <th className="px-5 py-3.5 font-normal">Order</th>
-                    <th className="px-5 py-3.5 font-normal">Customer</th>
-                    <th className="px-5 py-3.5 font-normal">Total</th>
-                    <th className="px-5 py-3.5 font-normal">Status</th>
-                    <th className="px-5 py-3.5 font-normal" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {recentOrders.map((order) => (
-                    <tr key={order.id} className="border-b border-stone/60 last:border-0">
-                      <td className="px-5 py-3.5 font-medium">{order.orderNumber}</td>
-                      <td className="px-5 py-3.5 text-aubergine/70">
+            <ul className="divide-y divide-stone border border-stone bg-porcelain">
+              {recentOrders.map((order) => (
+                <li key={order.id} className="px-5 py-4">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="truncate font-medium tracking-wide text-aubergine">
+                        {order.orderNumber}
+                      </p>
+                      <p className="mt-1 truncate text-sm text-aubergine/60">
                         {order.customerName}
-                      </td>
-                      <td className="px-5 py-3.5">
+                      </p>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <p className="text-sm text-aubergine">
                         {formatPrice(order.total, order.currency)}
-                      </td>
-                      <td className="px-5 py-3.5 text-aubergine/65">
-                        <span className="block">{order.status}</span>
-                        <span className="text-xs text-aubergine/40">
-                          {order.paymentStatus.replace("_", " ")}
-                        </span>
-                      </td>
-                      <td className="px-5 py-3.5 text-right">
-                        <Link
-                          href={`/admin/orders/${order.id}`}
-                          className="text-nav text-copper"
-                        >
-                          Open
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                      </p>
+                      <p className="mt-1 text-[10px] uppercase tracking-nav text-aubergine/45">
+                        {order.status} · {order.paymentStatus.replace("_", " ")}
+                      </p>
+                      <Link
+                        href={`/admin/orders/${order.id}`}
+                        className="mt-2 inline-block text-nav text-copper"
+                      >
+                        Open
+                      </Link>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
           )}
         </section>
       </div>
