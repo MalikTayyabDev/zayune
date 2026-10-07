@@ -6,7 +6,7 @@ import { ensureDatabaseUrl } from "@/lib/env";
 import { sendOrderStatusEmail } from "@/lib/email";
 import { verifyOrderAccessToken } from "@/lib/order-token";
 import { prisma } from "@/lib/prisma";
-import { siteConfig } from "@/lib/site";
+import { siteOrigin, storeFromEmail } from "@/lib/site";
 
 const schema = z.object({
   token: z.string().min(10),
@@ -31,11 +31,11 @@ async function notifyTeamAdvance(input: {
   if (!key) return;
   const { Resend } = await import("resend");
   const resend = new Resend(key);
-  const from = process.env.RESEND_FROM_EMAIL || "orders@zayune.com";
+  const from = storeFromEmail();
   const team = (
     process.env.ORDER_NOTIFY_EMAILS ||
     process.env.NEXT_PUBLIC_STUDIO_EMAIL ||
-    ""
+    "store@zayune.com"
   )
     .split(",")
     .map((e) => e.trim())
@@ -52,7 +52,7 @@ async function notifyTeamAdvance(input: {
         `Email: ${input.customerEmail}`,
         input.paymentRef ? `Reference: ${input.paymentRef}` : "",
         input.paymentProofUrl ? `Receipt: ${input.paymentProofUrl}` : "",
-        `Verify in admin (mark Paid when transfer appears): ${(process.env.NEXTAUTH_URL || siteConfig.url).replace(/\/$/, "")}/admin/orders`,
+        `Verify in admin (mark Paid when transfer appears): ${siteOrigin()}/admin/orders`,
       ]
         .filter(Boolean)
         .join("\n"),

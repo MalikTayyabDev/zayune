@@ -58,3 +58,9 @@ public           # logo / favicon
 
 - **COD** and **bank/Raast transfer** are wired for launch.
 - Card/wallet gateway sits behind `src/lib/payments/providers.ts` — set `PAYMENT_GATEWAY_PROVIDER` and implement provider-specific initiate + webhook verify. Webhook: `POST /api/payments/webhook`.
+
+## Domain & email (production)
+
+Canonical site: **https://zayune.com** · studio: **store@zayune.com**
+
+Attach the domain on Vercel, set `NEXTAUTH_URL` / Resend From to `store@zayune.com`, and verify DNS in Resend. Full checklist: [`docs/DOMAIN.md`](docs/DOMAIN.md).

@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 import type { OrderStatus } from "@prisma/client";
-import { siteConfig } from "@/lib/site";
+import { siteOrigin, storeFromEmail } from "@/lib/site";
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -13,7 +13,7 @@ function teamEmails() {
     process.env.ORDER_NOTIFY_EMAILS ||
     process.env.TEAM_NOTIFY_EMAILS ||
     process.env.NEXT_PUBLIC_STUDIO_EMAIL ||
-    "";
+    "store@zayune.com";
   return raw
     .split(",")
     .map((e) => e.trim())
@@ -66,8 +66,8 @@ export async function sendOrderConfirmationEmail(input: {
   payUrl?: string;
   whatsappCustomerUrl?: string | null;
 }) {
-  const from = process.env.RESEND_FROM_EMAIL || "orders@zayune.com";
-  const site = process.env.NEXTAUTH_URL || siteConfig.url;
+  const from = storeFromEmail();
+  const site = siteOrigin();
   const isBank = input.paymentMethod === "BANK_TRANSFER" || input.paymentMethod === "bank_transfer";
   const advance =
     input.advanceAmount ??
@@ -148,7 +148,7 @@ export async function sendOrderStatusEmail(input: {
   customerName: string;
   status: OrderStatus;
 }) {
-  const from = process.env.RESEND_FROM_EMAIL || "orders@zayune.com";
+  const from = storeFromEmail();
   const body = statusCopy[input.status];
   if (!body) return;
 
@@ -177,7 +177,7 @@ export async function sendSupportTicketEmail(input: {
   message: string;
   phone: string;
 }) {
-  const from = process.env.RESEND_FROM_EMAIL || "orders@zayune.com";
+  const from = storeFromEmail();
 
   await safeSend(
     {
@@ -224,7 +224,7 @@ export async function sendSubscribeEmail(input: {
   to: string;
   code: string;
 }) {
-  const from = process.env.RESEND_FROM_EMAIL || "orders@zayune.com";
+  const from = storeFromEmail();
   await safeSend(
     {
       from,

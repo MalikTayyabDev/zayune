@@ -156,7 +156,7 @@ export async function POST(request: Request) {
       currency: "PKR",
       customerEmail: data.customerEmail,
       customerName: data.customerName,
-      returnUrl: `${process.env.NEXTAUTH_URL || "http://localhost:3000"}/order/${orderId}/confirmation`,
+      returnUrl: `${process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://zayune.com"}/order/${orderId}/confirmation`,
     });
 
     let customerId: string | null = null;

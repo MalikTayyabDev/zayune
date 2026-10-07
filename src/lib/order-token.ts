@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from "crypto";
+import { siteOrigin } from "@/lib/site";
 
 function secret() {
   return (
@@ -48,10 +49,5 @@ export function orderPayPath(token: string) {
 }
 
 export function orderPayUrl(token: string) {
-  const base = (
-    process.env.NEXTAUTH_URL ||
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    "http://localhost:3000"
-  ).replace(/\/$/, "");
-  return `${base}${orderPayPath(token)}`;
+  return `${siteOrigin()}${orderPayPath(token)}`;
 }

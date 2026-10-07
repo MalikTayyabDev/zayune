@@ -1,22 +1,22 @@
 import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { siteConfig } from "@/lib/site";
 
 export const metadata = {
   title: "Contact",
 };
 
 export default function ContactPage() {
-  const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "923001234567";
-  const instagram =
-    process.env.NEXT_PUBLIC_INSTAGRAM_URL ||
-    "https://www.instagram.com/zayune.pk/";
+  const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || siteConfig.whatsapp;
+  const instagram = siteConfig.instagram;
+  const email = siteConfig.email;
 
   return (
     <div className="container-content py-14 sm:py-20 max-w-narrow">
       <SectionHeading
         eyebrow="Contact"
         title="Say hello"
-        description="For orders, custom requests, or studio questions — WhatsApp is often the fastest path. Email details forthcoming."
+        description="For orders, custom requests, or studio questions — WhatsApp is often the fastest path."
       />
 
       <div className="mt-12 space-y-6 text-sm leading-relaxed text-aubergine/75">
@@ -37,12 +37,17 @@ export default function ContactPage() {
             rel="noreferrer"
             className="hover:text-copper transition-colors"
           >
-            @zayune.pk
+            {siteConfig.instagramHandle}
           </a>
         </p>
         <p>
           <span className="text-nav text-aubergine/45 block mb-2">Email</span>
-          hello@zayune.com
+          <a
+            href={`mailto:${email}`}
+            className="hover:text-copper transition-colors"
+          >
+            {email}
+          </a>
         </p>
       </div>
 

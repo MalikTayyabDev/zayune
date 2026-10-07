@@ -21,7 +21,9 @@ export function generateOrderNumber() {
 export function whatsappOrderUrl(productName: string, slug: string) {
   const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "923001234567";
   const site =
-    process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || "https://zayune.com";
+    process.env.NEXTAUTH_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    "https://zayune.com";
   const message = `Hi ZAYUNE — I'd like to order: ${productName}\n${site}/product/${slug}`;
   return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 }
