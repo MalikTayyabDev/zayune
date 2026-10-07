@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Bell, Eye, Flower2, Plus } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { QuickViewModal } from "@/components/product/QuickViewModal";
 import { WishlistButton } from "@/components/product/WishlistButton";
 import { Icon } from "@/components/ui/Icon";
@@ -45,6 +45,8 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
   const [variantId, setVariantId] = useState(product.variants?.[0]?.id || "");
   const [adding, setAdding] = useState(false);
   const [quickView, setQuickView] = useState(false);
+  const [inView, setInView] = useState(false);
+  const cardRef = useRef<HTMLElement | null>(null);
 
   const selected = useMemo(
     () => product.variants?.find((v) => v.id === variantId),
@@ -57,6 +59,26 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
   const activeImage = selected?.imageUrl || primary?.url || "";
   const price = product.price + (selected?.priceDelta || 0);
   const swatches = (product.variants || []).filter((v) => v.swatchHex).slice(0, 6);
+
+  useEffect(() => {
+    const node = cardRef.current;
+    if (!node) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setInView(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.2, rootMargin: "0px 0px -6% 0px" }
+    );
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   function quickAdd(e: React.MouseEvent) {
     e.preventDefault();
@@ -82,7 +104,7 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
 
   return (
     <>
-      <article className="group flex h-full flex-col">
+      <article ref={cardRef} className="group flex h-full flex-col">
         <div className="relative">
           <Link href={`/product/${product.slug}`} className="block">
             <div className="relative aspect-[4/5] overflow-hidden bg-stone/40">
@@ -108,23 +130,48 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
                   className="object-cover opacity-0 transition duration-500 group-hover:opacity-100"
                 />
               )}
+              {/* Soft scrim so mobile CTAs stay readable */}
+              <div
+                className={cn(
+                  "pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-aubergine/45 to-transparent sm:hidden",
+                  inView ? "opacity-100" : "opacity-0",
+                  "transition-opacity duration-500"
+                )}
+              />
             </div>
           </Link>
 
           <div className="absolute left-2 top-2 z-10 flex flex-col gap-1.5 sm:left-3 sm:top-3">
-            <span className="inline-flex h-6 items-center justify-center gap-1 bg-porcelain/95 px-1.5 text-[8px] uppercase tracking-nav text-aubergine/70 backdrop-blur-sm sm:h-7 sm:justify-start sm:gap-1.5 sm:px-2.5 sm:text-[9px]">
+            <span
+              className={cn(
+                "inline-flex h-6 items-center justify-center gap-1 border border-stone/80 bg-porcelain/95 px-1.5 text-[8px] uppercase tracking-nav text-aubergine/70 backdrop-blur-sm sm:h-7 sm:justify-start sm:gap-1.5 sm:px-2.5 sm:text-[9px]",
+                inView && "badge-pop"
+              )}
+            >
               <Icon icon={Flower2} size={11} className="text-copper sm:hidden" />
               <Icon icon={Flower2} size={12} className="hidden text-copper sm:block" />
               <span className="hidden sm:inline">Handmade</span>
             </span>
             {oos && (
-              <span className="inline-flex h-6 items-center bg-aubergine/90 px-2 text-[8px] uppercase tracking-nav text-porcelain sm:h-7 sm:text-[9px]">
+              <span
+                className={cn(
+                  "inline-flex h-7 items-center gap-1.5 border border-copper/40 bg-aubergine px-2.5 text-[9px] uppercase tracking-nav text-porcelain shadow-sm sm:h-7 sm:text-[10px]",
+                  inView && "sold-out-glow"
+                )}
+              >
+                <span className="h-1.5 w-1.5 rounded-full bg-copper" aria-hidden />
                 Sold out
               </span>
             )}
           </div>
 
-          <div className="absolute right-2 top-2 z-10 sm:right-3 sm:top-3">
+          <div
+            className={cn(
+              "absolute right-2 top-2 z-10 sm:right-3 sm:top-3",
+              inView && "badge-pop"
+            )}
+            style={inView ? { animationDelay: "80ms" } : undefined}
+          >
             <WishlistButton
               className="h-8 w-8 justify-center rounded-sm bg-porcelain/95 p-0 shadow-sm backdrop-blur-sm sm:h-9 sm:w-9"
               product={{
@@ -138,21 +185,33 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
             />
           </div>
 
-          <div className="absolute inset-x-3 bottom-3 z-10 flex translate-y-2 items-center gap-2 opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+          {/* Mobile: always reveal with fade. Desktop: hover reveal. */}
+          <div
+            className={cn(
+              "absolute inset-x-2 bottom-2 z-10 flex items-center gap-1.5 sm:inset-x-3 sm:bottom-3 sm:gap-2",
+              "sm:translate-y-2 sm:opacity-0 sm:transition-all sm:duration-300 sm:group-hover:translate-y-0 sm:group-hover:opacity-100",
+              inView ? "card-action-in opacity-100" : "opacity-0 sm:opacity-0"
+            )}
+          >
             {showQuickAdd && (
               <button
                 type="button"
                 onClick={quickAdd}
-                className="inline-flex h-10 min-h-10 max-h-10 flex-1 items-center justify-center gap-1.5 box-border bg-aubergine px-3 text-[10px] uppercase leading-none tracking-nav text-porcelain"
+                className={cn(
+                  "inline-flex h-10 min-h-10 max-h-10 flex-1 items-center justify-center gap-1.5 box-border px-2.5 text-[9px] uppercase leading-none tracking-nav text-porcelain shadow-md sm:px-3 sm:text-[10px]",
+                  oos
+                    ? "bg-copper hover:bg-aubergine"
+                    : "bg-aubergine hover:bg-aubergine/90"
+                )}
               >
                 {oos ? (
                   <>
-                    <Icon icon={Bell} size={14} className="text-porcelain" />
+                    <Icon icon={Bell} size={13} className="text-porcelain" />
                     Get notified
                   </>
                 ) : (
                   <>
-                    <Icon icon={Plus} size={14} className="text-porcelain" />
+                    <Icon icon={Plus} size={13} className="text-porcelain" />
                     {adding ? "Added ✓" : "Quick add"}
                   </>
                 )}
@@ -167,13 +226,13 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
                   e.preventDefault();
                   setQuickView(true);
                 }}
-                className="peer inline-flex h-10 min-h-10 max-h-10 w-full items-center justify-center box-border border border-aubergine/15 bg-porcelain/95 text-aubergine backdrop-blur-sm transition hover:border-copper hover:text-copper"
+                className="peer inline-flex h-10 min-h-10 max-h-10 w-full items-center justify-center box-border border border-aubergine/15 bg-porcelain/95 text-aubergine shadow-md backdrop-blur-sm transition hover:border-copper hover:text-copper"
               >
                 <Icon icon={Eye} size={14} className="text-current" />
               </button>
               <span
                 role="tooltip"
-                className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap border border-white/20 bg-white px-2.5 py-1.5 text-[10px] uppercase tracking-nav text-aubergine opacity-0 shadow-sm transition-opacity peer-hover:opacity-100 peer-focus-visible:opacity-100"
+                className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-2 -translate-x-1/2 whitespace-nowrap border border-white/20 bg-white px-2.5 py-1.5 text-[10px] uppercase tracking-nav text-aubergine opacity-0 shadow-sm transition-opacity peer-hover:opacity-100 peer-focus-visible:opacity-100 max-sm:hidden"
               >
                 Quick view
               </span>
@@ -205,7 +264,7 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
               </span>
             )}
             {oos && (
-              <span className="text-[10px] uppercase tracking-nav text-aubergine/45">
+              <span className="text-[10px] uppercase tracking-nav text-copper">
                 Out of stock
               </span>
             )}
@@ -231,27 +290,6 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
               ))}
             </div>
           )}
-
-          <div className="mt-auto flex items-center gap-2 pt-1.5 sm:hidden">
-            {showQuickAdd && (
-              <button
-                type="button"
-                onClick={quickAdd}
-                className="text-[10px] uppercase tracking-nav text-copper"
-              >
-                {oos ? "Notify me" : adding ? "Added ✓" : "Add +"}
-              </button>
-            )}
-            <button
-              type="button"
-              aria-label="Quick view"
-              onClick={() => setQuickView(true)}
-              className="inline-flex items-center gap-0.5 text-[10px] uppercase tracking-nav text-aubergine/50"
-            >
-              <Icon icon={Eye} size={12} className="text-current" />
-              View
-            </button>
-          </div>
         </div>
       </article>
 
