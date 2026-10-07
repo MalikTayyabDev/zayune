@@ -417,19 +417,27 @@ export function orderStatusCustomerHtml(input: {
 export function supportCustomerHtml(input: {
   name: string;
   ticketId: string;
+  source?: "support" | "contact";
 }) {
+  const fromContact = input.source === "contact";
   const body = `
     <p style="margin:0 0 18px;">Hi ${esc(input.name)},</p>
-    <p style="margin:0 0 18px;">We received your support request and will follow up on WhatsApp using the number you shared.</p>
+    <p style="margin:0 0 18px;">${
+      fromContact
+        ? "Thanks for writing to ZAYUNE. We’ve received your message and will follow up on email or WhatsApp soon."
+        : "We received your support request and will follow up on WhatsApp using the number you shared."
+    }</p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-      ${detailRow("Ticket", esc(input.ticketId))}
+      ${detailRow(fromContact ? "Reference" : "Ticket", esc(input.ticketId))}
     </table>
     <p style="margin:20px 0 0;color:${colors.muted};font-size:14px;">Please keep an eye on email and WhatsApp.</p>`;
 
   return emailLayout({
-    preheader: `Support ticket ${input.ticketId} received`,
-    eyebrow: "Support",
-    title: "We’ve got your message",
+    preheader: fromContact
+      ? `We received your message · ${input.ticketId}`
+      : `Support ticket ${input.ticketId} received`,
+    eyebrow: fromContact ? "Contact" : "Support",
+    title: fromContact ? "Thanks for reaching out" : "We’ve got your message",
     bodyHtml: body,
   });
 }
@@ -440,11 +448,17 @@ export function supportTeamHtml(input: {
   phone: string;
   ticketId: string;
   message: string;
+  source?: "support" | "contact";
 }) {
+  const fromContact = input.source === "contact";
   const body = `
-    <p style="margin:0 0 18px;">A customer opened a support ticket.</p>
+    <p style="margin:0 0 18px;">${
+      fromContact
+        ? "A new message arrived from the contact form."
+        : "A customer opened a support ticket."
+    }</p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-      ${detailRow("Ticket", esc(input.ticketId))}
+      ${detailRow(fromContact ? "Reference" : "Ticket", esc(input.ticketId))}
       ${detailRow("Name", esc(input.name))}
       ${detailRow("Email", esc(input.email))}
       ${detailRow("Phone", esc(input.phone))}
@@ -453,9 +467,182 @@ export function supportTeamHtml(input: {
     <p style="margin:0;padding:16px;background:${colors.porcelain};border:1px solid ${colors.stone};font-size:15px;line-height:1.65;white-space:pre-wrap;">${esc(input.message)}</p>`;
 
   return emailLayout({
-    preheader: `Support ${input.ticketId} — ${input.name}`,
+    preheader: `${fromContact ? "Contact" : "Support"} ${input.ticketId} — ${input.name}`,
     eyebrow: "Studio alert",
-    title: "New support ticket",
+    title: fromContact ? "New contact message" : "New support ticket",
+    bodyHtml: body,
+  });
+}
+
+export function customRequestCustomerHtml(input: {
+  name: string;
+  requestId: string;
+  pieceType: string;
+}) {
+  const body = `
+    <p style="margin:0 0 18px;">Dear ${esc(input.name)},</p>
+    <p style="margin:0 0 18px;">We’ve received your custom request and will review it carefully. Expect a follow-up on WhatsApp or email once we’ve looked at the details.</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      ${detailRow("Reference", esc(input.requestId))}
+      ${detailRow("Piece", esc(input.pieceType))}
+    </table>
+    <p style="margin:20px 0 0;color:${colors.muted};font-size:14px;">Custom pieces are made to order — timing depends on the design and studio queue.</p>`;
+
+  return emailLayout({
+    preheader: `Custom request received · ${input.requestId}`,
+    eyebrow: "Custom request",
+    title: "We’ve received your custom request",
+    bodyHtml: body,
+  });
+}
+
+export function customRequestTeamHtml(input: {
+  name: string;
+  email: string;
+  phone: string;
+  requestId: string;
+  pieceType: string;
+  colors: string;
+  occasion: string;
+  budget: string;
+  details: string;
+  neededBy?: string | null;
+  adminUrl: string;
+}) {
+  const rows = [
+    detailRow("Reference", esc(input.requestId)),
+    detailRow("Name", `${esc(input.name)}<br/><span style="font-size:13px;color:${colors.muted};">${esc(input.email)}</span>`),
+    detailRow("Phone", esc(input.phone)),
+    detailRow("Piece", esc(input.pieceType)),
+    detailRow("Colors", esc(input.colors)),
+    detailRow("Occasion", esc(input.occasion)),
+    detailRow("Budget", esc(input.budget)),
+  ];
+  if (input.neededBy) rows.push(detailRow("Needed by", esc(input.neededBy)));
+
+  const body = `
+    <p style="margin:0 0 18px;">A new custom request is waiting for review.</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      ${rows.join("")}
+    </table>
+    <p style="margin:22px 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${colors.muted};">Details</p>
+    <p style="margin:0;padding:16px;background:${colors.porcelain};border:1px solid ${colors.stone};font-size:15px;line-height:1.65;white-space:pre-wrap;">${esc(input.details)}</p>
+    ${ctaButton(input.adminUrl, "Open custom requests")}`;
+
+  return emailLayout({
+    preheader: `Custom request · ${input.name}`,
+    eyebrow: "Studio alert",
+    title: "New custom request",
+    bodyHtml: body,
+  });
+}
+
+export function customRequestStatusHtml(input: {
+  name: string;
+  requestId: string;
+  statusLabel: string;
+  message: string;
+}) {
+  const body = `
+    <p style="margin:0 0 18px;">Dear ${esc(input.name)},</p>
+    <p style="margin:0 0 18px;">${esc(input.message)}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      ${detailRow("Reference", esc(input.requestId))}
+      ${detailRow("Status", esc(input.statusLabel))}
+    </table>
+    <p style="margin:20px 0 0;color:${colors.muted};font-size:14px;">We’ll continue on WhatsApp if we need anything else from you.</p>`;
+
+  return emailLayout({
+    preheader: `Custom request ${input.statusLabel.toLowerCase()} · ${input.requestId}`,
+    eyebrow: "Custom update",
+    title: input.statusLabel,
+    bodyHtml: body,
+  });
+}
+
+export function waitlistJoinedHtml(input: {
+  email: string;
+  productName: string;
+  productUrl: string;
+}) {
+  const body = `
+    <p style="margin:0 0 18px;">You’re on the waitlist for <strong style="font-weight:normal;">${esc(input.productName)}</strong>.</p>
+    <p style="margin:0 0 18px;">We’ll email you when it’s available again — no spam, just that one note from the studio.</p>
+    ${ctaButton(input.productUrl, "View product")}`;
+
+  return emailLayout({
+    preheader: `Waitlist confirmed for ${input.productName}`,
+    eyebrow: "Waitlist",
+    title: "You’re on the list",
+    bodyHtml: body,
+  });
+}
+
+export function waitlistRestockHtml(input: {
+  productName: string;
+  productUrl: string;
+}) {
+  const body = `
+    <p style="margin:0 0 18px;"><strong style="font-weight:normal;">${esc(input.productName)}</strong> is back.</p>
+    <p style="margin:0 0 18px;">You asked us to tell you — pieces move quickly, so claim yours while it’s available.</p>
+    ${ctaButton(input.productUrl, "Shop now")}`;
+
+  return emailLayout({
+    preheader: `${input.productName} is back in stock`,
+    eyebrow: "Back in stock",
+    title: "It’s available again",
+    bodyHtml: body,
+  });
+}
+
+export function welcomeAccountHtml(input: {
+  name: string;
+  accountUrl: string;
+  shopUrl: string;
+}) {
+  const body = `
+    <p style="margin:0 0 18px;">Dear ${esc(input.name)},</p>
+    <p style="margin:0 0 18px;">Welcome to ZAYUNE. Your account is ready — track orders, save favourites, and check out a little faster next time.</p>
+    ${ctaButton(input.accountUrl, "Open your account")}
+    ${secondaryLink(input.shopUrl, "Browse the shop")}`;
+
+  return emailLayout({
+    preheader: "Your ZAYUNE account is ready",
+    eyebrow: "Welcome",
+    title: "Your account is ready",
+    bodyHtml: body,
+  });
+}
+
+export function marketingBroadcastHtml(input: {
+  headline: string;
+  body: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+}) {
+  const paragraphs = input.body
+    .split(/\n+/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map(
+      (p) =>
+        `<p style="margin:0 0 16px;">${esc(p)}</p>`
+    )
+    .join("");
+
+  const body = `
+    ${paragraphs}
+    ${
+      input.ctaUrl && input.ctaLabel
+        ? ctaButton(input.ctaUrl, input.ctaLabel)
+        : ""
+    }
+    <p style="margin:24px 0 0;color:${colors.muted};font-size:13px;">You’re receiving this because you subscribed or have an account with ZAYUNE.</p>`;
+
+  return emailLayout({
+    preheader: input.headline,
+    eyebrow: "From the studio",
+    title: input.headline,
     bodyHtml: body,
   });
 }

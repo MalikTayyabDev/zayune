@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDemoWaitlist } from "@/lib/demo-customers";
 import { isDemoMode } from "@/lib/demo-data";
+import { sendWaitlistJoinedEmail } from "@/lib/email";
+import { siteOrigin } from "@/lib/site";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
@@ -32,9 +34,19 @@ export async function POST(request: Request) {
           variantId,
           createdAt: new Date(),
         });
+        void sendWaitlistJoinedEmail({
+          to: email,
+          productName: "this piece",
+          productUrl: `${siteOrigin()}/shop`,
+        });
       }
       return NextResponse.json({ ok: true });
     }
+
+    const product = await prisma.product.findUnique({
+      where: { id: data.productId },
+      select: { name: true, slug: true },
+    });
 
     const existing = await prisma.waitlistEntry.findFirst({
       where: {
@@ -51,6 +63,13 @@ export async function POST(request: Request) {
           productId: data.productId,
           variantId,
         },
+      });
+      void sendWaitlistJoinedEmail({
+        to: email,
+        productName: product?.name || "this piece",
+        productUrl: product?.slug
+          ? `${siteOrigin()}/product/${product.slug}`
+          : `${siteOrigin()}/shop`,
       });
     }
 

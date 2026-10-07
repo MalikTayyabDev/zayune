@@ -2,6 +2,10 @@ import { Resend } from "resend";
 import type { OrderStatus } from "@prisma/client";
 import {
   advanceNotifyTeamHtml,
+  customRequestCustomerHtml,
+  customRequestStatusHtml,
+  customRequestTeamHtml,
+  marketingBroadcastHtml,
   orderConfirmationCustomerHtml,
   orderConfirmationTeamHtml,
   orderStatusCustomerHtml,
@@ -10,6 +14,9 @@ import {
   subscribeWelcomeHtml,
   supportCustomerHtml,
   supportTeamHtml,
+  waitlistJoinedHtml,
+  waitlistRestockHtml,
+  welcomeAccountHtml,
 } from "@/lib/email-templates";
 import { siteConfig, siteOrigin, storeFromEmail } from "@/lib/site";
 
@@ -225,31 +232,38 @@ export async function sendSupportTicketEmail(input: {
   ticketId: string;
   message: string;
   phone: string;
+  source?: "support" | "contact";
 }) {
   const from = storeFromEmail();
+  const source = input.source || "support";
+  const isContact = source === "contact";
 
   await safeSend(
     {
       from,
       to: input.to,
-      subject: `ZAYUNE support ticket ${input.ticketId}`,
+      subject: isContact
+        ? `ZAYUNE — We received your message`
+        : `ZAYUNE support ticket ${input.ticketId}`,
       text: [
         `Hi ${input.name},`,
         "",
-        "We received your support request.",
-        `Ticket: ${input.ticketId}`,
+        isContact
+          ? "Thanks for writing to ZAYUNE. We’ve received your message."
+          : "We received your support request.",
+        `${isContact ? "Reference" : "Ticket"}: ${input.ticketId}`,
         "",
-        "Our team will follow up on WhatsApp using the phone number you shared.",
-        "Please keep an eye on your email and WhatsApp.",
+        "We’ll follow up on email or WhatsApp soon.",
         "",
-        "— ZAYUNE Support",
+        "— ZAYUNE",
       ].join("\n"),
       html: supportCustomerHtml({
         name: input.name,
         ticketId: input.ticketId,
+        source,
       }),
     },
-    "support customer"
+    isContact ? "contact customer" : "support customer"
   );
 
   const team = teamEmails();
@@ -258,9 +272,11 @@ export async function sendSupportTicketEmail(input: {
       {
         from,
         to: team,
-        subject: `Support ticket ${input.ticketId} — ${input.name}`,
+        subject: isContact
+          ? `Contact message ${input.ticketId} — ${input.name}`
+          : `Support ticket ${input.ticketId} — ${input.name}`,
         text: [
-          `Ticket: ${input.ticketId}`,
+          `${isContact ? "Reference" : "Ticket"}: ${input.ticketId}`,
           `Name: ${input.name}`,
           `Email: ${input.to}`,
           `Phone: ${input.phone}`,
@@ -273,9 +289,10 @@ export async function sendSupportTicketEmail(input: {
           phone: input.phone,
           ticketId: input.ticketId,
           message: input.message,
+          source,
         }),
       },
-      "support team"
+      isContact ? "contact team" : "support team"
     );
   }
 }
@@ -339,4 +356,285 @@ export async function sendAdvanceNotifyEmail(input: {
     },
     "advance notify"
   );
+}
+
+export async function sendCustomRequestEmails(input: {
+  to: string;
+  name: string;
+  phone: string;
+  requestId: string;
+  pieceType: string;
+  colors: string;
+  occasion: string;
+  budget: string;
+  details: string;
+  neededBy?: string | null;
+}) {
+  const from = storeFromEmail();
+  const site = siteOrigin();
+
+  await safeSend(
+    {
+      from,
+      to: input.to,
+      subject: "ZAYUNE — Custom request received",
+      text: [
+        `Dear ${input.name},`,
+        "",
+        "We’ve received your custom request and will review it carefully.",
+        `Reference: ${input.requestId}`,
+        `Piece: ${input.pieceType}`,
+        "",
+        "— ZAYUNE",
+      ].join("\n"),
+      html: customRequestCustomerHtml({
+        name: input.name,
+        requestId: input.requestId,
+        pieceType: input.pieceType,
+      }),
+    },
+    "custom request customer"
+  );
+
+  const team = teamEmails();
+  if (team.length) {
+    await safeSend(
+      {
+        from,
+        to: team,
+        subject: `Custom request — ${input.name}`,
+        text: [
+          `Reference: ${input.requestId}`,
+          `Name: ${input.name}`,
+          `Email: ${input.to}`,
+          `Phone: ${input.phone}`,
+          `Piece: ${input.pieceType}`,
+          `Colors: ${input.colors}`,
+          `Occasion: ${input.occasion}`,
+          `Budget: ${input.budget}`,
+          input.neededBy ? `Needed by: ${input.neededBy}` : "",
+          "",
+          input.details,
+          "",
+          `${site}/admin/custom-requests`,
+        ]
+          .filter(Boolean)
+          .join("\n"),
+        html: customRequestTeamHtml({
+          ...input,
+          email: input.to,
+          adminUrl: `${site}/admin/custom-requests`,
+        }),
+      },
+      "custom request team"
+    );
+  }
+}
+
+const customStatusCopy: Record<
+  string,
+  { label: string; message: string; subjectSuffix: string }
+> = {
+  NEW: {
+    label: "Received",
+    subjectSuffix: "received",
+    message:
+      "Your custom request is in our queue and will be reviewed by the studio soon.",
+  },
+  REVIEWING: {
+    label: "Under review",
+    subjectSuffix: "is under review",
+    message:
+      "We’re reviewing your custom request now — checking feasibility, materials, and timing.",
+  },
+  QUOTED: {
+    label: "Quote ready",
+    subjectSuffix: "quote is ready",
+    message:
+      "Your custom quote is ready. We’ll share details on WhatsApp so you can decide on next steps.",
+  },
+  CLOSED: {
+    label: "Closed",
+    subjectSuffix: "was closed",
+    message:
+      "This custom request has been closed. If you’d like to reopen or start a new one, reply or message us anytime.",
+  },
+};
+
+export async function sendCustomRequestStatusEmail(input: {
+  to: string;
+  name: string;
+  requestId: string;
+  status: string;
+}) {
+  const copy = customStatusCopy[input.status];
+  if (!copy) return;
+  const from = storeFromEmail();
+
+  await safeSend(
+    {
+      from,
+      to: input.to,
+      subject: `ZAYUNE — Custom request ${copy.subjectSuffix}`,
+      text: [
+        `Dear ${input.name},`,
+        "",
+        copy.message,
+        `Reference: ${input.requestId}`,
+        `Status: ${copy.label}`,
+        "",
+        "— ZAYUNE",
+      ].join("\n"),
+      html: customRequestStatusHtml({
+        name: input.name,
+        requestId: input.requestId,
+        statusLabel: copy.label,
+        message: copy.message,
+      }),
+    },
+    "custom request status"
+  );
+}
+
+export async function sendWaitlistJoinedEmail(input: {
+  to: string;
+  productName: string;
+  productUrl: string;
+}) {
+  const from = storeFromEmail();
+  await safeSend(
+    {
+      from,
+      to: input.to,
+      subject: `ZAYUNE — You’re on the waitlist for ${input.productName}`,
+      text: [
+        `You’re on the waitlist for ${input.productName}.`,
+        "We’ll email you when it’s available again.",
+        input.productUrl,
+        "",
+        "— ZAYUNE",
+      ].join("\n"),
+      html: waitlistJoinedHtml({
+        email: input.to,
+        productName: input.productName,
+        productUrl: input.productUrl,
+      }),
+    },
+    "waitlist joined"
+  );
+}
+
+export async function sendWaitlistRestockEmail(input: {
+  to: string;
+  productName: string;
+  productUrl: string;
+}) {
+  const from = storeFromEmail();
+  await safeSend(
+    {
+      from,
+      to: input.to,
+      subject: `ZAYUNE — ${input.productName} is back`,
+      text: [
+        `${input.productName} is back in stock.`,
+        input.productUrl,
+        "",
+        "— ZAYUNE",
+      ].join("\n"),
+      html: waitlistRestockHtml(input),
+    },
+    "waitlist restock"
+  );
+}
+
+export async function sendWelcomeAccountEmail(input: {
+  to: string;
+  name: string;
+}) {
+  const from = storeFromEmail();
+  const site = siteOrigin();
+  await safeSend(
+    {
+      from,
+      to: input.to,
+      subject: "Welcome to ZAYUNE — your account is ready",
+      text: [
+        `Dear ${input.name},`,
+        "",
+        "Welcome to ZAYUNE. Your account is ready.",
+        `${site}/account`,
+        "",
+        "— ZAYUNE",
+      ].join("\n"),
+      html: welcomeAccountHtml({
+        name: input.name,
+        accountUrl: `${site}/account`,
+        shopUrl: `${site}/shop`,
+      }),
+    },
+    "welcome account"
+  );
+}
+
+export async function sendMarketingBroadcast(input: {
+  to: string[];
+  subject: string;
+  headline: string;
+  body: string;
+  ctaLabel?: string;
+  ctaUrl?: string;
+}) {
+  const from = storeFromEmail();
+  const unique = Array.from(
+    new Set(input.to.map((e) => e.toLowerCase().trim()).filter(Boolean))
+  );
+  let sent = 0;
+  let failed = 0;
+
+  const html = marketingBroadcastHtml({
+    headline: input.headline,
+    body: input.body,
+    ctaLabel: input.ctaLabel,
+    ctaUrl: input.ctaUrl,
+  });
+  const text = [
+    input.headline,
+    "",
+    input.body,
+    input.ctaUrl ? `\n${input.ctaLabel || "Open"}: ${input.ctaUrl}` : "",
+    "",
+    "— ZAYUNE",
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  // Send in small batches to stay within Resend rate limits
+  const chunkSize = 8;
+  for (let i = 0; i < unique.length; i += chunkSize) {
+    const chunk = unique.slice(i, i + chunkSize);
+    await Promise.all(
+      chunk.map(async (to) => {
+        const resend = getResend();
+        if (!resend) {
+          failed += 1;
+          return;
+        }
+        try {
+          await resend.emails.send({
+            from,
+            to,
+            subject: input.subject,
+            text,
+            html,
+          });
+          sent += 1;
+        } catch (error) {
+          console.error("[email failed] marketing", to, error);
+          failed += 1;
+        }
+      })
+    );
+  }
+
+  return { sent, failed, total: unique.length };
 }

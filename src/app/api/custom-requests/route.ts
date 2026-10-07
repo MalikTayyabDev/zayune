@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { addDemoCustomRequest } from "@/lib/demo-custom-requests";
 import { isDemoMode } from "@/lib/demo-data";
+import { sendCustomRequestEmails } from "@/lib/email";
+import { labelFor, PIECE_TYPES, OCCASIONS, BUDGET_RANGES } from "@/lib/custom-requests";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
@@ -37,6 +39,18 @@ export async function POST(request: Request) {
       );
     }
 
+    const emailPayload = {
+      to: data.email.toLowerCase(),
+      name: data.name,
+      phone: data.phone,
+      pieceType: labelFor(PIECE_TYPES, data.pieceType),
+      colors: data.colors,
+      occasion: labelFor(OCCASIONS, data.occasion),
+      budget: labelFor(BUDGET_RANGES, data.budget),
+      details: data.details,
+      neededBy: neededBy ? neededBy.toISOString().slice(0, 10) : null,
+    };
+
     if (isDemoMode()) {
       const entry = addDemoCustomRequest({
         name: data.name,
@@ -50,6 +64,10 @@ export async function POST(request: Request) {
         neededBy,
         referenceUrl,
         referenceImage,
+      });
+      void sendCustomRequestEmails({
+        ...emailPayload,
+        requestId: entry.id.slice(0, 10).toUpperCase(),
       });
       return NextResponse.json({ id: entry.id });
     }
@@ -68,6 +86,11 @@ export async function POST(request: Request) {
         referenceUrl,
         referenceImage,
       },
+    });
+
+    void sendCustomRequestEmails({
+      ...emailPayload,
+      requestId: entry.id.slice(0, 10).toUpperCase(),
     });
 
     return NextResponse.json({ id: entry.id });

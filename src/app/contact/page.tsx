@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { ContactForm } from "@/components/contact/ContactForm";
 import { siteConfig } from "@/lib/site";
 
 export const metadata = {
@@ -16,7 +17,7 @@ export default function ContactPage() {
       <SectionHeading
         eyebrow="Contact"
         title="Say hello"
-        description="For orders, custom requests, or studio questions — WhatsApp is often the fastest path."
+        description="WhatsApp is often fastest — or send a note below and we’ll reply by email."
       />
 
       <div className="mt-12 space-y-6 text-sm leading-relaxed text-aubergine/75">
@@ -59,6 +60,8 @@ export default function ContactPage() {
       >
         Open WhatsApp
       </Button>
+
+      <ContactForm />
     </div>
   );
 }

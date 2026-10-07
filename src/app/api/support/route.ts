@@ -10,6 +10,7 @@ const schema = z.object({
   email: z.string().email(),
   phone: z.string().min(7),
   message: z.string().min(5),
+  source: z.enum(["support", "contact"]).optional(),
 });
 
 export async function POST(request: Request) {
@@ -46,6 +47,7 @@ export async function POST(request: Request) {
       ticketId,
       message: data.message,
       phone: data.phone,
+      source: data.source || "support",
     });
 
     return NextResponse.json({ ticketId });

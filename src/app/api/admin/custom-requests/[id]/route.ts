@@ -5,6 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { CUSTOM_STATUSES } from "@/lib/custom-requests";
 import { isDemoMode } from "@/lib/demo-data";
 import { updateDemoCustomRequest } from "@/lib/demo-custom-requests";
+import { sendCustomRequestStatusEmail } from "@/lib/email";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
@@ -32,7 +33,22 @@ export async function PATCH(request: Request, { params }: Params) {
       if (!updated) {
         return NextResponse.json({ error: "Not found" }, { status: 404 });
       }
+      if (data.status) {
+        void sendCustomRequestStatusEmail({
+          to: updated.email,
+          name: updated.name,
+          requestId: updated.id.slice(0, 10).toUpperCase(),
+          status: data.status,
+        });
+      }
       return NextResponse.json(updated);
+    }
+
+    const existing = await prisma.customRequest.findUnique({
+      where: { id: params.id },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
     const updated = await prisma.customRequest.update({
@@ -44,6 +60,15 @@ export async function PATCH(request: Request, { params }: Params) {
           : {}),
       },
     });
+
+    if (data.status && data.status !== existing.status) {
+      void sendCustomRequestStatusEmail({
+        to: updated.email,
+        name: updated.name,
+        requestId: updated.id.slice(0, 10).toUpperCase(),
+        status: data.status,
+      });
+    }
 
     return NextResponse.json(updated);
   } catch {

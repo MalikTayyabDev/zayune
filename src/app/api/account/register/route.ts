@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDemoCustomers } from "@/lib/demo-customers";
 import { isDemoMode } from "@/lib/demo-data";
+import { sendWelcomeAccountEmail } from "@/lib/email";
 import { hashPassword } from "@/lib/password";
 import { prisma } from "@/lib/prisma";
 
@@ -36,6 +37,7 @@ export async function POST(request: Request) {
         updatedAt: new Date(),
       };
       store.set(email, customer);
+      void sendWelcomeAccountEmail({ to: email, name: data.name });
       return NextResponse.json({ id: customer.id });
     }
 
@@ -56,6 +58,7 @@ export async function POST(request: Request) {
       },
     });
 
+    void sendWelcomeAccountEmail({ to: email, name: data.name });
     return NextResponse.json({ id: customer.id });
   } catch {
     return NextResponse.json(
