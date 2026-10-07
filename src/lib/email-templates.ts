@@ -83,11 +83,17 @@ export function emailLayout(input: {
       <td align="center" style="padding:36px 16px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:${colors.white};border:1px solid ${colors.stone};">
           <tr>
-            <td style="padding:28px 32px 20px;border-bottom:1px solid ${colors.stone};background:linear-gradient(180deg, ${colors.porcelain} 0%, ${colors.white} 100%);">
-              <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:${colors.aubergine};">
-                ${esc(siteConfig.name)}
-              </p>
-              <p style="margin:8px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:13px;font-style:italic;color:${colors.copper};">
+            <td align="center" style="padding:28px 32px 22px;border-bottom:1px solid ${colors.stone};background:linear-gradient(180deg, ${colors.porcelain} 0%, ${colors.white} 100%);">
+              <a href="${esc(site)}" target="_blank" style="text-decoration:none;">
+                <img
+                  src="${esc(`${site}/logo.png`)}"
+                  width="120"
+                  height="132"
+                  alt="ZAYUNE"
+                  style="display:block;margin:0 auto;width:120px;height:auto;border:0;outline:none;"
+                />
+              </a>
+              <p style="margin:14px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:13px;font-style:italic;color:${colors.copper};">
                 ${esc(siteConfig.tagline)}
               </p>
             </td>
@@ -113,10 +119,17 @@ export function emailLayout(input: {
               <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:13px;color:${colors.porcelain};">
                 Designed, not just made.
               </p>
-              <p style="margin:10px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.12em;color:${colors.stone};">
+              <p style="margin:14px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:12px;letter-spacing:0.08em;color:${colors.stone};">
+                Follow us on Instagram<br/>
+                <a href="${esc(siteConfig.instagram)}" target="_blank" style="color:${colors.brass};text-decoration:none;font-size:13px;letter-spacing:0.14em;">
+                  ${esc(siteConfig.instagramHandle)}
+                </a>
+              </p>
+              <p style="margin:14px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.1em;color:${colors.stone};">
+                <a href="${esc(siteConfig.instagram)}" target="_blank" style="color:${colors.brass};text-decoration:underline;">${esc(siteConfig.instagram)}</a>
+              </p>
+              <p style="margin:14px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.1em;color:${colors.stone};">
                 <a href="${esc(site)}" style="color:${colors.brass};text-decoration:none;">zayune.com</a>
-                &nbsp;·&nbsp;
-                <a href="${esc(siteConfig.instagram)}" style="color:${colors.brass};text-decoration:none;">${esc(siteConfig.instagramHandle)}</a>
                 &nbsp;·&nbsp;
                 <a href="mailto:${esc(siteConfig.email)}" style="color:${colors.brass};text-decoration:none;">${esc(siteConfig.email)}</a>
               </p>
