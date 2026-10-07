@@ -1,0 +1,379 @@
+import { siteConfig, siteOrigin } from "@/lib/site";
+
+const colors = {
+  aubergine: "#2A1F2D",
+  porcelain: "#F4EEE6",
+  copper: "#B85F45",
+  sage: "#7F8B78",
+  brass: "#B79B63",
+  stone: "#D7CEC3",
+  white: "#FFFFFF",
+  muted: "#5C5260",
+};
+
+function esc(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function money(amount: number, currency: string) {
+  return `${amount.toLocaleString("en-PK")} ${esc(currency)}`;
+}
+
+function ctaButton(href: string, label: string) {
+  return `
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 8px;">
+      <tr>
+        <td align="center" bgcolor="${colors.aubergine}" style="border-radius:2px;">
+          <a href="${esc(href)}" target="_blank"
+            style="display:inline-block;padding:14px 28px;font-family:Georgia,'Times New Roman',serif;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;text-decoration:none;color:${colors.porcelain};">
+            ${esc(label)}
+          </a>
+        </td>
+      </tr>
+    </table>`;
+}
+
+function secondaryLink(href: string, label: string) {
+  return `
+    <p style="margin:12px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:13px;">
+      <a href="${esc(href)}" style="color:${colors.copper};text-decoration:none;letter-spacing:0.06em;">${esc(label)} →</a>
+    </p>`;
+}
+
+function detailRow(label: string, value: string) {
+  return `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid ${colors.stone};font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${colors.muted};width:38%;vertical-align:top;">
+        ${esc(label)}
+      </td>
+      <td style="padding:10px 0;border-bottom:1px solid ${colors.stone};font-family:Georgia,'Times New Roman',serif;font-size:15px;color:${colors.aubergine};vertical-align:top;">
+        ${value}
+      </td>
+    </tr>`;
+}
+
+/** Shared ZAYUNE shell — table layout for email clients. */
+export function emailLayout(input: {
+  preheader?: string;
+  eyebrow: string;
+  title: string;
+  bodyHtml: string;
+}) {
+  const site = siteOrigin();
+  const preheader = input.preheader
+    ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;mso-hide:all;">${esc(input.preheader)}</div>`
+    : "";
+
+  return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>${esc(input.title)}</title>
+</head>
+<body style="margin:0;padding:0;background:${colors.porcelain};">
+  ${preheader}
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${colors.porcelain};">
+    <tr>
+      <td align="center" style="padding:36px 16px;">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;background:${colors.white};border:1px solid ${colors.stone};">
+          <tr>
+            <td style="padding:28px 32px 20px;border-bottom:1px solid ${colors.stone};background:linear-gradient(180deg, ${colors.porcelain} 0%, ${colors.white} 100%);">
+              <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.28em;text-transform:uppercase;color:${colors.aubergine};">
+                ${esc(siteConfig.name)}
+              </p>
+              <p style="margin:8px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:13px;font-style:italic;color:${colors.copper};">
+                ${esc(siteConfig.tagline)}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <td style="height:3px;background:${colors.copper};font-size:0;line-height:0;">&nbsp;</td>
+          </tr>
+          <tr>
+            <td style="padding:32px;">
+              <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:${colors.sage};">
+                ${esc(input.eyebrow)}
+              </p>
+              <h1 style="margin:10px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:28px;font-weight:normal;line-height:1.25;color:${colors.aubergine};">
+                ${esc(input.title)}
+              </h1>
+              <div style="margin-top:22px;font-family:Georgia,'Times New Roman',serif;font-size:15px;line-height:1.7;color:${colors.aubergine};">
+                ${input.bodyHtml}
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td style="padding:22px 32px;background:${colors.aubergine};">
+              <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:13px;color:${colors.porcelain};">
+                Designed, not just made.
+              </p>
+              <p style="margin:10px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.12em;color:${colors.stone};">
+                <a href="${esc(site)}" style="color:${colors.brass};text-decoration:none;">zayune.com</a>
+                &nbsp;·&nbsp;
+                <a href="${esc(siteConfig.instagram)}" style="color:${colors.brass};text-decoration:none;">${esc(siteConfig.instagramHandle)}</a>
+                &nbsp;·&nbsp;
+                <a href="mailto:${esc(siteConfig.email)}" style="color:${colors.brass};text-decoration:none;">${esc(siteConfig.email)}</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+        <p style="margin:18px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;color:${colors.muted};">
+          You’re receiving this because of activity on ZAYUNE.
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+}
+
+export function orderConfirmationCustomerHtml(input: {
+  customerName: string;
+  orderNumber: string;
+  total: number;
+  currency: string;
+  itemsSummary?: string;
+  isBank: boolean;
+  advance: number;
+  payUrl?: string;
+  trackUrl: string;
+}) {
+  const rows = [
+    detailRow("Order", esc(input.orderNumber)),
+    detailRow("Total", money(input.total, input.currency)),
+  ];
+  if (input.itemsSummary) {
+    rows.push(detailRow("Items", esc(input.itemsSummary)));
+  }
+  if (input.isBank) {
+    rows.push(
+      detailRow(
+        "Advance due",
+        `${money(input.advance, input.currency)} <span style="color:${colors.muted};font-size:13px;">(30%)</span>`
+      )
+    );
+  }
+
+  const body = `
+    <p style="margin:0 0 18px;">Dear ${esc(input.customerName)},</p>
+    <p style="margin:0 0 18px;">Thank you for your ZAYUNE order. We’ve received it and will take care of the next steps with the same attention we give every piece.</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 4px;">
+      ${rows.join("")}
+    </table>
+    ${
+      input.payUrl
+        ? ctaButton(
+            input.payUrl,
+            input.isBank ? "Pay 30% advance" : "Confirm order"
+          )
+        : ""
+    }
+    ${
+      input.isBank
+        ? `<p style="margin:16px 0 0;color:${colors.muted};font-size:14px;">Transfer the advance using your order number as the reference, then mark it sent on the payment page.</p>`
+        : ""
+    }
+    ${secondaryLink(input.trackUrl, "Track your order")}`;
+
+  return emailLayout({
+    preheader: `Order ${input.orderNumber} — thank you for shopping ZAYUNE`,
+    eyebrow: "Order confirmation",
+    title: "Your order is with us",
+    bodyHtml: body,
+  });
+}
+
+export function orderConfirmationTeamHtml(input: {
+  customerName: string;
+  customerEmail: string;
+  orderNumber: string;
+  total: number;
+  currency: string;
+  paymentMethod?: string;
+  itemsSummary?: string;
+  isBank: boolean;
+  advance: number;
+  payUrl?: string;
+  whatsappCustomerUrl?: string | null;
+  adminUrl: string;
+}) {
+  const rows = [
+    detailRow("Order", esc(input.orderNumber)),
+    detailRow("Customer", `${esc(input.customerName)}<br/><span style="font-size:13px;color:${colors.muted};">${esc(input.customerEmail)}</span>`),
+    detailRow("Total", money(input.total, input.currency)),
+    detailRow("Payment", esc(input.paymentMethod || "n/a")),
+  ];
+  if (input.isBank) {
+    rows.push(detailRow("Advance due", money(input.advance, input.currency)));
+  }
+  if (input.itemsSummary) {
+    rows.push(detailRow("Items", esc(input.itemsSummary)));
+  }
+
+  const body = `
+    <p style="margin:0 0 18px;">A new order is waiting in the studio inbox.</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      ${rows.join("")}
+    </table>
+    ${ctaButton(input.adminUrl, "Open admin orders")}
+    ${input.payUrl ? secondaryLink(input.payUrl, "Customer pay link") : ""}
+    ${
+      input.whatsappCustomerUrl
+        ? secondaryLink(input.whatsappCustomerUrl, "WhatsApp customer")
+        : ""
+    }`;
+
+  return emailLayout({
+    preheader: `New order ${input.orderNumber} from ${input.customerName}`,
+    eyebrow: "Studio alert",
+    title: "New order received",
+    bodyHtml: body,
+  });
+}
+
+export function orderStatusCustomerHtml(input: {
+  customerName: string;
+  orderNumber: string;
+  statusLabel: string;
+  message: string;
+  trackUrl: string;
+}) {
+  const body = `
+    <p style="margin:0 0 18px;">Dear ${esc(input.customerName)},</p>
+    <p style="margin:0 0 18px;">${esc(input.message)}</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      ${detailRow("Order", esc(input.orderNumber))}
+      ${detailRow("Status", esc(input.statusLabel))}
+    </table>
+    ${ctaButton(input.trackUrl, "Track order")}
+    <p style="margin:20px 0 0;color:${colors.muted};font-size:14px;">Questions? Reply to this email or message us on WhatsApp.</p>`;
+
+  return emailLayout({
+    preheader: `Order ${input.orderNumber} is now ${input.statusLabel}`,
+    eyebrow: "Order update",
+    title: input.statusLabel,
+    bodyHtml: body,
+  });
+}
+
+export function supportCustomerHtml(input: {
+  name: string;
+  ticketId: string;
+}) {
+  const body = `
+    <p style="margin:0 0 18px;">Hi ${esc(input.name)},</p>
+    <p style="margin:0 0 18px;">We received your support request and will follow up on WhatsApp using the number you shared.</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      ${detailRow("Ticket", esc(input.ticketId))}
+    </table>
+    <p style="margin:20px 0 0;color:${colors.muted};font-size:14px;">Please keep an eye on email and WhatsApp.</p>`;
+
+  return emailLayout({
+    preheader: `Support ticket ${input.ticketId} received`,
+    eyebrow: "Support",
+    title: "We’ve got your message",
+    bodyHtml: body,
+  });
+}
+
+export function supportTeamHtml(input: {
+  name: string;
+  email: string;
+  phone: string;
+  ticketId: string;
+  message: string;
+}) {
+  const body = `
+    <p style="margin:0 0 18px;">A customer opened a support ticket.</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      ${detailRow("Ticket", esc(input.ticketId))}
+      ${detailRow("Name", esc(input.name))}
+      ${detailRow("Email", esc(input.email))}
+      ${detailRow("Phone", esc(input.phone))}
+    </table>
+    <p style="margin:22px 0 8px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.16em;text-transform:uppercase;color:${colors.muted};">Message</p>
+    <p style="margin:0;padding:16px;background:${colors.porcelain};border:1px solid ${colors.stone};font-size:15px;line-height:1.65;white-space:pre-wrap;">${esc(input.message)}</p>`;
+
+  return emailLayout({
+    preheader: `Support ${input.ticketId} — ${input.name}`,
+    eyebrow: "Studio alert",
+    title: "New support ticket",
+    bodyHtml: body,
+  });
+}
+
+export function subscribeWelcomeHtml(input: { code: string; shopUrl: string }) {
+  const body = `
+    <p style="margin:0 0 18px;">Welcome to ZAYUNE.</p>
+    <p style="margin:0 0 18px;">Here’s a one-time welcome code for 5% off your first order.</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 20px;">
+      <tr>
+        <td align="center" style="padding:22px;background:${colors.porcelain};border:1px dashed ${colors.copper};">
+          <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:${colors.muted};">Your code</p>
+          <p style="margin:10px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:28px;letter-spacing:0.12em;color:${colors.aubergine};">${esc(input.code)}</p>
+        </td>
+      </tr>
+    </table>
+    ${ctaButton(input.shopUrl, "Shop the collection")}
+    <p style="margin:16px 0 0;color:${colors.muted};font-size:14px;">One-time use per email.</p>`;
+
+  return emailLayout({
+    preheader: `Your 5% welcome code: ${input.code}`,
+    eyebrow: "Welcome",
+    title: "A little something for you",
+    bodyHtml: body,
+  });
+}
+
+export function advanceNotifyTeamHtml(input: {
+  customerName: string;
+  customerEmail: string;
+  orderNumber: string;
+  paymentRef?: string | null;
+  paymentProofUrl?: string | null;
+  adminUrl: string;
+}) {
+  const rows = [
+    detailRow("Order", esc(input.orderNumber)),
+    detailRow(
+      "Customer",
+      `${esc(input.customerName)}<br/><span style="font-size:13px;color:${colors.muted};">${esc(input.customerEmail)}</span>`
+    ),
+  ];
+  if (input.paymentRef) {
+    rows.push(detailRow("Reference", esc(input.paymentRef)));
+  }
+
+  const body = `
+    <p style="margin:0 0 18px;">${esc(input.customerName)} marked their 30% advance as sent. Verify the transfer, then mark the order Paid in admin.</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      ${rows.join("")}
+    </table>
+    ${ctaButton(input.adminUrl, "Verify in admin")}
+    ${
+      input.paymentProofUrl
+        ? secondaryLink(input.paymentProofUrl, "View receipt")
+        : ""
+    }`;
+
+  return emailLayout({
+    preheader: `Advance marked sent — ${input.orderNumber}`,
+    eyebrow: "Studio alert",
+    title: "Advance awaiting verification",
+    bodyHtml: body,
+  });
+}
+
+export const statusLabels: Partial<Record<string, string>> = {
+  CONFIRMED: "Confirmed",
+  PACKED: "Packed",
+  SHIPPED: "Shipped",
+  DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
+};

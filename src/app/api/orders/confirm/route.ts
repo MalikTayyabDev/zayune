@@ -3,10 +3,12 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { findDemoOrder, updateDemoOrder } from "@/lib/demo-orders";
 import { ensureDatabaseUrl } from "@/lib/env";
-import { sendOrderStatusEmail } from "@/lib/email";
+import {
+  sendAdvanceNotifyEmail,
+  sendOrderStatusEmail,
+} from "@/lib/email";
 import { verifyOrderAccessToken } from "@/lib/order-token";
 import { prisma } from "@/lib/prisma";
-import { siteOrigin, storeFromEmail } from "@/lib/site";
 
 const schema = z.object({
   token: z.string().min(10),
@@ -19,48 +21,6 @@ const schema = z.object({
     .nullable()
     .or(z.literal("")),
 });
-
-async function notifyTeamAdvance(input: {
-  orderNumber: string;
-  customerName: string;
-  customerEmail: string;
-  paymentRef?: string | null;
-  paymentProofUrl?: string | null;
-}) {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) return;
-  const { Resend } = await import("resend");
-  const resend = new Resend(key);
-  const from = storeFromEmail();
-  const team = (
-    process.env.ORDER_NOTIFY_EMAILS ||
-    process.env.NEXT_PUBLIC_STUDIO_EMAIL ||
-    "store@zayune.com"
-  )
-    .split(",")
-    .map((e) => e.trim())
-    .filter(Boolean);
-  if (!team.length) return;
-  try {
-    await resend.emails.send({
-      from,
-      to: team,
-      subject: `Advance marked paid — ${input.orderNumber}`,
-      text: [
-        `${input.customerName} marked 30% advance as sent.`,
-        `Order: ${input.orderNumber}`,
-        `Email: ${input.customerEmail}`,
-        input.paymentRef ? `Reference: ${input.paymentRef}` : "",
-        input.paymentProofUrl ? `Receipt: ${input.paymentProofUrl}` : "",
-        `Verify in admin (mark Paid when transfer appears): ${siteOrigin()}/admin/orders`,
-      ]
-        .filter(Boolean)
-        .join("\n"),
-    });
-  } catch (error) {
-    console.error("[email] advance notify", error);
-  }
-}
 
 export async function POST(request: Request) {
   try {
@@ -98,7 +58,7 @@ export async function POST(request: Request) {
             ...(proof ? { paymentProofUrl: proof } : {}),
           },
         });
-        void notifyTeamAdvance({
+        void sendAdvanceNotifyEmail({
           orderNumber: updated.orderNumber,
           customerName: updated.customerName,
           customerEmail: updated.customerEmail,
