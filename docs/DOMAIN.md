@@ -28,19 +28,38 @@ Keep `DATABASE_URL`, `NEXTAUTH_SECRET`, `RESEND_API_KEY`, bank fields, and Whats
 
 Redeploy after saving env vars so `NEXTAUTH_URL` and public URL take effect (order pay links, emails, Auth.js callbacks).
 
-## 3. Resend — send from store@zayune.com
+## 3. Hostinger inbox + Resend sending (recommended)
 
-1. In [Resend](https://resend.com) → **Domains** → add `zayune.com`.
-2. Add the DNS records Resend gives you (SPF, DKIM, and optional DMARC) at your registrar.
-3. Wait until the domain is **Verified**.
-4. Confirm `RESEND_FROM_EMAIL=store@zayune.com` (or `ZAYUNE <store@zayune.com>`) on Vercel.
-5. Place a test order and confirm the confirmation email arrives From `store@zayune.com`.
+**Split of roles**
 
-Until the domain is verified, Resend will reject sends from `@zayune.com` addresses.
+| Role | Provider |
+|---|---|
+| Receive / reply in webmail | **Hostinger** (`store@zayune.com`) |
+| Site auto-sends (orders, status, alerts) | **Resend**, From `store@zayune.com` |
 
-## 4. Receiving mail at store@zayune.com
+Platform alerts use `ORDER_NOTIFY_EMAILS=store@zayune.com` → they land in Hostinger webmail.
 
-DNS/MX for *receiving* mail is separate from Resend (sending). Point MX to whatever hosts `store@zayune.com` (Google Workspace, Zoho, your registrar mailbox, etc.). Order notifications go to `ORDER_NOTIFY_EMAILS` / `NEXT_PUBLIC_STUDIO_EMAIL`.
+### Hostinger (receiving) — leave MX alone
+
+1. In Hostinger → **Emails** → confirm `store@zayune.com` exists and webmail works.
+2. Do **not** remove Hostinger **MX** records. Those control receiving.
+3. Website / Vercel DNS (`A` / `CNAME` for the site) can live on the same domain; MX stays on Hostinger.
+
+### Resend (sending)
+
+1. Sign up at [resend.com](https://resend.com) → **API Keys** → create a key → set `RESEND_API_KEY` on Vercel (and local `.env`).
+2. **Domains** → add `zayune.com`.
+3. In Hostinger **DNS** (or wherever `zayune.com` DNS is managed), add **only** the records Resend shows:
+   - DKIM `TXT` / `CNAME` (usually several)
+   - SPF: if you already have an SPF `TXT` for Hostinger, **merge** into one record, e.g.  
+     `v=spf1 include:_spf.mail.hostinger.com include:amazonses.com ~all`  
+     (use the exact `include:` Resend shows — often AWS SES). Do not create two SPF records.
+   - Optional DMARC `TXT` on `_dmarc`
+4. Wait until Resend shows the domain **Verified**.
+5. Confirm Vercel has `RESEND_FROM_EMAIL=store@zayune.com`.
+6. Place a test order: customer mail From `store@zayune.com`; team copy arrives in Hostinger inbox.
+
+Until the domain is verified, Resend will reject sends from `@zayune.com`.
 
 ## 5. Quick checks after go-live
 
