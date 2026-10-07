@@ -37,8 +37,8 @@ npm run dev
 ## Admin
 
 - URL: `/admin/login`
-- Default (from `.env`): `admin@zayune.com` / `zayune-admin`
-- Change credentials before any deployment.
+- Set `ADMIN_EMAIL` and `ADMIN_PASSWORD` in `.env` (and on Vercel for production).
+- Never commit real credentials.
 
 ## Brand assets
 
@@ -61,6 +61,4 @@ public           # logo / favicon
 
 ## Domain & email (production)
 
-Canonical site: **https://zayune.com** · studio: **store@zayune.com**
-
-Attach the domain on Vercel, set `NEXTAUTH_URL` / Resend From to `store@zayune.com`, and verify DNS in Resend. Full checklist: [`docs/DOMAIN.md`](docs/DOMAIN.md).
+Attach your domain on Vercel, set `NEXTAUTH_URL`, studio email env vars, and verify the domain in Resend. Full checklist: [`docs/DOMAIN.md`](docs/DOMAIN.md).
