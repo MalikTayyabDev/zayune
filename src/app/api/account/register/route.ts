@@ -4,21 +4,32 @@ import { getDemoCustomers } from "@/lib/demo-customers";
 import { isDemoMode } from "@/lib/demo-data";
 import { friendlyError } from "@/lib/api-error";
 import { sendWelcomeAccountEmail } from "@/lib/email";
-import { hashPassword } from "@/lib/password";
+import { consumePendingRegistration } from "@/lib/email-verification";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
-  name: z.string().min(2, "Please enter your name."),
   email: z.string().email("Please enter a valid email."),
-  password: z.string().min(8, "Password must be at least 8 characters."),
-  phone: z.string().optional(),
+  code: z
+    .string()
+    .trim()
+    .regex(/^\d{6}$/, "Enter the 6-digit code from your email."),
 });
 
 export async function POST(request: Request) {
   try {
     const data = schema.parse(await request.json());
     const email = data.email.toLowerCase();
-    const passwordHash = hashPassword(data.password);
+
+    const pending = await consumePendingRegistration(email, data.code);
+    if (!pending) {
+      return NextResponse.json(
+        {
+          error:
+            "Invalid or expired code. Request a new verification code and try again.",
+        },
+        { status: 400 }
+      );
+    }
 
     if (isDemoMode()) {
       const store = getDemoCustomers();
@@ -31,14 +42,14 @@ export async function POST(request: Request) {
       const customer = {
         id: `cus_${Date.now().toString(36)}`,
         email,
-        passwordHash,
-        name: data.name,
-        phone: data.phone || null,
+        passwordHash: pending.passwordHash,
+        name: pending.name,
+        phone: pending.phone,
         createdAt: new Date(),
         updatedAt: new Date(),
       };
       store.set(email, customer);
-      void sendWelcomeAccountEmail({ to: email, name: data.name });
+      void sendWelcomeAccountEmail({ to: email, name: pending.name });
       return NextResponse.json({ id: customer.id });
     }
 
@@ -53,13 +64,13 @@ export async function POST(request: Request) {
     const customer = await prisma.customer.create({
       data: {
         email,
-        passwordHash,
-        name: data.name,
-        phone: data.phone || null,
+        passwordHash: pending.passwordHash,
+        name: pending.name,
+        phone: pending.phone,
       },
     });
 
-    void sendWelcomeAccountEmail({ to: email, name: data.name });
+    void sendWelcomeAccountEmail({ to: email, name: pending.name });
     return NextResponse.json({ id: customer.id });
   } catch (error) {
     return NextResponse.json(

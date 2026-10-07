@@ -41,12 +41,22 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const itemCount = useCartStore((s) => s.items.reduce((n, i) => n + i.quantity, 0));
   const cartOpen = useCartStore((s) => s.drawerOpen);
   const openDrawer = useCartStore((s) => s.openDrawer);
   const wishCount = useWishlistStore((s) => s.items.length);
 
   useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > 4);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     if (!mounted) return;
@@ -97,7 +107,7 @@ export function Header() {
             }}
           />
 
-          <div className="relative z-[1] flex h-14 shrink-0 items-center justify-between border-b border-porcelain/10 px-4">
+          <div className="relative z-[1] flex min-h-14 shrink-0 items-center justify-between border-b border-porcelain/10 px-4 pb-3 pt-[max(0.85rem,env(safe-area-inset-top))]">
             <Link href="/" onClick={closeMenu} aria-label="ZAYUNE home">
               <Logo href={null} variant="light" className="h-8" />
             </Link>
@@ -186,7 +196,14 @@ export function Header() {
     );
 
   return (
-    <header className="sticky top-0 z-40 border-b border-stone/70 bg-porcelain/95 backdrop-blur-md">
+    <header
+      className={cn(
+        "sticky top-0 z-40 border-b border-stone/70 bg-porcelain/95 backdrop-blur-md transition-[padding] duration-200",
+        scrolled
+          ? "pt-[max(0.5rem,env(safe-area-inset-top))]"
+          : "pt-[env(safe-area-inset-top)]"
+      )}
+    >
       <div className="hidden border-b border-stone/60 bg-stone/20 lg:block">
         <div className="container-content flex items-center justify-between gap-3 py-3">
           <SearchBar className="max-w-xl flex-1" compact />

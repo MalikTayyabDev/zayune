@@ -13,7 +13,13 @@ type Values = {
   bankIban: string;
 };
 
-export function SettingsForm({ initial }: { initial: Values }) {
+export function SettingsForm({
+  initial,
+  adminEmailHint,
+}: {
+  initial: Values;
+  adminEmailHint?: string;
+}) {
   const [values, setValues] = useState(initial);
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -34,6 +40,30 @@ export function SettingsForm({ initial }: { initial: Values }) {
 
   return (
     <form onSubmit={onSubmit} className="max-w-xl space-y-5">
+      <div className="border border-stone bg-stone/20 px-5 py-4 text-sm text-aubergine/70">
+        <p className="text-nav text-aubergine/45">Admin login</p>
+        <p className="mt-2 leading-relaxed">
+          Change studio admin email/password in environment variables — not on
+          this form:
+        </p>
+        <ul className="mt-2 list-disc space-y-1 pl-5 text-xs">
+          <li>
+            Local <code className="text-aubergine">.env</code>:{" "}
+            <code className="text-aubergine">ADMIN_EMAIL</code>,{" "}
+            <code className="text-aubergine">ADMIN_PASSWORD</code>
+          </li>
+          <li>
+            Vercel → Project → Settings → Environment Variables → same keys →
+            Redeploy
+          </li>
+        </ul>
+        <p className="mt-2 text-xs text-aubergine/55">
+          Current admin email:{" "}
+          <span className="text-aubergine">
+            {adminEmailHint || "set ADMIN_EMAIL on the server"}
+          </span>
+        </p>
+      </div>
       <label className="block">
         <span className="text-nav text-aubergine/55">Flat shipping fee (PKR)</span>
         <input

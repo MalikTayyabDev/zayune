@@ -41,6 +41,7 @@ type Props = {
 
 export function ProductCard({ product, showQuickAdd = true }: Props) {
   const addItem = useCartStore((s) => s.addItem);
+  const openDrawer = useCartStore((s) => s.openDrawer);
   const [variantId, setVariantId] = useState(product.variants?.[0]?.id || "");
   const [adding, setAdding] = useState(false);
   const [quickView, setQuickView] = useState(false);
@@ -75,6 +76,7 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
       variantName: selected?.name,
       fulfillment: product.fulfillment || undefined,
     });
+    openDrawer();
     window.setTimeout(() => setAdding(false), 1200);
   }
 

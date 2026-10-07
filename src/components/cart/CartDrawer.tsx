@@ -45,7 +45,7 @@ export function CartDrawer() {
         )}
         aria-hidden={!open}
       >
-        <div className="flex items-center justify-between border-b border-stone px-5 py-4">
+        <div className="flex items-center justify-between border-b border-stone px-5 pb-4 pt-[max(1rem,calc(env(safe-area-inset-top)+0.75rem))]">
           <h2 className="inline-flex items-center gap-2 font-display text-2xl">
             <Icon icon={ShoppingBag} size={18} />
             Your cart

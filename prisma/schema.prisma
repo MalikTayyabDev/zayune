@@ -125,6 +125,20 @@ model Customer {
   waitlist     WaitlistEntry[]
 }
 
+/// Pending customer signup — 6-digit email verification
+model EmailVerification {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  codeHash     String
+  name         String
+  phone        String?
+  passwordHash String
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([expiresAt])
+}
+
 model WishlistItem {
   id         String   @id @default(cuid())
   customerId String?

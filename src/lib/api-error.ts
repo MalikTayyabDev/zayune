@@ -37,6 +37,19 @@ function humanizePath(key: string) {
 
 function issueToMessage(issue: ZodIssue): string {
   const key = String(issue.path[0] ?? "");
+  const msg = issue.message?.trim() || "";
+  const hasCustomMessage =
+    !!msg &&
+    !looksLikeZodJson(msg) &&
+    !msg.startsWith("String must") &&
+    !msg.startsWith("Number must") &&
+    !msg.startsWith("Required") &&
+    !msg.startsWith("Invalid enum") &&
+    msg !== "Required";
+
+  // Prefer messages we wrote in the Zod schema
+  if (hasCustomMessage) return msg;
+
   if (key && fieldHints[key]) return fieldHints[key];
 
   if (issue.code === "invalid_string" && issue.validation === "email") {
@@ -63,16 +76,6 @@ function issueToMessage(issue: ZodIssue): string {
       : "Please fill in all required fields.";
   }
 
-  if (
-    issue.message &&
-    !looksLikeZodJson(issue.message) &&
-    !issue.message.includes("Invalid")
-  ) {
-    // Prefer our field hints; only use plain custom messages
-    if (!issue.message.startsWith("String must") && !issue.message.startsWith("Required")) {
-      return issue.message;
-    }
-  }
   return "Please check your details and try again.";
 }
 

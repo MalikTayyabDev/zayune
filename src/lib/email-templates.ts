@@ -614,6 +614,31 @@ export function welcomeAccountHtml(input: {
   });
 }
 
+export function verificationCodeHtml(input: {
+  name: string;
+  code: string;
+}) {
+  const body = `
+    <p style="margin:0 0 18px;">Hi ${esc(input.name)},</p>
+    <p style="margin:0 0 18px;">Use this 6-digit code to finish creating your ZAYUNE account. It expires in 15 minutes.</p>
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:8px 0 20px;">
+      <tr>
+        <td align="center" style="padding:22px;background:${colors.porcelain};border:1px dashed ${colors.copper};">
+          <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:${colors.muted};">Verification code</p>
+          <p style="margin:10px 0 0;font-family:Georgia,'Times New Roman',serif;font-size:32px;letter-spacing:0.28em;color:${colors.aubergine};">${esc(input.code)}</p>
+        </td>
+      </tr>
+    </table>
+    <p style="margin:0;color:${colors.muted};font-size:14px;">If you didn’t request this, you can ignore this email.</p>`;
+
+  return emailLayout({
+    preheader: `Your ZAYUNE code is ${input.code}`,
+    eyebrow: "Verify email",
+    title: "Your verification code",
+    bodyHtml: body,
+  });
+}
+
 export function marketingBroadcastHtml(input: {
   headline: string;
   body: string;

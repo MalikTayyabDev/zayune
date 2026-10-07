@@ -19,6 +19,7 @@ export default async function AdminSettingsPage() {
         className="mb-10"
       />
       <SettingsForm
+        adminEmailHint={process.env.ADMIN_EMAIL || undefined}
         initial={{
           shippingFlatFee: settings.shippingFlatFee,
           bannerText: settings.bannerText || "",

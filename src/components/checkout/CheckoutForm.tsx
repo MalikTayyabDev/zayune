@@ -45,6 +45,9 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
   );
   const [paymentRef, setPaymentRef] = useState("");
   const [createAccount, setCreateAccount] = useState(false);
+  const [verifyCode, setVerifyCode] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
+  const [sendingCode, setSendingCode] = useState(false);
   const [password, setPassword] = useState("");
   const [discountInput, setDiscountInput] = useState(discountCodeStore || "");
   const [discountAmount, setDiscountAmount] = useState(0);
@@ -101,14 +104,18 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
         if (password.length < 8) {
           throw new Error("Password must be at least 8 characters.");
         }
+        if (!codeSent) {
+          throw new Error("Tap “Send code”, then enter the 6-digit email code.");
+        }
+        if (!/^\d{6}$/.test(verifyCode.trim())) {
+          throw new Error("Enter the 6-digit verification code from your email.");
+        }
         const reg = await fetch("/api/account/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            name: customerName,
             email: customerEmail,
-            phone: customerPhone || undefined,
-            password,
+            code: verifyCode.trim(),
           }),
         });
         const regData = await reg.json();
@@ -273,18 +280,80 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
               </span>
             </label>
             {createAccount && (
-              <label className="block">
-                <span className="text-nav text-aubergine/55">Create password</span>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  minLength={8}
-                  required={createAccount}
-                  placeholder="At least 8 characters"
-                  className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm outline-none focus:border-aubergine/40"
-                />
-              </label>
+              <div className="space-y-4">
+                <label className="block">
+                  <span className="text-nav text-aubergine/55">Create password</span>
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    minLength={8}
+                    required={createAccount}
+                    placeholder="At least 8 characters"
+                    className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm outline-none focus:border-aubergine/40"
+                  />
+                </label>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+                  <label className="block flex-1">
+                    <span className="text-nav text-aubergine/55">Email code</span>
+                    <input
+                      value={verifyCode}
+                      onChange={(e) => setVerifyCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      inputMode="numeric"
+                      autoComplete="one-time-code"
+                      maxLength={6}
+                      required={createAccount}
+                      placeholder="6-digit code"
+                      className="mt-2 w-full border border-stone bg-transparent px-4 py-3 text-sm tracking-widest outline-none focus:border-aubergine/40"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    disabled={sendingCode || password.length < 8}
+                    onClick={async () => {
+                      setSendingCode(true);
+                      setError("");
+                      const name =
+                        (document.querySelector(
+                          'input[name="customerName"]'
+                        ) as HTMLInputElement | null)?.value || "";
+                      const email =
+                        (document.querySelector(
+                          'input[name="customerEmail"]'
+                        ) as HTMLInputElement | null)?.value || "";
+                      const phone =
+                        (document.querySelector(
+                          'input[name="customerPhone"]'
+                        ) as HTMLInputElement | null)?.value || "";
+                      const res = await fetch("/api/account/register/send-code", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          name,
+                          email,
+                          phone: phone || undefined,
+                          password,
+                        }),
+                      });
+                      const data = await res.json();
+                      setSendingCode(false);
+                      if (!res.ok) {
+                        setError(readApiError(data, "Unable to send code"));
+                        return;
+                      }
+                      setCodeSent(true);
+                    }}
+                    className="border border-stone px-4 py-3 text-[11px] uppercase tracking-nav text-aubergine disabled:opacity-50"
+                  >
+                    {sendingCode ? "Sending…" : codeSent ? "Resend code" : "Send code"}
+                  </button>
+                </div>
+                {codeSent ? (
+                  <p className="text-xs text-sage">
+                    Code sent — check your email (and spam).
+                  </p>
+                ) : null}
+              </div>
             )}
           </fieldset>
         )}

@@ -14,6 +14,7 @@ import {
   subscribeWelcomeHtml,
   supportCustomerHtml,
   supportTeamHtml,
+  verificationCodeHtml,
   waitlistJoinedHtml,
   waitlistRestockHtml,
   welcomeAccountHtml,
@@ -544,6 +545,31 @@ export async function sendWaitlistRestockEmail(input: {
       html: waitlistRestockHtml(input),
     },
     "waitlist restock"
+  );
+}
+
+export async function sendVerificationCodeEmail(input: {
+  to: string;
+  name: string;
+  code: string;
+}) {
+  const from = storeFromEmail();
+  await safeSend(
+    {
+      from,
+      to: input.to,
+      subject: `ZAYUNE — Your verification code is ${input.code}`,
+      text: [
+        `Hi ${input.name},`,
+        "",
+        `Your ZAYUNE verification code is: ${input.code}`,
+        "It expires in 15 minutes.",
+        "",
+        "— ZAYUNE",
+      ].join("\n"),
+      html: verificationCodeHtml(input),
+    },
+    "verification code"
   );
 }
 
