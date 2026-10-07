@@ -82,7 +82,7 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
   const price = product.price + (selected?.priceDelta || 0);
 
   return (
-    <div className="fixed inset-0 z-[110] flex items-end justify-center p-0 sm:items-center sm:p-4">
+    <div className="fixed inset-0 z-[110] flex items-end justify-center p-0 sm:items-center sm:p-5">
       <button
         type="button"
         className="absolute inset-0 bg-aubergine/40"
@@ -93,24 +93,17 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
         role="dialog"
         aria-modal="true"
         aria-label={`Quick view: ${product.name}`}
-        className="relative z-10 flex max-h-[92vh] w-full max-w-md flex-col overflow-hidden bg-porcelain shadow-2xl sm:max-h-[90vh]"
+        className="relative z-10 grid max-h-[92vh] w-full max-w-4xl overflow-hidden bg-porcelain shadow-2xl sm:max-h-[88vh] md:grid-cols-2"
       >
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute right-3 top-3 z-20 bg-porcelain/90 px-2.5 py-1.5 text-nav text-aubergine/60 hover:text-copper"
-        >
-          Close
-        </button>
-
-        <div className="relative aspect-[4/5] w-full shrink-0 bg-stone/40 sm:aspect-[5/4]">
+        {/* Image — full width on mobile, left column on desktop */}
+        <div className="relative aspect-[4/5] w-full shrink-0 bg-stone/40 md:aspect-auto md:min-h-[min(88vh,560px)]">
           {image && (
             <Image
               src={image}
               alt={product.name}
               fill
               className="object-cover"
-              sizes="(max-width:640px) 100vw, 28rem"
+              sizes="(max-width:768px) 100vw, 50vw"
             />
           )}
           {oos && (
@@ -120,120 +113,133 @@ export function QuickViewModal({ product, open, onClose, initialVariantId }: Pro
           )}
         </div>
 
-        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-5 sm:p-6">
-          <p className="text-nav text-aubergine/45">{product.category.name}</p>
-          <h2 className="mt-2 font-display text-3xl text-aubergine">{product.name}</h2>
-          <p className="mt-2 font-editorial italic text-aubergine/70">
-            {product.oneLiner}
-          </p>
-          <p className="mt-4 text-lg">{formatPrice(price, product.currency)}</p>
+        {/* Details */}
+        <div className="relative flex min-h-0 min-w-0 flex-col overflow-y-auto overflow-x-hidden">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute right-4 top-4 z-10 text-nav text-aubergine/50 hover:text-copper"
+          >
+            Close
+          </button>
 
-          {product.variants && product.variants.length > 0 && (
-            <div className="mt-5">
-              <p className="mb-3 text-nav text-aubergine/50">
-                {selected?.name || "Option"}
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {product.variants.map((variant) => {
-                  const variantOos =
-                    product.fulfillment !== "MADE_TO_ORDER" &&
-                    (variant.stock ?? product.stock ?? 0) <= 0;
-                  return (
-                    <button
-                      key={variant.id}
-                      type="button"
-                      title={variant.name}
-                      onClick={() => setVariantId(variant.id)}
-                      className={cn(
-                        "h-8 w-8 rounded-full border-2 transition",
-                        variantId === variant.id
-                          ? "scale-110 border-aubergine"
-                          : "border-stone hover:border-aubergine/40",
-                        variantOos && "opacity-50"
-                      )}
-                      style={{
-                        backgroundColor: variant.swatchHex || "#D7CEC3",
-                      }}
-                    />
-                  );
-                })}
-              </div>
-            </div>
-          )}
+          <div className="flex flex-1 flex-col p-5 pr-14 sm:p-7 sm:pr-16">
+            <p className="text-nav text-aubergine/45">{product.category.name}</p>
+            <h2 className="mt-2 font-display text-[1.85rem] leading-tight text-aubergine sm:text-3xl">
+              {product.name}
+            </h2>
+            <p className="mt-2 font-editorial text-sm italic leading-relaxed text-aubergine/70">
+              {product.oneLiner}
+            </p>
+            <p className="mt-4 text-lg">{formatPrice(price, product.currency)}</p>
 
-          {oos ? (
-            <div className="mt-5">
-              <WaitlistForm
-                stacked
-                productId={product.id}
-                productName={product.name}
-                variantId={selected?.id}
-              />
-            </div>
-          ) : (
-            <div className="mt-5 flex flex-col gap-3">
-              <div className="inline-flex w-fit border border-stone">
-                <button
-                  type="button"
-                  className="h-11 w-11"
-                  onClick={() => setQty((q) => Math.max(1, q - 1))}
-                >
-                  −
-                </button>
-                <span className="flex w-10 items-center justify-center text-sm">
-                  {qty}
-                </span>
-                <button
-                  type="button"
-                  className="h-11 w-11"
-                  onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
-                >
-                  +
-                </button>
+            {product.variants && product.variants.length > 0 && (
+              <div className="mt-5">
+                <p className="mb-2.5 text-nav text-aubergine/50">
+                  {selected?.name || "Option"}
+                </p>
+                <div className="flex flex-wrap gap-2">
+                  {product.variants.map((variant) => {
+                    const variantOos =
+                      product.fulfillment !== "MADE_TO_ORDER" &&
+                      (variant.stock ?? product.stock ?? 0) <= 0;
+                    return (
+                      <button
+                        key={variant.id}
+                        type="button"
+                        title={variant.name}
+                        onClick={() => setVariantId(variant.id)}
+                        className={cn(
+                          "h-8 w-8 rounded-full border-2 transition",
+                          variantId === variant.id
+                            ? "scale-110 border-aubergine"
+                            : "border-stone hover:border-aubergine/40",
+                          variantOos && "opacity-50"
+                        )}
+                        style={{
+                          backgroundColor: variant.swatchHex || "#D7CEC3",
+                        }}
+                      />
+                    );
+                  })}
+                </div>
               </div>
-              <Button
-                type="button"
-                className="w-full"
-                onClick={() => {
-                  addItem({
-                    productId: product.id,
-                    slug: product.slug,
-                    name: product.name,
-                    price,
-                    image,
-                    quantity: qty,
-                    variantId: selected?.id,
-                    variantName: selected?.name,
-                    fulfillment: product.fulfillment || undefined,
-                  });
-                  onClose();
-                  openCart();
+            )}
+
+            {oos ? (
+              <div className="mt-5 min-w-0">
+                <WaitlistForm
+                  stacked
+                  productId={product.id}
+                  productName={product.name}
+                  variantId={selected?.id}
+                />
+              </div>
+            ) : (
+              <div className="mt-5 flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="inline-flex w-fit shrink-0 border border-stone">
+                  <button
+                    type="button"
+                    className="h-11 w-11"
+                    onClick={() => setQty((q) => Math.max(1, q - 1))}
+                  >
+                    −
+                  </button>
+                  <span className="flex w-10 items-center justify-center text-sm">
+                    {qty}
+                  </span>
+                  <button
+                    type="button"
+                    className="h-11 w-11"
+                    onClick={() => setQty((q) => Math.min(maxQty, q + 1))}
+                  >
+                    +
+                  </button>
+                </div>
+                <Button
+                  type="button"
+                  className="w-full min-w-0 sm:flex-1"
+                  onClick={() => {
+                    addItem({
+                      productId: product.id,
+                      slug: product.slug,
+                      name: product.name,
+                      price,
+                      image,
+                      quantity: qty,
+                      variantId: selected?.id,
+                      variantName: selected?.name,
+                      fulfillment: product.fulfillment || undefined,
+                    });
+                    onClose();
+                    openCart();
+                  }}
+                >
+                  Add to cart
+                </Button>
+              </div>
+            )}
+
+            <div className="mt-auto flex items-center justify-between gap-3 border-t border-stone pt-5 mt-6">
+              <WishlistButton
+                label
+                product={{
+                  productId: product.id,
+                  slug: product.slug,
+                  name: product.name,
+                  price: product.price,
+                  image: product.images[0]?.url || "",
+                  currency: product.currency,
                 }}
+              />
+              <Link
+                href={`/product/${product.slug}`}
+                onClick={onClose}
+                className="shrink-0 text-nav text-copper hover:text-aubergine"
               >
-                Add to cart
-              </Button>
+                Full details →
+              </Link>
             </div>
-          )}
-
-          <div className="mt-5 flex items-center justify-between gap-3 border-t border-stone pt-4">
-            <WishlistButton
-              label
-              product={{
-                productId: product.id,
-                slug: product.slug,
-                name: product.name,
-                price: product.price,
-                image: product.images[0]?.url || "",
-                currency: product.currency,
-              }}
-            />
-            <Link
-              href={`/product/${product.slug}`}
-              onClick={onClose}
-              className="text-nav text-copper hover:text-aubergine"
-            >
-              Full details →
-            </Link>
           </div>
         </div>
       </div>
