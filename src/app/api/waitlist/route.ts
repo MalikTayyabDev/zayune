@@ -74,9 +74,15 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ ok: true });
-  } catch {
+  } catch (error) {
+    const { friendlyError } = await import("@/lib/api-error");
     return NextResponse.json(
-      { error: "Please enter a valid email to join the waitlist." },
+      {
+        error: friendlyError(
+          error,
+          "Please enter a valid email to join the waitlist."
+        ),
+      },
       { status: 400 }
     );
   }

@@ -182,7 +182,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ id: product.id });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Invalid product data" }, { status: 400 });
+    const { friendlyError } = await import("@/lib/api-error");
+    return NextResponse.json(
+      { error: friendlyError(error, "Please check the product fields and try again.") },
+      { status: 400 }
+    );
   }
 }
 

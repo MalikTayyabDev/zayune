@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { friendlyError } from "@/lib/api-error";
 import { resolveDiscount } from "@/lib/order-pricing";
 
 const schema = z.object({
-  code: z.string().min(1),
+  code: z.string().trim().min(1, "Please enter a discount code."),
   subtotal: z.number().int().nonnegative(),
 });
 
@@ -15,8 +16,7 @@ export async function POST(request: Request) {
   } catch (error) {
     return NextResponse.json(
       {
-        error:
-          error instanceof Error ? error.message : "Unable to apply discount.",
+        error: friendlyError(error, "Unable to apply discount."),
       },
       { status: 400 }
     );

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { ImagePlus, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { Icon } from "@/components/ui/Icon";
+import { readApiError } from "@/lib/api-error";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -36,7 +37,7 @@ export function ImageUpload({
       if (guest) body.append("guest", "true");
       const res = await fetch("/api/uploads", { method: "POST", body });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
+      if (!res.ok) throw new Error(readApiError(data, "Upload failed"));
       onChange(data.url);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Upload failed");

@@ -119,7 +119,11 @@ export async function POST(request: Request) {
       paymentStatus: updated?.paymentStatus,
       message: "Order updated.",
     });
-  } catch {
-    return NextResponse.json({ error: "Unable to confirm order." }, { status: 400 });
+  } catch (error) {
+    const { friendlyError } = await import("@/lib/api-error");
+    return NextResponse.json(
+      { error: friendlyError(error, "Unable to confirm order.") },
+      { status: 400 }
+    );
   }
 }

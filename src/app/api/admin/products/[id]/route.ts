@@ -190,7 +190,11 @@ export async function PUT(request: Request, { params }: Props) {
     return NextResponse.json({ id: params.id });
   } catch (error) {
     console.error(error);
-    return NextResponse.json({ error: "Invalid product data" }, { status: 400 });
+    const { friendlyError } = await import("@/lib/api-error");
+    return NextResponse.json(
+      { error: friendlyError(error, "Please check the product fields and try again.") },
+      { status: 400 }
+    );
   }
 }
 

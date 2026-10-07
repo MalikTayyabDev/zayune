@@ -113,7 +113,11 @@ export async function PATCH(request: Request, { params }: Props) {
     }
 
     return NextResponse.json(order);
-  } catch {
-    return NextResponse.json({ error: "Unable to update order" }, { status: 400 });
+  } catch (error) {
+    const { friendlyError } = await import("@/lib/api-error");
+    return NextResponse.json(
+      { error: friendlyError(error, "Unable to update order.") },
+      { status: 400 }
+    );
   }
 }

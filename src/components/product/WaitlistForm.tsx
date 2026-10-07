@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { readApiError } from "@/lib/api-error";
 
 type Props = {
   productId: string;
@@ -31,7 +32,7 @@ export function WaitlistForm({
         body: JSON.stringify({ email, productId, variantId }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Unable to join waitlist");
+      if (!res.ok) throw new Error(readApiError(data, "Unable to join waitlist"));
       setStatus("done");
       setMessage(`You're on the list for ${productName}. We'll email you when it's back.`);
     } catch (err) {

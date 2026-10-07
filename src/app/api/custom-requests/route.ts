@@ -94,9 +94,15 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json({ id: entry.id });
-  } catch {
+  } catch (error) {
+    const { friendlyError } = await import("@/lib/api-error");
     return NextResponse.json(
-      { error: "Unable to submit request. Check your details and try again." },
+      {
+        error: friendlyError(
+          error,
+          "Unable to submit request. Check your details and try again."
+        ),
+      },
       { status: 400 }
     );
   }

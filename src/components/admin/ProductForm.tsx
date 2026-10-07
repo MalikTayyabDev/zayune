@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { FormSelect } from "@/components/ui/FormControls";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { readApiError } from "@/lib/api-error";
 import { generateProductSku, generateVariantSku } from "@/lib/sku";
 
 type Category = { id: string; name: string };
@@ -174,7 +175,7 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
 
     const data = await res.json();
     if (!res.ok) {
-      setError(data.error || "Unable to save product");
+      setError(readApiError(data, "Unable to save product"));
       setLoading(false);
       return;
     }

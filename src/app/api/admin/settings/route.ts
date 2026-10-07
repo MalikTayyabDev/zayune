@@ -50,7 +50,11 @@ export async function PUT(request: Request) {
       },
     });
     return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "Invalid settings" }, { status: 400 });
+  } catch (error) {
+    const { friendlyError } = await import("@/lib/api-error");
+    return NextResponse.json(
+      { error: friendlyError(error, "Unable to save settings.") },
+      { status: 400 }
+    );
   }
 }

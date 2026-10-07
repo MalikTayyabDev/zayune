@@ -2,14 +2,15 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getDemoCustomers } from "@/lib/demo-customers";
 import { isDemoMode } from "@/lib/demo-data";
+import { friendlyError } from "@/lib/api-error";
 import { sendWelcomeAccountEmail } from "@/lib/email";
 import { hashPassword } from "@/lib/password";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
-  name: z.string().min(2),
-  email: z.string().email(),
-  password: z.string().min(8),
+  name: z.string().min(2, "Please enter your name."),
+  email: z.string().email("Please enter a valid email."),
+  password: z.string().min(8, "Password must be at least 8 characters."),
   phone: z.string().optional(),
 });
 
@@ -60,9 +61,14 @@ export async function POST(request: Request) {
 
     void sendWelcomeAccountEmail({ to: email, name: data.name });
     return NextResponse.json({ id: customer.id });
-  } catch {
+  } catch (error) {
     return NextResponse.json(
-      { error: "Unable to create account. Check your details and try again." },
+      {
+        error: friendlyError(
+          error,
+          "Unable to create account. Check your details and try again."
+        ),
+      },
       { status: 400 }
     );
   }

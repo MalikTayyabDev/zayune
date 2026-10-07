@@ -87,9 +87,10 @@ export async function PATCH(request: Request) {
       email: updated.email,
       phone: updated.phone,
     });
-  } catch {
+  } catch (error) {
+    const { friendlyError } = await import("@/lib/api-error");
     return NextResponse.json(
-      { error: "Unable to update profile." },
+      { error: friendlyError(error, "Unable to update profile.") },
       { status: 400 }
     );
   }

@@ -11,6 +11,7 @@ import {
 import { useMemo, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { FormCheckbox, FormInput, FormTextarea } from "@/components/ui/FormControls";
+import { readApiError } from "@/lib/api-error";
 import { cn } from "@/lib/utils";
 
 type Msg = { role: "bot" | "user"; text: string };
@@ -111,7 +112,7 @@ export function SupportChat() {
     const data = await res.json();
     setLoading(false);
     if (!res.ok) {
-      setError(data.error || "Unable to create ticket");
+      setError(readApiError(data, "Unable to create ticket"));
       return;
     }
     setTicketId(data.ticketId);

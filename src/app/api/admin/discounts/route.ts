@@ -8,10 +8,11 @@ import {
   type DemoDiscount,
 } from "@/lib/demo-discounts";
 import { isDemoMode } from "@/lib/demo-data";
+import { friendlyError } from "@/lib/api-error";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
-  code: z.string().min(2).max(32),
+  code: z.string().trim().min(2, "Please enter a discount code (at least 2 characters).").max(32),
   type: z.enum(["PERCENT", "FIXED"]),
   value: z.number().int().positive(),
   minSubtotal: z.number().int().nonnegative().default(0),
@@ -89,9 +90,14 @@ export async function POST(request: Request) {
       },
     });
     return NextResponse.json(created);
-  } catch {
+  } catch (error) {
     return NextResponse.json(
-      { error: "Unable to create discount. Code may already exist." },
+      {
+        error: friendlyError(
+          error,
+          "Unable to create discount. Code may already exist."
+        ),
+      },
       { status: 400 }
     );
   }

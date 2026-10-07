@@ -6,6 +6,7 @@ import {
   FormInput,
   FormTextarea,
 } from "@/components/ui/FormControls";
+import { readApiError } from "@/lib/api-error";
 
 export function ContactForm() {
   const [loading, setLoading] = useState(false);
@@ -31,7 +32,7 @@ export function ContactForm() {
     const data = await res.json();
     setLoading(false);
     if (!res.ok) {
-      setError(data.error || "Unable to send message.");
+      setError(readApiError(data, "Unable to send message."));
       return;
     }
     setTicketId(data.ticketId);

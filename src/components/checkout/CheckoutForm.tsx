@@ -7,6 +7,7 @@ import { signIn, useSession } from "next-auth/react";
 import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
+import { readApiError } from "@/lib/api-error";
 import { useCartStore } from "@/lib/cart-store";
 import {
   formatAdvance,
@@ -61,21 +62,28 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
 
   async function applyDiscount() {
     setError("");
+    const code = discountInput.trim();
+    if (!code) {
+      setDiscountAmount(0);
+      setDiscountLabel(null);
+      setError("Please enter a discount code.");
+      return;
+    }
     const res = await fetch("/api/discounts/validate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: discountInput, subtotal }),
+      body: JSON.stringify({ code, subtotal }),
     });
     const data = await res.json();
     if (!res.ok) {
       setDiscountAmount(0);
       setDiscountLabel(null);
-      setError(data.error || "Invalid code");
+      setError(readApiError(data, "Invalid or expired code."));
       return;
     }
     setDiscountAmount(data.discountAmount || 0);
     setDiscountLabel(data.label || data.discountCode);
-    setDiscountCodeStore(data.discountCode || discountInput);
+    setDiscountCodeStore(data.discountCode || code);
   }
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -105,7 +113,7 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
         });
         const regData = await reg.json();
         if (!reg.ok) {
-          throw new Error(regData.error || "Unable to create account");
+          throw new Error(readApiError(regData, "Unable to create account"));
         }
         await signIn("credentials", {
           email: customerEmail,
@@ -141,7 +149,7 @@ export function CheckoutForm({ shippingFee, providers }: Props) {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Unable to place order");
+        throw new Error(readApiError(data, "Unable to place order"));
       }
 
       // Bank/Raast → pay link (set as redirectUrl). COD → thank-you page.

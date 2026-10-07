@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { FormInput } from "@/components/ui/FormControls";
+import { readApiError } from "@/lib/api-error";
 
 const STORAGE_KEY = "zayune_subscribe_dismissed";
 
@@ -40,7 +41,7 @@ export function SubscribePopup() {
     const data = await res.json();
     setLoading(false);
     if (!res.ok) {
-      setError(data.error || "Unable to subscribe");
+      setError(readApiError(data, "Unable to subscribe"));
       return;
     }
     setCode(data.code || "SUBSCRIBE5");

@@ -330,14 +330,18 @@ export async function POST(request: Request) {
       requiresAdvance: needsAdvance,
     });
   } catch (error) {
+    const { friendlyError } = await import("@/lib/api-error");
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: "Please check your details and try again." },
+        { error: friendlyError(error, "Please check your details and try again.") },
         { status: 400 }
       );
     }
     if (error instanceof Error) {
-      return NextResponse.json({ error: error.message }, { status: 400 });
+      return NextResponse.json(
+        { error: friendlyError(error, "Unable to place order. Please try again.") },
+        { status: 400 }
+      );
     }
     console.error(error);
     return NextResponse.json(

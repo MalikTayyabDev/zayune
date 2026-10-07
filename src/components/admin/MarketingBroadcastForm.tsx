@@ -7,6 +7,7 @@ import {
   FormSelect,
   FormTextarea,
 } from "@/components/ui/FormControls";
+import { readApiError } from "@/lib/api-error";
 
 export function MarketingBroadcastForm() {
   const [audience, setAudience] = useState<"subscribers" | "customers" | "all">(
@@ -74,7 +75,7 @@ export function MarketingBroadcastForm() {
     const data = await res.json();
     setLoading(false);
     if (!res.ok) {
-      setError(data.error || "Unable to send.");
+      setError(readApiError(data, "Unable to send."));
       return;
     }
     setResult(data);

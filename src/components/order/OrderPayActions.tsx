@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { readApiError } from "@/lib/api-error";
 
 type Props = {
   token: string;
@@ -41,7 +42,7 @@ export function OrderPayActions({
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Unable to update order");
+      if (!res.ok) throw new Error(readApiError(data, "Unable to update order"));
       setMessage(data.message || "Updated.");
       router.refresh();
     } catch (err) {

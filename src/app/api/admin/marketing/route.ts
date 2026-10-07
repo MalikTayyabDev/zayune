@@ -90,13 +90,13 @@ export async function POST(request: Request) {
 
     return NextResponse.json(result);
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Check subject, headline, and message." },
-        { status: 400 }
-      );
-    }
+    const { friendlyError } = await import("@/lib/api-error");
     console.error(error);
-    return NextResponse.json({ error: "Unable to send broadcast." }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: friendlyError(error, "Unable to send broadcast."),
+      },
+      { status: 400 }
+    );
   }
 }

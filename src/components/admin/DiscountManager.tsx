@@ -8,6 +8,7 @@ import {
   FormInput,
   FormSelect,
 } from "@/components/ui/FormControls";
+import { readApiError } from "@/lib/api-error";
 
 type Discount = {
   id: string;
@@ -75,7 +76,7 @@ export function DiscountManager({ discounts }: { discounts: Discount[] }) {
     setLoading(false);
     if (!res.ok) {
       const data = await res.json();
-      setError(data.error || "Unable to create");
+      setError(readApiError(data, "Unable to create discount"));
       return;
     }
     setCode("");

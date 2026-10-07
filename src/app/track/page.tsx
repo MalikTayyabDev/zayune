@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense, useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { readApiError } from "@/lib/api-error";
 import { formatPrice } from "@/lib/utils";
 
 type TrackResult = {
@@ -47,7 +48,7 @@ function TrackForm() {
     const data = await res.json();
     setLoading(false);
     if (!res.ok) {
-      setError(data.error || "Order not found");
+      setError(readApiError(data, "Order not found"));
       return;
     }
     setResult(data);

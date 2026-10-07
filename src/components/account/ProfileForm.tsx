@@ -4,6 +4,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { readApiError } from "@/lib/api-error";
 
 type Props = {
   name: string;
@@ -42,7 +43,7 @@ export function ProfileForm({ name, email, phone }: Props) {
     setLoading(false);
 
     if (!res.ok) {
-      setError(data.error || "Unable to save");
+      setError(readApiError(data, "Unable to save"));
       return;
     }
 

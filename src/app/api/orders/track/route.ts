@@ -70,7 +70,11 @@ export async function POST(request: Request) {
       customerName: order.customerName,
       updatedAt: order.updatedAt,
     });
-  } catch {
-    return NextResponse.json({ error: "Invalid lookup details." }, { status: 400 });
+  } catch (error) {
+    const { friendlyError } = await import("@/lib/api-error");
+    return NextResponse.json(
+      { error: friendlyError(error, "Please enter a valid order number and email.") },
+      { status: 400 }
+    );
   }
 }

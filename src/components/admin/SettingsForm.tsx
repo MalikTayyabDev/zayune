@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { readApiError } from "@/lib/api-error";
 
 type Values = {
   shippingFlatFee: number;
@@ -27,7 +28,7 @@ export function SettingsForm({ initial }: { initial: Values }) {
       body: JSON.stringify(values),
     });
     const data = await res.json();
-    setMessage(res.ok ? "Saved." : data.error || "Unable to save");
+    setMessage(res.ok ? "Saved." : readApiError(data, "Unable to save"));
     setLoading(false);
   }
 

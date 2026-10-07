@@ -71,9 +71,10 @@ export async function PATCH(request: Request, { params }: Params) {
     }
 
     return NextResponse.json(updated);
-  } catch {
+  } catch (error) {
+    const { friendlyError } = await import("@/lib/api-error");
     return NextResponse.json(
-      { error: "Unable to update request." },
+      { error: friendlyError(error, "Unable to update request.") },
       { status: 400 }
     );
   }

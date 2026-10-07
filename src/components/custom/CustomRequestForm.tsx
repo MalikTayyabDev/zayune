@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { ImageUpload } from "@/components/ui/ImageUpload";
+import { readApiError } from "@/lib/api-error";
 import {
   BUDGET_RANGES,
   OCCASIONS,
@@ -52,7 +53,7 @@ export function CustomRequestForm() {
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Unable to submit request");
+        throw new Error(readApiError(data, "Unable to submit request"));
       }
       setDone({
         name: payload.name,

@@ -88,10 +88,11 @@ export async function POST(request: Request) {
     void sendSubscribeEmail({ to: email, code: CODE });
     return NextResponse.json({ code: CODE });
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return NextResponse.json({ error: "Enter a valid email." }, { status: 400 });
-    }
+    const { friendlyError } = await import("@/lib/api-error");
     console.error(error);
-    return NextResponse.json({ error: "Unable to subscribe" }, { status: 500 });
+    return NextResponse.json(
+      { error: friendlyError(error, "Enter a valid email.") },
+      { status: 400 }
+    );
   }
 }
