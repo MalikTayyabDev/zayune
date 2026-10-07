@@ -7,6 +7,8 @@ import { Header } from "@/components/layout/Header";
 import { SubscribePopup } from "@/components/marketing/SubscribePopup";
 import { SessionProvider } from "@/components/providers/SessionProvider";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
+import { ConsentScripts } from "@/components/cookies/ConsentScripts";
+import { CookieConsent } from "@/components/cookies/CookieConsent";
 import { SupportChat } from "@/components/support/SupportChat";
 import { WhatsAppFloat } from "@/components/support/WhatsAppFloat";
 import { siteConfig } from "@/lib/site";
@@ -102,6 +104,8 @@ export default function RootLayout({
           <WhatsAppFloat />
           <SupportChat />
           <SubscribePopup />
+          <CookieConsent />
+          <ConsentScripts />
         </SessionProvider>
       </body>
     </html>

@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { CopperStar } from "@/components/brand/CopperStar";
+import { CookieSettingsButton } from "@/components/cookies/CookieSettingsButton";
 import { InstagramIcon } from "@/components/ui/BrandIcons";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
@@ -41,6 +42,7 @@ const columns = [
       { href: "/contact", label: "Contact" },
       { href: "/shipping-returns", label: "Shipping & returns" },
       { href: "/privacy", label: "Privacy" },
+      { href: "/cookies", label: "Cookies" },
       { href: "/journal", label: "Journal" },
     ],
   },
@@ -137,9 +139,12 @@ export function Footer() {
               WhatsApp
             </a>
           </div>
-          <p className="text-[11px] uppercase tracking-nav text-porcelain/40">
-            © {new Date().getFullYear()} ZAYUNE · Designed, not just made
-          </p>
+          <div className="flex flex-col items-start gap-2 sm:items-end">
+            <CookieSettingsButton />
+            <p className="text-[11px] uppercase tracking-nav text-porcelain/40">
+              © {new Date().getFullYear()} ZAYUNE · Designed, not just made
+            </p>
+          </div>
         </div>
       </div>
     </footer>
