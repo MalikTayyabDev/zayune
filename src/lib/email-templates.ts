@@ -119,16 +119,32 @@ export function emailLayout(input: {
               <p style="margin:0;font-family:Georgia,'Times New Roman',serif;font-size:13px;color:${colors.porcelain};">
                 Designed, not just made.
               </p>
-              <p style="margin:14px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:12px;letter-spacing:0.08em;color:${colors.stone};">
-                Follow us on Instagram<br/>
-                <a href="${esc(siteConfig.instagram)}" target="_blank" style="color:${colors.brass};text-decoration:none;font-size:13px;letter-spacing:0.14em;">
-                  ${esc(siteConfig.instagramHandle)}
-                </a>
-              </p>
-              <p style="margin:14px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.1em;color:${colors.stone};">
-                <a href="${esc(siteConfig.instagram)}" target="_blank" style="color:${colors.brass};text-decoration:underline;">${esc(siteConfig.instagram)}</a>
-              </p>
-              <p style="margin:14px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.1em;color:${colors.stone};">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:16px 0 0;">
+                <tr>
+                  <td valign="middle" style="padding-right:10px;">
+                    <a href="${esc(siteConfig.instagram)}" target="_blank" style="text-decoration:none;">
+                      <img
+                        src="${esc(`${site}/instagram-icon.png`)}"
+                        width="22"
+                        height="22"
+                        alt="Instagram"
+                        style="display:block;width:22px;height:22px;border:0;outline:none;"
+                      />
+                    </a>
+                  </td>
+                  <td valign="middle">
+                    <p style="margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:12px;color:${colors.stone};">
+                      Follow us on Instagram
+                    </p>
+                    <p style="margin:4px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;letter-spacing:0.08em;">
+                      <a href="${esc(siteConfig.instagram)}" target="_blank" style="color:${colors.brass};text-decoration:none;">
+                        ${esc(siteConfig.instagramHandle)}
+                      </a>
+                    </p>
+                  </td>
+                </tr>
+              </table>
+              <p style="margin:16px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:11px;letter-spacing:0.1em;color:${colors.stone};">
                 <a href="${esc(site)}" style="color:${colors.brass};text-decoration:none;">zayune.com</a>
                 &nbsp;·&nbsp;
                 <a href="mailto:${esc(siteConfig.email)}" style="color:${colors.brass};text-decoration:none;">${esc(siteConfig.email)}</a>
@@ -250,27 +266,150 @@ export function orderConfirmationTeamHtml(input: {
   });
 }
 
+const statusJourney = ["CONFIRMED", "PACKED", "SHIPPED", "DELIVERED"] as const;
+
+function statusProgressHtml(active: string) {
+  if (active === "CANCELLED" || active === "PENDING") return "";
+  const activeIdx = statusJourney.indexOf(
+    active as (typeof statusJourney)[number]
+  );
+  if (activeIdx < 0) return "";
+
+  const labels: Record<(typeof statusJourney)[number], string> = {
+    CONFIRMED: "Confirmed",
+    PACKED: "Packed",
+    SHIPPED: "Shipped",
+    DELIVERED: "Delivered",
+  };
+
+  const cells = statusJourney
+    .map((step, i) => {
+      const on = i <= activeIdx;
+      return `
+        <td align="center" width="25%" style="padding:0 2px;vertical-align:top;">
+          <div style="height:4px;background:${on ? colors.copper : colors.stone};border-radius:2px;font-size:0;line-height:0;">&nbsp;</div>
+          <p style="margin:8px 0 0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:${on ? colors.aubergine : colors.muted};">
+            ${labels[step]}
+          </p>
+        </td>`;
+    })
+    .join("");
+
+  return `
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 22px;">
+      <tr>${cells}</tr>
+    </table>`;
+}
+
+export const statusLabels: Record<string, string> = {
+  CONFIRMED: "Confirmed",
+  PACKED: "Packed",
+  SHIPPED: "Shipped",
+  DELIVERED: "Delivered",
+  CANCELLED: "Cancelled",
+};
+
+/** Distinct copy + subject per order status change. */
+export const statusEmailCopy: Record<
+  string,
+  {
+    subjectSuffix: string;
+    preheader: string;
+    eyebrow: string;
+    title: string;
+    message: string;
+    ctaLabel: string;
+    showProgress: boolean;
+  }
+> = {
+  CONFIRMED: {
+    subjectSuffix: "confirmed",
+    preheader: "We’re preparing your piece with care",
+    eyebrow: "Order confirmed",
+    title: "Your order is confirmed",
+    message:
+      "Thank you — your order is confirmed and with our studio. We’re preparing your piece carefully and will update you again when it’s packed.",
+    ctaLabel: "Track your order",
+    showProgress: true,
+  },
+  PACKED: {
+    subjectSuffix: "is packed",
+    preheader: "Your order is packed and nearly ready to leave",
+    eyebrow: "Packed & ready",
+    title: "Your order is packed",
+    message:
+      "Good news — your order has been packed with care and is nearly ready to leave the studio. We’ll write again as soon as it’s on its way.",
+    ctaLabel: "Track your order",
+    showProgress: true,
+  },
+  SHIPPED: {
+    subjectSuffix: "has shipped",
+    preheader: "Your ZAYUNE order is on its way",
+    eyebrow: "On its way",
+    title: "Your order has shipped",
+    message:
+      "Your order has left the studio and is on its way to you. Keep this email handy for your order number — we’ll share tracking details separately if available.",
+    ctaLabel: "Track shipment",
+    showProgress: true,
+  },
+  DELIVERED: {
+    subjectSuffix: "delivered",
+    preheader: "Your order has been marked as delivered",
+    eyebrow: "Delivered",
+    title: "Your order was delivered",
+    message:
+      "Your order has been marked as delivered. We hope it feels as considered as it looks — thank you for choosing ZAYUNE.",
+    ctaLabel: "View order",
+    showProgress: true,
+  },
+  CANCELLED: {
+    subjectSuffix: "cancelled",
+    preheader: "Your order has been cancelled",
+    eyebrow: "Order cancelled",
+    title: "Your order was cancelled",
+    message:
+      "Your order has been cancelled. If this wasn’t expected, reply to this email or message us on WhatsApp and we’ll help sort it out.",
+    ctaLabel: "Contact the studio",
+    showProgress: false,
+  },
+};
+
 export function orderStatusCustomerHtml(input: {
   customerName: string;
   orderNumber: string;
-  statusLabel: string;
-  message: string;
+  status: string;
   trackUrl: string;
+  contactUrl?: string;
 }) {
+  const copy = statusEmailCopy[input.status];
+  if (!copy) {
+    return emailLayout({
+      eyebrow: "Order update",
+      title: "Order update",
+      bodyHtml: `<p>Order ${esc(input.orderNumber)} was updated.</p>`,
+    });
+  }
+
+  const ctaHref =
+    input.status === "CANCELLED"
+      ? input.contactUrl || input.trackUrl
+      : input.trackUrl;
+
   const body = `
+    ${copy.showProgress ? statusProgressHtml(input.status) : ""}
     <p style="margin:0 0 18px;">Dear ${esc(input.customerName)},</p>
-    <p style="margin:0 0 18px;">${esc(input.message)}</p>
+    <p style="margin:0 0 18px;">${esc(copy.message)}</p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
       ${detailRow("Order", esc(input.orderNumber))}
-      ${detailRow("Status", esc(input.statusLabel))}
+      ${detailRow("Status", esc(statusLabels[input.status] || input.status))}
     </table>
-    ${ctaButton(input.trackUrl, "Track order")}
+    ${ctaButton(ctaHref, copy.ctaLabel)}
     <p style="margin:20px 0 0;color:${colors.muted};font-size:14px;">Questions? Reply to this email or message us on WhatsApp.</p>`;
 
   return emailLayout({
-    preheader: `Order ${input.orderNumber} is now ${input.statusLabel}`,
-    eyebrow: "Order update",
-    title: input.statusLabel,
+    preheader: `${copy.preheader} · ${input.orderNumber}`,
+    eyebrow: copy.eyebrow,
+    title: copy.title,
     bodyHtml: body,
   });
 }
@@ -382,11 +521,3 @@ export function advanceNotifyTeamHtml(input: {
     bodyHtml: body,
   });
 }
-
-export const statusLabels: Partial<Record<string, string>> = {
-  CONFIRMED: "Confirmed",
-  PACKED: "Packed",
-  SHIPPED: "Shipped",
-  DELIVERED: "Delivered",
-  CANCELLED: "Cancelled",
-};

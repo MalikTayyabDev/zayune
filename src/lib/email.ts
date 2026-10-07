@@ -5,12 +5,13 @@ import {
   orderConfirmationCustomerHtml,
   orderConfirmationTeamHtml,
   orderStatusCustomerHtml,
+  statusEmailCopy,
   statusLabels,
   subscribeWelcomeHtml,
   supportCustomerHtml,
   supportTeamHtml,
 } from "@/lib/email-templates";
-import { siteOrigin, storeFromEmail } from "@/lib/site";
+import { siteConfig, siteOrigin, storeFromEmail } from "@/lib/site";
 
 function getResend() {
   const key = process.env.RESEND_API_KEY;
@@ -51,18 +52,6 @@ async function safeSend(
     console.error(`[email failed] ${label}`, error);
   }
 }
-
-const statusCopy: Partial<Record<OrderStatus, string>> = {
-  CONFIRMED:
-    "Your order has been confirmed. We're preparing your piece with care.",
-  PACKED: "Your order has been packed and is nearly on its way.",
-  SHIPPED:
-    "Your order has shipped. You'll receive tracking details separately if available.",
-  DELIVERED:
-    "Your order has been marked as delivered. We hope it feels as considered as it looks.",
-  CANCELLED:
-    "Your order has been cancelled. If this is unexpected, reply to this email or WhatsApp us.",
-};
 
 export async function sendOrderConfirmationEmail(input: {
   to: string;
@@ -189,31 +178,41 @@ export async function sendOrderStatusEmail(input: {
   status: OrderStatus;
 }) {
   const from = storeFromEmail();
-  const body = statusCopy[input.status];
-  if (!body) return;
+  const copy = statusEmailCopy[input.status];
+  if (!copy) return;
   const site = siteOrigin();
   const trackUrl = `${site}/track?order=${encodeURIComponent(input.orderNumber)}`;
+  const contactUrl = `${site}/contact`;
   const statusLabel = statusLabels[input.status] || input.status;
+  const subject = `ZAYUNE — Order ${input.orderNumber} ${copy.subjectSuffix}`;
 
   await safeSend(
     {
       from,
       to: input.to,
-      subject: `ZAYUNE — Order ${input.orderNumber} update`,
+      subject,
       text: [
         `Dear ${input.customerName},`,
         "",
-        body,
+        copy.message,
+        "",
         `Order number: ${input.orderNumber}`,
+        `Status: ${statusLabel}`,
+        "",
+        input.status === "CANCELLED"
+          ? `Contact us: ${contactUrl}`
+          : `Track: ${trackUrl}`,
+        "",
+        `Follow us on Instagram: ${siteConfig.instagramHandle}`,
         "",
         "— ZAYUNE",
       ].join("\n"),
       html: orderStatusCustomerHtml({
         customerName: input.customerName,
         orderNumber: input.orderNumber,
-        statusLabel,
-        message: body,
+        status: input.status,
         trackUrl,
+        contactUrl,
       }),
     },
     "status update"
