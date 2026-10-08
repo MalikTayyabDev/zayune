@@ -26,6 +26,15 @@ const nextConfig = {
       {
         source: "/sitemap.xml",
         headers: [
+          { key: "Content-Type", value: "text/xml; charset=utf-8" },
+          { key: "Cache-Control", value: "public, s-maxage=3600, stale-while-revalidate=86400" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+        ],
+      },
+      {
+        source: "/sitemap/sitemap.xml",
+        headers: [
+          { key: "Content-Type", value: "text/xml; charset=utf-8" },
           { key: "Cache-Control", value: "public, s-maxage=3600, stale-while-revalidate=86400" },
           { key: "X-Content-Type-Options", value: "nosniff" },
         ],

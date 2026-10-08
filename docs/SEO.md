@@ -31,9 +31,13 @@ Open these in a browser (expect **200**, not 500):
 ## Submit in Google Search Console
 
 1. Add property **Domain** `zayune.com` (or URL-prefix `https://zayune.com`) and verify DNS/ownership.
-2. **Sitemaps** → submit exactly: `https://zayune.com/sitemap.xml`
-3. If GSC still shows a cached error, wait a few hours or resubmit after redeploy (sometimes appending `?v=2` once helps force a re-fetch; prefer the clean URL long-term).
-4. Use **URL Inspection** on the homepage and one product URL → Request indexing.
+2. Confirm live URLs return **200** XML:
+   - `https://zayune.com/sitemap.xml`
+   - `https://zayune.com/sitemap/sitemap.xml` (same content; use this if GSC is stuck)
+3. **Sitemaps** → submit: `https://zayune.com/sitemap/sitemap.xml`  
+   (If `/sitemap.xml` still shows **Couldn't fetch**, that status is often a GSC cache of an older failure — submit the nested path instead.)
+4. Optional: also keep `https://zayune.com/sitemap.xml` submitted; either is fine once Success appears.
+5. Use **URL Inspection** on the homepage and one product URL → Request indexing.
 
 ## What we index
 
