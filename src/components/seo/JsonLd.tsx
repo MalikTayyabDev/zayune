@@ -1,14 +1,15 @@
 import { siteConfig } from "@/lib/site";
 
 export function OrganizationJsonLd() {
-  const data = {
+  const base = siteConfig.url.replace(/\/$/, "");
+  const organization = {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: siteConfig.name,
-    url: siteConfig.url,
+    url: base,
     description: siteConfig.description,
-    logo: `${siteConfig.url}/logo.png`,
-    image: `${siteConfig.url}/logo.png`,
+    logo: `${base}/logo.png`,
+    image: `${base}/logo.png`,
     sameAs: siteConfig.sameAs,
     email: siteConfig.email,
     areaServed: "PK",
@@ -16,15 +17,39 @@ export function OrganizationJsonLd() {
       "@type": "Brand",
       name: siteConfig.name,
       slogan: siteConfig.tagline,
-      logo: `${siteConfig.url}/logo.png`,
+      logo: `${base}/logo.png`,
+    },
+  };
+
+  const website = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: siteConfig.name,
+    url: base,
+    description: siteConfig.description,
+    inLanguage: "en-PK",
+    publisher: { "@type": "Organization", name: siteConfig.name },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${base}/shop?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
     },
   };
 
   return (
-    <script
-      type="application/ld+json"
-      dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }}
+      />
+    </>
   );
 }
 

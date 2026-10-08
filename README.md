@@ -62,3 +62,7 @@ public           # logo / favicon
 ## Domain & email (production)
 
 Attach your domain on Vercel, set `NEXTAUTH_URL`, studio email env vars, and verify the domain in Resend. Full checklist: [`docs/DOMAIN.md`](docs/DOMAIN.md).
+
+## SEO & Search Console
+
+Set `NEXT_PUBLIC_SITE_URL=https://zayune.com` (not `*.vercel.app`), redeploy, then confirm `/robots.txt` and `/sitemap.xml` on the custom domain before submitting the sitemap in Google Search Console. Checklist: [`docs/SEO.md`](docs/SEO.md).

@@ -38,7 +38,8 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
-    default: "ZAYUNE — Designed, not just made. | Handmade Jewelry & Crochet Pakistan",
+    default:
+      "ZAYUNE — Designed, not just made. | Handmade Jewelry & Crochet Pakistan",
     template: "%s · ZAYUNE",
   },
   description: siteConfig.description,
@@ -48,11 +49,13 @@ export const metadata: Metadata = {
     "crochet flowers",
     "handmade keychains",
     "custom crochet orders",
-    "zayune.pk",
+    "handmade accessories Pakistan",
     "designer handmade accessories",
   ],
   authors: [{ name: "ZAYUNE" }],
   creator: "ZAYUNE",
+  publisher: "ZAYUNE",
+  category: "shopping",
   openGraph: {
     title: "ZAYUNE — Designed, not just made.",
     description: siteConfig.description,
@@ -60,7 +63,14 @@ export const metadata: Metadata = {
     siteName: "ZAYUNE",
     locale: siteConfig.locale,
     type: "website",
-    images: [{ url: "/logo.png", width: 512, height: 512, alt: "ZAYUNE" }],
+    images: [
+      {
+        url: "/logo.png",
+        width: 512,
+        height: 512,
+        alt: "ZAYUNE handmade accessories",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -74,7 +84,13 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
-    googleBot: { index: true, follow: true },
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
   },
   icons: {
     icon: [
