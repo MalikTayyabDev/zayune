@@ -133,18 +133,18 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
               {/* Soft scrim so mobile CTAs stay readable */}
               <div
                 className={cn(
-                  "pointer-events-none absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-aubergine/45 to-transparent sm:hidden",
+                  "pointer-events-none absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-aubergine/55 via-aubergine/20 to-transparent sm:hidden",
                   inView ? "opacity-100" : "opacity-0",
-                  "transition-opacity duration-500"
+                  "transition-opacity duration-700"
                 )}
               />
             </div>
           </Link>
 
-          <div className="absolute left-2 top-2 z-10 flex flex-col gap-1.5 sm:left-3 sm:top-3">
+          <div className="absolute left-2 top-2 z-10 flex flex-col items-start gap-1.5 sm:left-3 sm:top-3 sm:gap-2">
             <span
               className={cn(
-                "inline-flex h-6 items-center justify-center gap-1 border border-stone/80 bg-porcelain/95 px-1.5 text-[8px] uppercase tracking-nav text-aubergine/70 backdrop-blur-sm sm:h-7 sm:justify-start sm:gap-1.5 sm:px-2.5 sm:text-[9px]",
+                "inline-flex h-6 items-center justify-center gap-1 border border-stone/80 bg-porcelain/95 px-1.5 text-[8px] uppercase tracking-nav text-aubergine/70 shadow-sm backdrop-blur-sm sm:h-7 sm:justify-start sm:gap-1.5 sm:px-2.5 sm:text-[9px]",
                 inView && "badge-pop"
               )}
             >
@@ -155,11 +155,14 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
             {oos && (
               <span
                 className={cn(
-                  "inline-flex h-7 items-center gap-1.5 border border-copper/40 bg-aubergine px-2.5 text-[9px] uppercase tracking-nav text-porcelain shadow-sm sm:h-7 sm:text-[10px]",
-                  inView && "sold-out-glow"
+                  "inline-flex h-7 items-center gap-1.5 border border-copper/50 bg-aubergine px-2.5 text-[9px] font-medium uppercase tracking-nav text-porcelain sm:h-8 sm:px-3 sm:text-[10px]",
+                  inView ? "sold-out-pop" : "opacity-0"
                 )}
               >
-                <span className="h-1.5 w-1.5 rounded-full bg-copper" aria-hidden />
+                <span
+                  className="h-1.5 w-1.5 shrink-0 rounded-full bg-copper"
+                  aria-hidden
+                />
                 Sold out
               </span>
             )}
@@ -170,10 +173,10 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
               "absolute right-2 top-2 z-10 sm:right-3 sm:top-3",
               inView && "badge-pop"
             )}
-            style={inView ? { animationDelay: "80ms" } : undefined}
+            style={inView ? { animationDelay: "90ms" } : undefined}
           >
             <WishlistButton
-              className="h-8 w-8 justify-center rounded-sm bg-porcelain/95 p-0 shadow-sm backdrop-blur-sm sm:h-9 sm:w-9"
+              className="h-8 w-8 justify-center rounded-sm bg-porcelain/95 p-0 shadow-md backdrop-blur-sm sm:h-9 sm:w-9"
               product={{
                 productId: product.id,
                 slug: product.slug,
@@ -185,12 +188,13 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
             />
           </div>
 
-          {/* Mobile: always reveal with fade. Desktop: hover reveal. */}
+          {/* Mobile: popup fade-in. Desktop: hover reveal. */}
           <div
             className={cn(
               "absolute inset-x-2 bottom-2 z-10 flex items-center gap-1.5 sm:inset-x-3 sm:bottom-3 sm:gap-2",
               "sm:translate-y-2 sm:opacity-0 sm:transition-all sm:duration-300 sm:group-hover:translate-y-0 sm:group-hover:opacity-100",
-              inView ? "card-action-in opacity-100" : "opacity-0 sm:opacity-0"
+              !inView && "max-sm:pointer-events-none max-sm:opacity-0",
+              inView && !oos && "max-sm:card-action-in"
             )}
           >
             {showQuickAdd && (
@@ -198,27 +202,39 @@ export function ProductCard({ product, showQuickAdd = true }: Props) {
                 type="button"
                 onClick={quickAdd}
                 className={cn(
-                  "inline-flex h-10 min-h-10 max-h-10 flex-1 items-center justify-center gap-1.5 box-border px-2.5 text-[9px] uppercase leading-none tracking-nav text-porcelain shadow-md sm:px-3 sm:text-[10px]",
+                  "inline-flex h-10 min-h-10 max-h-10 flex-1 items-center justify-center gap-1.5 box-border px-2.5 text-[9px] uppercase leading-none tracking-nav text-porcelain sm:px-3 sm:text-[10px]",
                   oos
-                    ? "bg-copper hover:bg-aubergine"
-                    : "bg-aubergine hover:bg-aubergine/90"
+                    ? cn(
+                        "bg-copper shadow-[0_6px_16px_rgba(184,95,69,0.35)] hover:bg-aubergine",
+                        inView ? "max-sm:notify-pop" : "max-sm:opacity-0"
+                      )
+                    : "bg-aubergine shadow-md hover:bg-aubergine/90"
                 )}
               >
                 {oos ? (
                   <>
-                    <Icon icon={Bell} size={13} className="text-porcelain" />
-                    Get notified
+                    <Icon icon={Bell} size={13} className="shrink-0 text-porcelain" />
+                    <span className="truncate">Get notified</span>
                   </>
                 ) : (
                   <>
-                    <Icon icon={Plus} size={13} className="text-porcelain" />
+                    <Icon icon={Plus} size={13} className="shrink-0 text-porcelain" />
                     {adding ? "Added ✓" : "Quick add"}
                   </>
                 )}
               </button>
             )}
 
-            <div className="relative h-10 w-10 shrink-0">
+            <div
+              className={cn(
+                "relative h-10 w-10 shrink-0",
+                inView && oos && "max-sm:badge-pop",
+                !inView && oos && "max-sm:opacity-0"
+              )}
+              style={
+                inView && oos ? { animationDelay: "0.42s" } : undefined
+              }
+            >
               <button
                 type="button"
                 aria-label="Quick view"
