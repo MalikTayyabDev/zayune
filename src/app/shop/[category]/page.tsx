@@ -8,6 +8,7 @@ import { CollectionJsonLd } from "@/components/seo/JsonLd";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getCategories, getProducts } from "@/lib/products";
 import { pageMetadata } from "@/lib/seo";
+import { isStoreComingSoon } from "@/lib/store-mode";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -32,31 +33,37 @@ export async function generateMetadata({ params }: Props) {
 }
 
 export default async function CategoryPage({ params, searchParams }: Props) {
+  const comingSoon = await isStoreComingSoon();
   const categories = await getCategories();
   const category = categories.find((c) => c.slug === params.category);
   if (!category) notFound();
 
-  const products = await getProducts({
-    categorySlug: params.category,
-    sort: searchParams.sort,
-    q: searchParams.q,
-    availability: searchParams.availability,
-  });
+  const products = comingSoon
+    ? []
+    : await getProducts({
+        categorySlug: params.category,
+        sort: searchParams.sort,
+        q: searchParams.q,
+        availability: searchParams.availability,
+      });
 
   const hasFilters = Boolean(
     searchParams.q || searchParams.availability || searchParams.sort
   );
+  const showComingSoon = comingSoon || products.length === 0;
 
   return (
     <div className="container-content py-10 sm:py-20">
-      <CollectionJsonLd
-        name={category.name}
-        description={
-          category.description || `Handmade ${category.name} from ZAYUNE.`
-        }
-        path={`/shop/${category.slug}`}
-        products={products.map((p) => ({ name: p.name, slug: p.slug }))}
-      />
+      {!comingSoon && (
+        <CollectionJsonLd
+          name={category.name}
+          description={
+            category.description || `Handmade ${category.name} from ZAYUNE.`
+          }
+          path={`/shop/${category.slug}`}
+          products={products.map((p) => ({ name: p.name, slug: p.slug }))}
+        />
+      )}
       <SectionHeading
         as="h1"
         eyebrow="Shop"
@@ -64,40 +71,52 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         description={category.description || undefined}
       />
 
-      <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
-        <Link href="/shop" className="text-nav text-aubergine/50 hover:text-copper">
-          All
-        </Link>
-        {categories.map((item) => (
-          <Link
-            key={item.id}
-            href={`/shop/${item.slug}`}
-            className={cn(
-              "text-nav transition-colors hover:text-copper",
-              item.slug === category.slug ? "text-aubergine" : "text-aubergine/50"
-            )}
-          >
-            {item.name}
+      {!comingSoon && (
+        <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
+          <Link href="/shop" className="text-nav text-aubergine/50 hover:text-copper">
+            All
           </Link>
-        ))}
-      </div>
+          {categories.map((item) => (
+            <Link
+              key={item.id}
+              href={`/shop/${item.slug}`}
+              className={cn(
+                "text-nav transition-colors hover:text-copper",
+                item.slug === category.slug
+                  ? "text-aubergine"
+                  : "text-aubergine/50"
+              )}
+            >
+              {item.name}
+            </Link>
+          ))}
+        </div>
+      )}
 
-      {products.length > 0 && (
+      {!comingSoon && products.length > 0 && (
         <Suspense fallback={null}>
           <ShopToolbar total={products.length} />
         </Suspense>
       )}
 
-      {products.length === 0 ? (
-        hasFilters ? (
+      {showComingSoon ? (
+        comingSoon || !hasFilters ? (
+          <ComingSoon
+            title={
+              comingSoon
+                ? "Products coming soon"
+                : `${category.name} coming soon`
+            }
+            description={
+              comingSoon
+                ? undefined
+                : `We’re preparing the ${category.name.toLowerCase()} edit. Custom requests for this collection are welcome anytime.`
+            }
+          />
+        ) : (
           <p className="mt-16 text-sm text-aubergine/60">
             No pieces match these filters right now.
           </p>
-        ) : (
-          <ComingSoon
-            title={`${category.name} coming soon`}
-            description={`We’re preparing the ${category.name.toLowerCase()} edit. Custom requests for this collection are welcome anytime.`}
-          />
         )
       ) : (
         <div className="card-grid mt-8 sm:mt-12 lg:grid-cols-3 xl:grid-cols-4">

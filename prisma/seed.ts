@@ -19,6 +19,7 @@ async function main() {
       id: "default",
       shippingFlatFee: 250,
       freeShippingOver: 5000,
+      storeMode: "COMING_SOON",
       bannerText:
         "Products coming soon · Custom orders open · Handmade in Pakistan",
       bankName: "[Bank name — to be supplied]",

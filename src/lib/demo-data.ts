@@ -104,6 +104,7 @@ export const demoSettings = {
   freeShippingOver: 5000,
   bannerText:
     "Products coming soon · Custom orders open on WhatsApp · Handmade in Pakistan",
+  storeMode: "COMING_SOON" as const,
   bankName: "[Bank name — to be supplied]",
   bankAccountTitle: "ZAYUNE",
   bankAccountNumber: "[Account number — to be supplied]",

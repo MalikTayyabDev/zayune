@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { AddToCart } from "@/components/product/AddToCart";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { RecentlyViewedTracker } from "@/components/product/RecentlyViewedTracker";
@@ -11,6 +11,7 @@ import { isDemoMode } from "@/lib/demo-data";
 import { getProductBySlug, getProducts, getRelatedProducts } from "@/lib/products";
 import { prisma } from "@/lib/prisma";
 import { pageMetadata } from "@/lib/seo";
+import { isStoreComingSoon } from "@/lib/store-mode";
 import { formatPrice } from "@/lib/utils";
 
 type Props = {
@@ -37,6 +38,8 @@ export async function generateStaticParams() {
 }
 
 export default async function ProductPage({ params }: Props) {
+  if (await isStoreComingSoon()) redirect("/shop");
+
   const product = await getProductBySlug(params.slug);
   if (!product || !product.published) notFound();
 

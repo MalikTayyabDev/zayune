@@ -22,6 +22,7 @@ import {
 import { pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 import { siteImages } from "@/lib/site-images";
+import { isStoreComingSoon } from "@/lib/store-mode";
 
 export const metadata = pageMetadata({
   title:
@@ -37,15 +38,20 @@ export const metadata = pageMetadata({
 });
 
 export default async function HomePage() {
-  const [bestSellers, newest, featured, all] = await Promise.all([
-    getBestSellers(4),
-    getNewestProducts(4),
-    getFeaturedProducts(4),
-    getProducts(),
-  ]);
+  const comingSoon = await isStoreComingSoon();
+  const empty: Awaited<ReturnType<typeof getProducts>> = [];
+  const [bestSellers, newest, featured, all] = comingSoon
+    ? [empty, empty, empty, empty]
+    : await Promise.all([
+        getBestSellers(4),
+        getNewestProducts(4),
+        getFeaturedProducts(4),
+        getProducts(),
+      ]);
 
   const alsoLike = all.filter((p) => !featured.some((f) => f.id === p.id)).slice(0, 4);
   const alsoLikeFill = alsoLike.length < 4 ? all.slice(0, 4) : alsoLike;
+  const showCatalog = !comingSoon && all.length > 0;
 
   return (
     <>
@@ -55,7 +61,7 @@ export default async function HomePage() {
       </Reveal>
       <CollectionBanners />
 
-      {all.length > 0 ? (
+      {showCatalog ? (
         <>
           <Reveal delay={40}>
             <ProductTabs

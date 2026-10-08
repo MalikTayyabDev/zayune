@@ -17,9 +17,14 @@ export async function AnnouncementBar() {
         orderBy: { createdAt: "desc" },
       });
 
+  const comingSoon =
+    "storeMode" in settings && settings.storeMode !== "LIVE";
+
   const text =
-    intro?.description ||
-    settings.bannerText ||
+    (comingSoon
+      ? settings.bannerText ||
+        "Products coming soon · Custom orders open · Handmade in Pakistan"
+      : intro?.description || settings.bannerText) ||
     "Crochet handmade accessories · Flowers · Jewelry · Keychains · Custom orders";
 
   const items = [

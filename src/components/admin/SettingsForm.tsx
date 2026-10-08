@@ -4,7 +4,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { readApiError } from "@/lib/api-error";
 
+type StoreMode = "LIVE" | "COMING_SOON";
+
 type Values = {
+  storeMode: StoreMode;
   shippingFlatFee: number;
   bannerText: string;
   bankName: string;
@@ -64,6 +67,53 @@ export function SettingsForm({
           </span>
         </p>
       </div>
+
+      <fieldset className="border border-stone px-5 py-4">
+        <legend className="text-nav px-1 text-aubergine/55">Store status</legend>
+        <p className="text-xs leading-relaxed text-aubergine/60">
+          Like WooCommerce “Coming soon” — hide the catalog on shop and home
+          until you’re ready to go live. Custom orders and WhatsApp stay
+          available.
+        </p>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          {(
+            [
+              {
+                value: "COMING_SOON" as const,
+                label: "Coming soon",
+                hint: "Show “Products coming soon” on shop & home",
+              },
+              {
+                value: "LIVE" as const,
+                label: "Live",
+                hint: "Show the product catalog to customers",
+              },
+            ] as const
+          ).map((option) => {
+            const active = values.storeMode === option.value;
+            return (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() =>
+                  setValues((v) => ({ ...v, storeMode: option.value }))
+                }
+                className={`border px-4 py-3 text-left transition-colors ${
+                  active
+                    ? "border-brass bg-brass/10 text-aubergine"
+                    : "border-stone text-aubergine/70 hover:border-brass/50"
+                }`}
+              >
+                <span className="block text-sm font-medium">{option.label}</span>
+                <span className="mt-1 block text-xs text-aubergine/55">
+                  {option.hint}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
+
       <label className="block">
         <span className="text-nav text-aubergine/55">Flat shipping fee (PKR)</span>
         <input

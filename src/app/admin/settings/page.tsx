@@ -10,17 +10,22 @@ export default async function AdminSettingsPage() {
   if (!session) redirect("/admin/login");
 
   const settings = await getSettings();
+  const storeMode =
+    "storeMode" in settings && settings.storeMode === "LIVE"
+      ? "LIVE"
+      : "COMING_SOON";
 
   return (
     <div className="py-4">
       <SectionHeading
         title="Settings"
-        description="Shipping rate, optional banner, and bank transfer details."
+        description="Store live / coming soon, shipping, banner, and bank transfer details."
         className="mb-10"
       />
       <SettingsForm
         adminEmailHint={process.env.ADMIN_EMAIL || undefined}
         initial={{
+          storeMode,
           shippingFlatFee: settings.shippingFlatFee,
           bannerText: settings.bannerText || "",
           bankName: settings.bankName || "",

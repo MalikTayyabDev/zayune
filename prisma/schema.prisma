@@ -208,11 +208,18 @@ model OrderItem {
   quantity    Int
 }
 
+enum StoreMode {
+  LIVE
+  COMING_SOON
+}
+
 model Settings {
-  id                String  @id @default("default")
-  shippingFlatFee   Int     @default(250)
-  freeShippingOver  Int     @default(5000)
+  id                String    @id @default("default")
+  shippingFlatFee   Int       @default(250)
+  freeShippingOver  Int       @default(5000)
   bannerText        String?
+  /// LIVE = show catalog · COMING_SOON = maintenance / products coming soon
+  storeMode         StoreMode @default(COMING_SOON)
   bankName          String?
   bankAccountTitle  String?
   bankAccountNumber String?

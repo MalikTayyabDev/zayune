@@ -6,6 +6,7 @@ import { isDemoMode } from "@/lib/demo-data";
 import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
+  storeMode: z.enum(["LIVE", "COMING_SOON"]).default("COMING_SOON"),
   shippingFlatFee: z.number().int().nonnegative(),
   bannerText: z.string().optional(),
   bankName: z.string().optional(),
@@ -32,6 +33,7 @@ export async function PUT(request: Request) {
     await prisma.settings.upsert({
       where: { id: "default" },
       update: {
+        storeMode: data.storeMode,
         shippingFlatFee: data.shippingFlatFee,
         bannerText: data.bannerText || null,
         bankName: data.bankName || null,
@@ -41,6 +43,7 @@ export async function PUT(request: Request) {
       },
       create: {
         id: "default",
+        storeMode: data.storeMode,
         shippingFlatFee: data.shippingFlatFee,
         bannerText: data.bannerText || null,
         bankName: data.bankName || null,

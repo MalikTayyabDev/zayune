@@ -51,17 +51,21 @@ Included: home, shop, categories, products, custom, about, contact, shipping/ret
 
 Excluded / noindex: `/admin`, `/api`, `/checkout`, `/cart`, `/account`, `/order`, `/wishlist`, `/track`, `/journal` (until editorial content ships).
 
-## Catalog (no dummy products)
+## Catalog & store mode
 
-Placeholder products were removed from seed/demo. Shop shows **Products coming soon** until you add real items in Admin.
+Admin → **Settings → Store status**:
 
-To wipe leftover demo rows on Neon/production:
+- **Coming soon** — shop & home show “Products coming soon” (custom/WhatsApp still open)
+- **Live** — catalog visible to customers
+
+Default after seed / clear is **Coming soon**. Placeholder products are not seeded.
+
+Wipe leftover demo rows:
 
 ```bash
+npx prisma db push
 npm run db:clear-products
 ```
-
-(Use the production `DATABASE_URL`, or delete products in Admin.) Then redeploy.
 
 Also set Vercel Production: `NEXT_PUBLIC_WHATSAPP_NUMBER=923055282964`.
 

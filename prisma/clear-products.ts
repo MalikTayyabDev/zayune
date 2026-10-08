@@ -15,13 +15,24 @@ async function main() {
   const waitlist = await prisma.waitlistEntry.deleteMany();
   const products = await prisma.product.deleteMany();
 
-  await prisma.settings.update({
-    where: { id: "default" },
-    data: {
-      bannerText:
-        "Products coming soon · Custom orders open · Handmade in Pakistan",
-    },
-  }).catch(() => null);
+  await prisma.settings
+    .upsert({
+      where: { id: "default" },
+      update: {
+        storeMode: "COMING_SOON",
+        bannerText:
+          "Products coming soon · Custom orders open · Handmade in Pakistan",
+      },
+      create: {
+        id: "default",
+        storeMode: "COMING_SOON",
+        shippingFlatFee: 250,
+        freeShippingOver: 5000,
+        bannerText:
+          "Products coming soon · Custom orders open · Handmade in Pakistan",
+      },
+    })
+    .catch(() => null);
 
   console.log("Cleared catalog:", {
     products: products.count,
