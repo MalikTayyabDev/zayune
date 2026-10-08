@@ -6,19 +6,24 @@ import {
   Sparkles,
 } from "lucide-react";
 import { CustomRequestForm } from "@/components/custom/CustomRequestForm";
+import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { siteConfig } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
+import { siteConfig, whatsappHref } from "@/lib/site";
 
-export const metadata = {
-  title: "Custom Orders | Handmade by ZAYUNE",
+export const metadata = pageMetadata({
+  title: "Custom Orders",
   description:
     "Request a made-to-order crochet flower, jewelry piece, keychain, or custom colorway from ZAYUNE Pakistan.",
-  alternates: {
-    canonical: `${siteConfig.url}/custom`,
-  },
-};
+  path: "/custom",
+  keywords: [
+    "custom crochet orders Pakistan",
+    "made to order crochet flowers",
+    "custom handmade jewelry Pakistan",
+  ],
+});
 
 const steps = [
   {
@@ -78,10 +83,11 @@ const faqs = [
 ];
 
 export default function CustomOrdersPage() {
-  const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "923001234567";
-
   return (
     <div>
+      <FaqJsonLd
+        items={faqs.map((item) => ({ question: item.q, answer: item.a }))}
+      />
       <section className="relative overflow-hidden border-b border-stone/70">
         <div
           className="pointer-events-none absolute inset-0 opacity-90"
@@ -91,9 +97,9 @@ export default function CustomOrdersPage() {
           }}
         />
         <div className="container-content relative py-16 sm:py-24 max-w-narrow">
-          <p className="text-nav text-aubergine/55">Custom orders</p>
+          <p className="text-nav text-aubergine/55">ZAYUNE</p>
           <h1 className="mt-4 font-display text-4xl sm:text-5xl md:text-[3.25rem] leading-tight text-aubergine">
-            ZAYUNE
+            Custom orders
           </h1>
           <p className="mt-5 max-w-lg text-base leading-relaxed text-aubergine/70">
             Made-to-order crochet pieces — designed with you, made by hand in
@@ -102,12 +108,12 @@ export default function CustomOrdersPage() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Button href="#request">Start a request</Button>
             <Button
-              href={`https://wa.me/${whatsapp}`}
+              href={whatsappHref("Hi ZAYUNE — I’d like a custom order.")}
               target="_blank"
               rel="noreferrer"
               variant="secondary"
             >
-              Chat on WhatsApp
+              WhatsApp {siteConfig.phoneDisplay}
             </Button>
           </div>
         </div>
@@ -202,12 +208,12 @@ export default function CustomOrdersPage() {
           references.
         </p>
         <Button
-          href={`https://wa.me/${whatsapp}`}
+          href={whatsappHref("Hi ZAYUNE — I have a custom order question.")}
           target="_blank"
           rel="noreferrer"
           className="mt-8"
         >
-          Open WhatsApp
+          WhatsApp {siteConfig.phoneDisplay}
         </Button>
       </section>
     </div>

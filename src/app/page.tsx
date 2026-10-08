@@ -7,6 +7,7 @@ import { HeroSlider } from "@/components/home/HeroSlider";
 import { ProductTabs } from "@/components/home/ProductTabs";
 import { PromoBanner } from "@/components/home/PromoBanner";
 import { TrustBar } from "@/components/home/TrustBar";
+import { ComingSoon } from "@/components/shop/ComingSoon";
 import { Button } from "@/components/ui/Button";
 import { InstagramIcon } from "@/components/ui/BrandIcons";
 import { EditorialQuote } from "@/components/ui/EditorialQuote";
@@ -18,8 +19,22 @@ import {
   getNewestProducts,
   getProducts,
 } from "@/lib/products";
+import { pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 import { siteImages } from "@/lib/site-images";
+
+export const metadata = pageMetadata({
+  title:
+    "ZAYUNE — Designed, not just made. | Handmade Jewelry & Crochet Pakistan",
+  description: siteConfig.description,
+  path: "/",
+  absoluteTitle: true,
+  keywords: [
+    "handmade crochet Pakistan",
+    "ZAYUNE handmade",
+    "crochet flowers online Pakistan",
+  ],
+});
 
 export default async function HomePage() {
   const [bestSellers, newest, featured, all] = await Promise.all([
@@ -40,20 +55,37 @@ export default async function HomePage() {
       </Reveal>
       <CollectionBanners />
 
-      <Reveal delay={40}>
-        <ProductTabs
-          tabs={[
-            { id: "best-sellers", label: "Best sellers", products: bestSellers },
-            { id: "new", label: "New arrivals", products: newest },
-            { id: "featured", label: "Featured", products: featured },
-            { id: "also-like", label: "You may also like", products: alsoLikeFill },
-          ]}
-        />
-      </Reveal>
-
-      <Reveal>
-        <PromoBanner />
-      </Reveal>
+      {all.length > 0 ? (
+        <>
+          <Reveal delay={40}>
+            <ProductTabs
+              tabs={[
+                {
+                  id: "best-sellers",
+                  label: "Best sellers",
+                  products: bestSellers,
+                },
+                { id: "new", label: "New arrivals", products: newest },
+                { id: "featured", label: "Featured", products: featured },
+                {
+                  id: "also-like",
+                  label: "You may also like",
+                  products: alsoLikeFill,
+                },
+              ]}
+            />
+          </Reveal>
+          <Reveal>
+            <PromoBanner />
+          </Reveal>
+        </>
+      ) : (
+        <Reveal>
+          <div className="container-content py-6 sm:py-10">
+            <ComingSoon />
+          </div>
+        </Reveal>
+      )}
 
       <Reveal as="section" className="bg-aubergine text-porcelain">
         <div className="container-content grid gap-10 py-16 sm:py-20 lg:grid-cols-2 lg:items-center">

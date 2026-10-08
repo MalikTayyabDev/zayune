@@ -99,7 +99,7 @@ export function HeroSlider() {
         >
           <Image
             src={item.image}
-            alt=""
+            alt={`${item.eyebrow}: ${item.title}`}
             fill
             priority={i === 0}
             sizes="100vw"

@@ -2,10 +2,12 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductCard } from "@/components/product/ProductCard";
+import { ComingSoon } from "@/components/shop/ComingSoon";
 import { ShopToolbar } from "@/components/shop/ShopToolbar";
+import { CollectionJsonLd } from "@/components/seo/JsonLd";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getCategories, getProducts } from "@/lib/products";
-import { siteConfig } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 type Props = {
@@ -16,15 +18,17 @@ type Props = {
 export async function generateMetadata({ params }: Props) {
   const categories = await getCategories();
   const category = categories.find((c) => c.slug === params.category);
-  return {
-    title: category ? `${category.name} | Handmade by ZAYUNE` : "Shop",
+  const name = category?.name || "Shop";
+  return pageMetadata({
+    title: category ? `${name} — Handmade` : "Shop",
     description:
       category?.description ||
       "Browse handmade pieces from ZAYUNE Pakistan.",
-    alternates: {
-      canonical: `${siteConfig.url}/shop/${params.category}`,
-    },
-  };
+    path: `/shop/${params.category}`,
+    keywords: category
+      ? [`${category.name} handmade Pakistan`, `ZAYUNE ${category.name}`]
+      : undefined,
+  });
 }
 
 export default async function CategoryPage({ params, searchParams }: Props) {
@@ -39,9 +43,22 @@ export default async function CategoryPage({ params, searchParams }: Props) {
     availability: searchParams.availability,
   });
 
+  const hasFilters = Boolean(
+    searchParams.q || searchParams.availability || searchParams.sort
+  );
+
   return (
     <div className="container-content py-10 sm:py-20">
+      <CollectionJsonLd
+        name={category.name}
+        description={
+          category.description || `Handmade ${category.name} from ZAYUNE.`
+        }
+        path={`/shop/${category.slug}`}
+        products={products.map((p) => ({ name: p.name, slug: p.slug }))}
+      />
       <SectionHeading
+        as="h1"
         eyebrow="Shop"
         title={category.name}
         description={category.description || undefined}
@@ -65,14 +82,23 @@ export default async function CategoryPage({ params, searchParams }: Props) {
         ))}
       </div>
 
-      <Suspense fallback={null}>
-        <ShopToolbar total={products.length} />
-      </Suspense>
+      {products.length > 0 && (
+        <Suspense fallback={null}>
+          <ShopToolbar total={products.length} />
+        </Suspense>
+      )}
 
       {products.length === 0 ? (
-        <p className="mt-16 text-sm text-aubergine/60">
-          No pieces match these filters right now.
-        </p>
+        hasFilters ? (
+          <p className="mt-16 text-sm text-aubergine/60">
+            No pieces match these filters right now.
+          </p>
+        ) : (
+          <ComingSoon
+            title={`${category.name} coming soon`}
+            description={`We’re preparing the ${category.name.toLowerCase()} edit. Custom requests for this collection are welcome anytime.`}
+          />
+        )
       ) : (
         <div className="card-grid mt-8 sm:mt-12 lg:grid-cols-3 xl:grid-cols-4">
           {products.map((product) => (

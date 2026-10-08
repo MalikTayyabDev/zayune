@@ -1,15 +1,21 @@
 import Link from "next/link";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { siteConfig } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
+import { siteConfig, whatsappHref } from "@/lib/site";
 
-export const metadata = {
-  title: "Cookie policy",
-};
+export const metadata = pageMetadata({
+  title: "Cookie Policy",
+  description:
+    "How ZAYUNE uses essential, analytics, and marketing cookies — and how to change your preferences.",
+  path: "/cookies",
+  keywords: ["ZAYUNE cookie policy", "cookie consent handmade shop"],
+});
 
 export default function CookiesPage() {
   return (
     <div className="container-content py-14 sm:py-20 max-w-narrow">
       <SectionHeading
+        as="h1"
         eyebrow="Care"
         title="Cookie policy"
         description="How ZAYUNE uses cookies and similar storage in the browser."
@@ -30,9 +36,9 @@ export default function CookiesPage() {
           <h2 className="font-display text-2xl text-aubergine">Essential</h2>
           <p>Always on. These keep the store secure and usable:</p>
           <ul className="list-disc space-y-2 pl-5">
-            <li>Sign-in / admin session (Auth.js)</li>
+            <li>Sign-in / admin session</li>
             <li>Cart and checkout continuity</li>
-            <li>Security and fraud prevention basics</li>
+            <li>Security basics</li>
             <li>Remembering your cookie preference choice</li>
           </ul>
         </section>
@@ -41,8 +47,7 @@ export default function CookiesPage() {
           <h2 className="font-display text-2xl text-aubergine">Analytics (optional)</h2>
           <p>
             Only if you accept analytics. Used to understand which pages are
-            visited (for example Google Analytics or similar), so we can improve
-            the site. We do not turn these on until you opt in.
+            visited so we can improve the site. Never loaded until you opt in.
           </p>
         </section>
 
@@ -50,7 +55,7 @@ export default function CookiesPage() {
           <h2 className="font-display text-2xl text-aubergine">Marketing (optional)</h2>
           <p>
             Only if you accept marketing. Used for ads or remarketing tags if we
-            add them later. Never loaded without your consent.
+            add them. Never loaded without your consent.
           </p>
         </section>
 
@@ -58,21 +63,30 @@ export default function CookiesPage() {
           <h2 className="font-display text-2xl text-aubergine">How to change your mind</h2>
           <p>
             Use <strong className="font-medium text-aubergine">Cookie settings</strong>{" "}
-            in the footer anytime, or clear site data in your browser. Questions:{" "}
+            in the footer anytime, or clear site data in your browser.
+          </p>
+          <p>
+            Questions:{" "}
             <a
               href={`mailto:${siteConfig.email}`}
               className="text-copper hover:text-aubergine"
             >
               {siteConfig.email}
+            </a>{" "}
+            · WhatsApp{" "}
+            <a
+              href={whatsappHref()}
+              className="text-copper hover:text-aubergine"
+              target="_blank"
+              rel="noreferrer"
+            >
+              {siteConfig.phoneDisplay}
             </a>
-            .
-          </p>
-          <p>
-            See also our{" "}
+            . See also our{" "}
             <Link href="/privacy" className="text-copper hover:text-aubergine">
-              Privacy
-            </Link>{" "}
-            page.
+              Privacy policy
+            </Link>
+            .
           </p>
         </section>
       </div>

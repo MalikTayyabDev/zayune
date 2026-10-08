@@ -24,6 +24,7 @@ export default function WishlistPage() {
   return (
     <div className="container-content py-10 sm:py-20">
       <SectionHeading
+        as="h1"
         title="Wishlist"
         description="Pieces you’re holding onto — move them to cart when you’re ready."
         className="mb-6 sm:mb-12"

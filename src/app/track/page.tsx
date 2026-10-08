@@ -59,6 +59,7 @@ function TrackForm() {
   return (
     <div className="container-content max-w-narrow py-14 sm:py-20">
       <SectionHeading
+        as="h1"
         title="Track your order"
         description="Enter your order number and email to see status and courier details."
       />

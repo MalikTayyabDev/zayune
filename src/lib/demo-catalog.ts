@@ -1,28 +1,28 @@
-import { demoCategories, demoProducts, isDemoMode } from "@/lib/demo-data";
+import {
+  demoCategories,
+  demoProducts,
+  isDemoMode,
+  type DemoProductSeed,
+} from "@/lib/demo-data";
 import { getDemoOrdersStore, type DemoOrder } from "@/lib/demo-orders";
 
-export type DemoProduct = (typeof demoProducts)[number] & {
-  compareAtPrice: number | null;
-  isBundle: boolean;
-  bundleProductIds: string[];
-  introOfferPercent: number | null;
-};
+export type DemoProduct = DemoProductSeed;
 
 const globalStore = globalThis as unknown as {
   __zayuneCatalog?: DemoProduct[];
   __zayuneCatalogVersion?: number;
 };
 
-const CATALOG_VERSION = 3;
+/** Bump when clearing placeholder catalog so in-memory demos reset. */
+const CATALOG_VERSION = 4;
 
-function normalizeProduct(product: (typeof demoProducts)[number]): DemoProduct {
-  const p = product as DemoProduct;
+function normalizeProduct(product: DemoProductSeed): DemoProduct {
   return {
     ...structuredClone(product),
-    compareAtPrice: p.compareAtPrice ?? null,
-    isBundle: p.isBundle ?? false,
-    bundleProductIds: p.bundleProductIds ?? [],
-    introOfferPercent: p.introOfferPercent ?? null,
+    compareAtPrice: product.compareAtPrice ?? null,
+    isBundle: product.isBundle ?? false,
+    bundleProductIds: product.bundleProductIds ?? [],
+    introOfferPercent: product.introOfferPercent ?? null,
   };
 }
 

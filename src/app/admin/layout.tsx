@@ -2,6 +2,12 @@ import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { authOptions } from "@/lib/auth";
+import { noIndexRobots } from "@/lib/seo";
+
+export const metadata = {
+  title: "Admin",
+  robots: noIndexRobots,
+};
 
 const links = [
   { href: "/admin", label: "Dashboard" },

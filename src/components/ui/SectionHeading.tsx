@@ -7,6 +7,8 @@ type Props = {
   description?: string;
   align?: "left" | "center";
   accent?: "star" | "rule" | "none";
+  /** Use h1 once per page for the primary heading. */
+  as?: "h1" | "h2";
   className?: string;
 };
 
@@ -16,8 +18,11 @@ export function SectionHeading({
   description,
   align = "left",
   accent = "rule",
+  as = "h2",
   className,
 }: Props) {
+  const TitleTag = as;
+
   return (
     <div
       className={cn(
@@ -36,9 +41,9 @@ export function SectionHeading({
         )}
       >
         {accent === "star" && <CopperStar className="shrink-0" />}
-        <h2 className="font-display text-3xl sm:text-4xl md:text-[2.75rem] leading-tight text-aubergine">
+        <TitleTag className="font-display text-3xl sm:text-4xl md:text-[2.75rem] leading-tight text-aubergine">
           {title}
-        </h2>
+        </TitleTag>
       </div>
       {accent === "rule" && (
         <div

@@ -1,15 +1,9 @@
 import Link from "next/link";
-import {
-  Flower2,
-  Heart,
-  MessageCircle,
-  PackageSearch,
-  Truck,
-} from "lucide-react";
+import { Flower2, Heart, PackageSearch, Truck } from "lucide-react";
 import { Logo } from "@/components/brand/Logo";
 import { CopperStar } from "@/components/brand/CopperStar";
 import { CookieSettingsButton } from "@/components/cookies/CookieSettingsButton";
-import { InstagramIcon } from "@/components/ui/BrandIcons";
+import { InstagramIcon, WhatsAppIcon } from "@/components/ui/BrandIcons";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { siteConfig } from "@/lib/site";
@@ -57,7 +51,7 @@ export function Footer() {
             {[
               { icon: Flower2, label: "Crochet handmade" },
               { icon: Heart, label: "Made with care" },
-              { icon: Truck, label: "Pakistan shipping" },
+              { icon: Truck, label: "Ships from Rawalpindi" },
               { icon: PackageSearch, label: "Secure checkout" },
             ].map((item) => (
               <div
@@ -135,8 +129,8 @@ export function Footer() {
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 transition-colors hover:text-brass"
             >
-              <Icon icon={MessageCircle} size={14} className="text-current" />
-              WhatsApp
+              <WhatsAppIcon size={14} className="text-current" />
+              {siteConfig.phoneDisplay}
             </a>
           </div>
           <div className="flex flex-col items-start gap-2 sm:items-end">

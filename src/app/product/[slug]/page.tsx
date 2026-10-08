@@ -4,13 +4,13 @@ import { AddToCart } from "@/components/product/AddToCart";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { RecentlyViewedTracker } from "@/components/product/RecentlyViewedTracker";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
-import { ProductJsonLd } from "@/components/seo/JsonLd";
+import { BreadcrumbJsonLd, ProductJsonLd } from "@/components/seo/JsonLd";
 import { Reveal } from "@/components/ui/Reveal";
 import { findDemoProduct } from "@/lib/demo-catalog";
 import { isDemoMode } from "@/lib/demo-data";
 import { getProductBySlug, getProducts, getRelatedProducts } from "@/lib/products";
 import { prisma } from "@/lib/prisma";
-import { siteConfig } from "@/lib/site";
+import { pageMetadata } from "@/lib/seo";
 import { formatPrice } from "@/lib/utils";
 
 type Props = {
@@ -20,19 +20,15 @@ type Props = {
 export async function generateMetadata({ params }: Props) {
   const product = await getProductBySlug(params.slug);
   if (!product) return { title: "Product" };
-  const title = product.seoTitle || `${product.name} | ZAYUNE`;
+  const title = product.seoTitle || product.name;
   const description = product.seoDescription || product.oneLiner;
-  return {
+  return pageMetadata({
     title,
     description,
-    alternates: { canonical: `${siteConfig.url}/product/${product.slug}` },
-    openGraph: {
-      title,
-      description,
-      url: `${siteConfig.url}/product/${product.slug}`,
-      images: product.images[0]?.url ? [{ url: product.images[0].url }] : undefined,
-    },
-  };
+    path: `/product/${product.slug}`,
+    image: product.images[0]?.url,
+    absoluteTitle: Boolean(product.seoTitle?.match(/zayune/i)),
+  });
 }
 
 export async function generateStaticParams() {
@@ -104,6 +100,17 @@ export default async function ProductPage({ params }: Props) {
           availability,
         }}
       />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Home", path: "/" },
+          { name: "Shop", path: "/shop" },
+          {
+            name: product.category.name,
+            path: `/shop/${product.category.slug}`,
+          },
+          { name: product.name, path: `/product/${product.slug}` },
+        ]}
+      />
       <RecentlyViewedTracker
         product={{
           productId: product.id,
@@ -115,7 +122,7 @@ export default async function ProductPage({ params }: Props) {
         }}
       />
 
-      <p className="mb-8 text-nav text-aubergine/45">
+      <nav aria-label="Breadcrumb" className="mb-8 text-nav text-aubergine/45">
         <Link href="/shop" className="hover:text-copper">
           Shop
         </Link>
@@ -123,7 +130,9 @@ export default async function ProductPage({ params }: Props) {
         <Link href={`/shop/${product.category.slug}`} className="hover:text-copper">
           {product.category.name}
         </Link>
-      </p>
+        <span className="mx-2">/</span>
+        <span className="text-aubergine/70">{product.name}</span>
+      </nav>
 
       <Reveal className="grid gap-12 lg:grid-cols-2 lg:gap-16">
         <ProductGallery images={product.images} productName={product.name} />

@@ -1,22 +1,33 @@
 import Image from "next/image";
+import Link from "next/link";
 import { StoryBlock } from "@/components/brand/StoryBlock";
+import { Button } from "@/components/ui/Button";
 import { EditorialQuote } from "@/components/ui/EditorialQuote";
 import { SectionHeading } from "@/components/ui/SectionHeading";
+import { pageMetadata } from "@/lib/seo";
+import { studioLocationLine } from "@/lib/site";
 import { siteImages } from "@/lib/site-images";
 
-export const metadata = {
-  title: "About",
-  description: "The story of ZAYUNE — two sisters, one design-led studio.",
-};
+export const metadata = pageMetadata({
+  title: "About the Studio",
+  description: `ZAYUNE is a designer-led handmade label from ${studioLocationLine()} — two sisters making crochet flowers, jewelry, keychains, and custom orders with quiet confidence.`,
+  path: "/about",
+  keywords: [
+    "ZAYUNE Rawalpindi",
+    "handmade Satellite Town",
+    "crochet studio Rawalpindi",
+  ],
+});
 
 export default function AboutPage() {
   return (
     <>
       <div className="container-content py-14 sm:py-20">
         <SectionHeading
+          as="h1"
           eyebrow="About"
           title="Two sisters. One point of view."
-          description="ZAYUNE is a designer-led handmade label from Pakistan — jewelry, crochet flowers, keychains, and custom orders. Quiet confidence, careful craft, pieces that begin on paper."
+          description={`ZAYUNE is a designer-led handmade label from ${studioLocationLine()} — jewelry, crochet flowers, keychains, and custom orders. Quiet confidence, careful craft, pieces that begin on paper.`}
           accent="star"
         />
 
@@ -33,19 +44,28 @@ export default function AboutPage() {
           </div>
           <div className="space-y-6 text-sm sm:text-base leading-relaxed text-aubergine/75">
             <p>
-              [Founder narrative — to be supplied.] The house was built on a shared
-              belief: handmade should still be designed. Tiny things, big vibes —
-              shaped with intention from the first line.
+              The house was built on a shared belief: handmade should still be
+              designed. Tiny things, big vibes — shaped with intention from the
+              first line, then finished by hand in the studio.
             </p>
             <p>
-              Today the studio makes jewelry, crochet flowers, keychains, and
-              custom orders. Follow the making at @zayune.pk. Bags and clothing
-              will follow as the vocabulary grows.
+              Today we make jewelry, crochet flowers, keychains, and{" "}
+              <Link href="/custom" className="text-copper hover:underline">
+                custom orders
+              </Link>
+              . Follow the making at @zayune.pk. Bags and clothing will follow as
+              the vocabulary grows.
             </p>
             <EditorialQuote
               quote="Made by hand. Led by design."
               attribution="Brand line"
             />
+            <div className="flex flex-wrap gap-3 pt-2">
+              <Button href="/shop">Shop the edit</Button>
+              <Button href="/contact" variant="secondary">
+                Contact the studio
+              </Button>
+            </div>
           </div>
         </div>
       </div>

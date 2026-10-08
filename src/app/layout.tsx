@@ -43,15 +43,7 @@ export const metadata: Metadata = {
     template: "%s · ZAYUNE",
   },
   description: siteConfig.description,
-  keywords: [
-    "ZAYUNE",
-    "handmade jewelry Pakistan",
-    "crochet flowers",
-    "handmade keychains",
-    "custom crochet orders",
-    "handmade accessories Pakistan",
-    "designer handmade accessories",
-  ],
+  keywords: siteConfig.focusKeywords,
   authors: [{ name: "ZAYUNE" }],
   creator: "ZAYUNE",
   publisher: "ZAYUNE",
@@ -78,8 +70,10 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: ["/logo.png"],
   },
+  // Relative "./" resolves to each page’s own URL via metadataBase (auto-canonical).
+  // Pages using pageMetadata() still set an absolute self-canonical explicitly.
   alternates: {
-    canonical: siteConfig.url,
+    canonical: "./",
   },
   robots: {
     index: true,

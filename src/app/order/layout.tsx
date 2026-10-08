@@ -1,11 +1,11 @@
 import { noIndexRobots } from "@/lib/seo";
 
 export const metadata = {
-  title: "Account",
+  title: "Order",
   robots: noIndexRobots,
 };
 
-export default function AccountLayout({
+export default function OrderLayout({
   children,
 }: {
   children: React.ReactNode;

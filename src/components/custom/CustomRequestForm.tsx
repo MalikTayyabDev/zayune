@@ -10,6 +10,7 @@ import {
   PIECE_TYPES,
   buildWhatsAppCustomMessage,
 } from "@/lib/custom-requests";
+import { siteConfig } from "@/lib/site";
 
 export function CustomRequestForm() {
   const [error, setError] = useState("");
@@ -23,7 +24,7 @@ export function CustomRequestForm() {
     budget: string;
   } | null>(null);
 
-  const whatsapp = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "923001234567";
+  const whatsapp = siteConfig.whatsapp;
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
