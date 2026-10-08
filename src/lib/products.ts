@@ -224,12 +224,27 @@ export async function getProductById(id: string) {
   });
 }
 
+function isMissingColumnError(error: unknown) {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "code" in error &&
+    (error as { code?: string }).code === "P2022"
+  );
+}
+
 export async function getSettings() {
   if (isDemoMode()) return demoSettings;
-  return (
-    (await prisma.settings.findUnique({ where: { id: "default" } })) ??
-    demoSettings
-  );
+  try {
+    return (
+      (await prisma.settings.findUnique({ where: { id: "default" } })) ??
+      demoSettings
+    );
+  } catch (error) {
+    // Column missing in production DB (e.g. storeMode before migrate) — fail soft.
+    if (isMissingColumnError(error)) return demoSettings;
+    throw error;
+  }
 }
 
 export type ProductWithRelations = NonNullable<
