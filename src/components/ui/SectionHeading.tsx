@@ -6,6 +6,7 @@ type Props = {
   title: string;
   description?: string;
   align?: "left" | "center";
+  /** Decorative line under the title. */
   accent?: "star" | "rule" | "none";
   /** Use h1 once per page for the primary heading. */
   as?: "h1" | "h2";
@@ -22,6 +23,7 @@ export function SectionHeading({
   className,
 }: Props) {
   const TitleTag = as;
+  const showRule = accent === "rule";
 
   return (
     <div
@@ -32,20 +34,20 @@ export function SectionHeading({
       )}
     >
       {eyebrow && (
-        <p className="text-nav mb-4 text-aubergine/60">{eyebrow}</p>
+        <p
+          className={cn(
+            "text-nav mb-4 inline-flex items-center gap-2 text-aubergine/60",
+            align === "center" && "w-full justify-center"
+          )}
+        >
+          <CopperStar size={10} className="shrink-0" />
+          <span>{eyebrow}</span>
+        </p>
       )}
-      <div
-        className={cn(
-          "flex items-center gap-3",
-          align === "center" && "justify-center"
-        )}
-      >
-        {accent === "star" && <CopperStar className="shrink-0" />}
-        <TitleTag className="font-display text-3xl sm:text-4xl md:text-[2.75rem] leading-tight text-aubergine">
-          {title}
-        </TitleTag>
-      </div>
-      {accent === "rule" && (
+      <TitleTag className="font-display text-3xl sm:text-4xl md:text-[2.75rem] leading-tight text-aubergine">
+        {title}
+      </TitleTag>
+      {showRule && (
         <div
           className={cn(
             "mt-5 h-px w-16 bg-brass/70",

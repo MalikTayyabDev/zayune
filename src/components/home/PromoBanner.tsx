@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Flower2, Gift, UserPlus } from "lucide-react";
+import { Flower2, UserPlus } from "lucide-react";
+import { CopperStar } from "@/components/brand/CopperStar";
 import { Icon } from "@/components/ui/Icon";
 
 export function PromoBanner() {
@@ -8,7 +9,7 @@ export function PromoBanner() {
       <div className="relative overflow-hidden border border-stone bg-gradient-to-r from-stone/50 via-porcelain to-sage/20 px-6 py-10 sm:px-10 sm:py-12">
         <div className="relative z-10 max-w-lg">
           <p className="text-nav inline-flex items-center gap-2 text-aubergine/50">
-            <Icon icon={Gift} size={14} />
+            <CopperStar size={10} />
             Gift-ready crochet
           </p>
           <h2 className="mt-2 font-display text-3xl text-aubergine sm:text-4xl">

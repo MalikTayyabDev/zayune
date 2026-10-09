@@ -6,6 +6,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { CustomRequestForm } from "@/components/custom/CustomRequestForm";
+import { CopperStar } from "@/components/brand/CopperStar";
 import { FaqJsonLd } from "@/components/seo/JsonLd";
 import { Button } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/Icon";
@@ -97,7 +98,10 @@ export default function CustomOrdersPage() {
           }}
         />
         <div className="container-content relative py-16 sm:py-24 max-w-narrow">
-          <p className="text-nav text-aubergine/55">ZAYUNE</p>
+          <p className="text-nav inline-flex items-center gap-2 text-aubergine/55">
+            <CopperStar size={10} />
+            <span>ZAYUNE</span>
+          </p>
           <h1 className="mt-4 font-display text-4xl sm:text-5xl md:text-[3.25rem] leading-tight text-aubergine">
             Custom orders
           </h1>

@@ -9,6 +9,7 @@ import {
   Star,
   Heart,
 } from "lucide-react";
+import { CopperStar } from "@/components/brand/CopperStar";
 import { ProductCard } from "@/components/product/ProductCard";
 import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/utils";
@@ -53,7 +54,7 @@ export function ProductTabs({ tabs }: Props) {
       <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <p className="text-nav inline-flex items-center gap-2 text-aubergine/50">
-            <Icon icon={Flower2} size={14} />
+            <CopperStar size={10} />
             Crochet handmade edit
           </p>
           <h2 className="mt-2 font-display text-3xl sm:text-4xl">

@@ -96,7 +96,10 @@ export default async function HomePage() {
       <Reveal as="section" className="bg-aubergine text-porcelain">
         <div className="container-content grid gap-10 py-16 sm:py-20 lg:grid-cols-2 lg:items-center">
           <div>
-            <p className="text-nav text-porcelain/50">Member perks</p>
+            <p className="text-nav inline-flex items-center gap-2 text-porcelain/50">
+              <CopperStar size={10} className="text-brass" />
+              Member perks
+            </p>
             <h2 className="mt-3 font-display text-3xl sm:text-4xl">
               Create an account
             </h2>
@@ -176,7 +179,7 @@ export default async function HomePage() {
         <div className="flex flex-col items-center border-t border-stone pt-16 text-center">
           <CopperStar animated />
           <p className="mt-6 inline-flex items-center gap-2 text-nav text-aubergine/50">
-            <InstagramIcon size={14} />
+            <CopperStar size={10} />
             Follow the making
           </p>
           <h2 className="mt-3 font-display text-3xl text-aubergine">On Instagram</h2>

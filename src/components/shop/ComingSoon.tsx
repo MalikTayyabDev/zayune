@@ -1,3 +1,4 @@
+import { CopperStar } from "@/components/brand/CopperStar";
 import { Button } from "@/components/ui/Button";
 import { siteConfig, whatsappHref } from "@/lib/site";
 
@@ -12,7 +13,10 @@ export function ComingSoon({
 }: Props) {
   return (
     <div className="mt-14 border border-stone/80 bg-stone/20 px-6 py-14 text-center sm:px-10">
-      <p className="text-nav text-brass">Studio update</p>
+      <p className="text-nav inline-flex items-center justify-center gap-2 text-brass">
+        <CopperStar size={10} />
+        Studio update
+      </p>
       <h2 className="mt-3 font-display text-3xl text-aubergine sm:text-4xl">
         {title}
       </h2>

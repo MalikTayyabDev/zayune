@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import { CopperStar } from "@/components/brand/CopperStar";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
 import { siteImages } from "@/lib/site-images";
@@ -47,7 +48,10 @@ export function CollectionBanners() {
         <Reveal>
           <div className="mb-6 flex flex-col gap-3 sm:mb-14 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
             <div className="max-w-lg">
-              <p className="text-nav text-aubergine/50">Collections</p>
+              <p className="text-nav inline-flex items-center gap-2 text-aubergine/50">
+                <CopperStar size={10} />
+                <span>Collections</span>
+              </p>
               <h2 className="mt-3 font-display text-3xl text-aubergine sm:text-4xl md:text-[2.75rem]">
                 Shop by piece
               </h2>
