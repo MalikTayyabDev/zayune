@@ -26,14 +26,15 @@ import { isStoreComingSoon } from "@/lib/store-mode";
 
 export const metadata = pageMetadata({
   title:
-    "ZAYUNE — Designed, not just made. | Handmade Jewelry & Crochet Pakistan",
-  description: siteConfig.description,
+    "ZAYUNE | Handmade Crochet Flowers, Jewelry & Keychains in Pakistan",
+  description: `${siteConfig.description} Based in Satellite Town, Rawalpindi. Custom orders open on WhatsApp.`,
   path: "/",
   absoluteTitle: true,
   keywords: [
     "handmade crochet Pakistan",
     "ZAYUNE handmade",
     "crochet flowers online Pakistan",
+    "handmade jewelry Rawalpindi",
   ],
 });
 

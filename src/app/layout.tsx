@@ -39,11 +39,15 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
     default:
-      "ZAYUNE — Designed, not just made. | Handmade Jewelry & Crochet Pakistan",
+      "ZAYUNE | Handmade Crochet Flowers, Jewelry & Keychains Pakistan",
     template: "%s · ZAYUNE",
   },
   description: siteConfig.description,
   keywords: siteConfig.focusKeywords,
+  other: {
+    "geo.region": "PK-PB",
+    "geo.placename": "Rawalpindi",
+  },
   authors: [{ name: "ZAYUNE" }],
   creator: "ZAYUNE",
   publisher: "ZAYUNE",

@@ -63,6 +63,7 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
     entry(`${base}/shipping-returns`, "0.4", "monthly", now),
     entry(`${base}/privacy`, "0.3", "yearly", now),
     entry(`${base}/cookies`, "0.3", "yearly", now),
+    entry(`${base}/site-map`, "0.3", "weekly", now),
     // Journal stays out until editorial content ships (also noindex).
   ];
 

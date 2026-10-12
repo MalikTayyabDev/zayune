@@ -16,7 +16,9 @@ function resolvePublicSiteUrl() {
       const url = new URL(withProtocol);
       const host = url.hostname.toLowerCase();
       if (host === "localhost" || host.endsWith(".vercel.app")) continue;
-      return `${url.protocol}//${host}`.replace(/\/$/, "");
+      // Always HTTPS for public SEO canonicals (GSC was splitting http vs https).
+      const canonicalHost = host.replace(/^www\./, "");
+      return `https://${canonicalHost}`;
     } catch {
       continue;
     }
@@ -69,10 +71,13 @@ export const siteConfig = {
     "handmade jewelry Pakistan",
     "crochet flowers Pakistan",
     "handmade crochet Rawalpindi",
+    "crochet flowers Rawalpindi",
     "handmade accessories Satellite Town",
     "handmade keychains Pakistan",
-    "custom crochet orders",
-    "designer handmade accessories",
+    "custom crochet orders Pakistan",
+    "designer handmade accessories Pakistan",
+    "buy crochet flowers online Pakistan",
+    "handmade gifts Pakistan",
     "zayune.pk",
   ],
 };

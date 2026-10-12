@@ -12,14 +12,15 @@ import { isStoreComingSoon } from "@/lib/store-mode";
 import { cn } from "@/lib/utils";
 
 export const metadata = pageMetadata({
-  title: "Shop Handmade Jewelry, Crochet Flowers & Keychains",
+  title: "Shop Handmade Crochet Flowers, Jewelry & Keychains Pakistan",
   description:
-    "Shop ZAYUNE — handmade jewelry, crochet flowers, keychains, and custom orders from Pakistan. Designed, not just made.",
+    "Shop ZAYUNE handmade crochet flowers, jewelry, and keychains from Satellite Town, Rawalpindi. Custom orders welcome across Pakistan.",
   path: "/shop",
   keywords: [
     "shop handmade crochet Pakistan",
     "buy crochet flowers online Pakistan",
-    "handmade jewelry shop Pakistan",
+    "handmade jewelry shop Rawalpindi",
+    "handmade keychains Pakistan",
   ],
 });
 
@@ -58,9 +59,21 @@ export default async function ShopPage({ searchParams }: Props) {
       <SectionHeading
         as="h1"
         eyebrow="Crochet handmade accessories"
-        title="All pieces"
-        description="Crochet flowers, jewelry, keychains, and custom orders — made by hand in Pakistan, presented with room to breathe."
+        title="Shop handmade pieces"
+        description="Crochet flowers, jewelry, keychains, and custom orders — made by hand in Rawalpindi, Pakistan, and shipped nationwide."
       />
+
+      <p className="mt-6 max-w-2xl text-sm leading-relaxed text-aubergine/65">
+        ZAYUNE is a designer-led handmade studio. Browse the edit when live, or{" "}
+        <Link href="/custom" className="text-copper hover:underline">
+          request a custom piece
+        </Link>{" "}
+        and{" "}
+        <Link href="/contact" className="text-copper hover:underline">
+          contact the studio
+        </Link>{" "}
+        anytime.
+      </p>
 
       {!comingSoon && (
         <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">

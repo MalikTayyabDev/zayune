@@ -37,6 +37,7 @@ const columns = [
       { href: "/shipping-returns", label: "Shipping & returns" },
       { href: "/privacy", label: "Privacy" },
       { href: "/cookies", label: "Cookies" },
+      { href: "/site-map", label: "Sitemap" },
       { href: "/journal", label: "Journal" },
     ],
   },
