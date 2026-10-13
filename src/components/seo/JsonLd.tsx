@@ -91,41 +91,6 @@ export function OrganizationJsonLd() {
     },
   };
 
-  const localBusiness = {
-    "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    "@id": `${base}/#localbusiness`,
-    name: siteConfig.name,
-    image: `${base}/logo.png`,
-    url: base,
-    telephone: siteConfig.phoneE164,
-    email: siteConfig.email,
-    description: siteConfig.description,
-    priceRange: "$$",
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: siteConfig.address.street,
-      addressLocality: siteConfig.address.city,
-      addressRegion: siteConfig.address.region,
-      addressCountry: siteConfig.address.countryCode,
-    },
-    areaServed: ["Rawalpindi", "Islamabad", "Pakistan"],
-    sameAs: siteConfig.sameAs,
-    openingHoursSpecification: {
-      "@type": "OpeningHoursSpecification",
-      dayOfWeek: [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-      ],
-      opens: "10:00",
-      closes: "20:00",
-    },
-  };
-
   return (
     <>
       <script
@@ -135,10 +100,6 @@ export function OrganizationJsonLd() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusiness) }}
       />
     </>
   );

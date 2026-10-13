@@ -22,11 +22,11 @@ const columns = [
   {
     title: "Account",
     links: [
-      { href: "/account", label: "My account" },
-      { href: "/account/orders", label: "Orders" },
-      { href: "/wishlist", label: "Wishlist" },
-      { href: "/track", label: "Track order" },
-      { href: "/account/register", label: "Register" },
+      { href: "/account", label: "My account", nofollow: true },
+      { href: "/account/orders", label: "Orders", nofollow: true },
+      { href: "/wishlist", label: "Wishlist", nofollow: true },
+      { href: "/track", label: "Track order", nofollow: true },
+      { href: "/account/register", label: "Register", nofollow: true },
     ],
   },
   {
@@ -37,8 +37,6 @@ const columns = [
       { href: "/shipping-returns", label: "Shipping & returns" },
       { href: "/privacy", label: "Privacy" },
       { href: "/cookies", label: "Cookies" },
-      { href: "/site-map", label: "Sitemap" },
-      { href: "/journal", label: "Journal" },
     ],
   },
 ];
@@ -97,6 +95,7 @@ export function Footer() {
                       <li key={link.href}>
                         <Link
                           href={link.href}
+                          rel={"nofollow" in link && link.nofollow ? "nofollow" : undefined}
                           className="text-sm text-porcelain/80 transition-colors hover:text-brass"
                         >
                           {link.label}

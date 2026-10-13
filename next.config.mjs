@@ -21,16 +21,6 @@ const nextConfig = {
       },
     ],
   },
-  async redirects() {
-    return [
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "www.zayune.com" }],
-        destination: "https://zayune.com/:path*",
-        permanent: true,
-      },
-    ];
-  },
   async headers() {
     return [
       {

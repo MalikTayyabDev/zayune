@@ -1,64 +1,100 @@
 # SEO & Google Search Console
 
-## Canonical host (critical)
+## Why the sitemap failed before
 
-Always use **`https://zayune.com`** (HTTPS + apex, no `www`, no `http`).
+Common causes on this project:
 
-- Env: `NEXT_PUBLIC_SITE_URL=https://zayune.com` and `NEXTAUTH_URL=https://zayune.com`
-- `www.zayune.com` → 301 to `https://zayune.com` (`vercel.json` + `next.config.mjs`)
-- Public SEO URLs never use `*.vercel.app` or `http://`
+1. **`robots.txt` pointed at `*.vercel.app`** instead of the production domain — Search Console property and sitemap host must match.
+2. **`/sitemap.xml` returned HTTP 500** when catalog data failed — Google then reports “Couldn’t fetch”.
+3. **Private URLs in the sitemap** while also disallowed in robots — creates GSC warnings.
 
-GSC previously showed separate impressions for `http://zayune.com/` and `https://zayune.com/` — that split must stay fixed.
+The app forces the public canonical host (never `vercel.app` / localhost) for sitemap, robots, and metadata.
+
+## Vercel env (required for SEO)
+
+Set **Production**:
+
+| Variable | Example |
+|---|---|
+| `NEXT_PUBLIC_SITE_URL` | `https://zayune.com` |
+| `NEXTAUTH_URL` | `https://zayune.com` |
+
+Then **Redeploy**. Preview deployments may still use `*.vercel.app`; that is fine — public SEO URLs stay on the custom domain.
 
 ## On-page SEO (code)
 
-- `pageMetadata()` for title, description, self-canonical, keywords, OG/Twitter
-- Root `canonical: "./"` + absolute canonicals on key pages
-- One `<h1>` per page; copper star on eyebrows
-- Schema: Organization/OnlineStore, LocalBusiness (Rawalpindi), WebSite, Product, BreadcrumbList, FAQ, CollectionPage
-- HTML sitemap for crawlers: `/site-map`
-- XML sitemaps: `/sitemap.xml` and `/sitemap/sitemap.xml`
+- Use `pageMetadata()` from `src/lib/seo.ts` for title, description, self-canonical, focus keywords, and OG/Twitter.
+- Root layout uses `canonical: "./"` so every route auto-canonicalizes to itself; `pageMetadata()` still sets absolute URLs.
+- One `<h1>` per page via `SectionHeading as="h1"` (or a bespoke h1 on product/custom/home).
+- Product pages: fill `seoTitle` / `seoDescription` in admin when possible; leave `seoTitle` without a trailing brand (template adds ` · ZAYUNE`).
+- Schema: Organization/OnlineStore + WebSite (root, with phone), Product + BreadcrumbList (PDP), FAQPage (custom), CollectionPage (shop when products exist).
+- Studio WhatsApp / phone: `NEXT_PUBLIC_WHATSAPP_NUMBER=923055282964` (no `+` in env).
+
+## Check before submitting
+
+Open these in a browser (expect **200**, not 500):
+
+- `https://zayune.com/robots.txt` — `Sitemap:` should use `zayune.com`
+- `https://zayune.com/sitemap.xml` — valid XML list of public pages
+- `https://zayune.com/sitemap/sitemap.xml` — same content (GSC cache bypass)
+
+## Submit in Google Search Console
+
+1. Add property **Domain** `zayune.com` (or URL-prefix `https://zayune.com`) and verify DNS/ownership.
+2. **Sitemaps** → submit **only** `https://zayune.com/sitemap.xml`  
+   (Optional fallback if apex still shows a cached failure: `https://zayune.com/sitemap/sitemap.xml` — do not keep both active long-term.)
+3. While **Coming soon**: URL Inspection → Request indexing for `/`, `/shop`, `/custom`, `/about`, `/contact` only. Do **not** request product URLs (they redirect to `/shop`).
+4. When products are ready: Admin → fill **Meta title** / **Meta description** → Publish → **Settings → Live** → wait for sitemap refresh → Request indexing for each `/product/...` URL.
 
 ## What we index
 
-Included: home, shop, categories, products, custom, about, contact, shipping/returns, privacy, cookies, site-map.
+**Coming soon:** home, shop, custom, about, contact, shipping/returns, privacy, cookies.  
+**Live:** same + published categories (`/shop/...`) and products (`/product/...`).
 
-Excluded / noindex: `/admin`, `/api`, `/checkout`, `/cart`, `/account`, `/order`, `/wishlist`, `/track`, `/journal`.
+Excluded / noindex: `/admin`, `/api`, `/checkout`, `/cart`, `/account`, `/order`, `/wishlist`, `/track`, `/journal` (until editorial content ships). Footer account/wishlist/track links use `rel="nofollow"`.
 
 ## Catalog & store mode
 
 Admin → **Settings → Store status**:
 
-- **Coming soon** — catalog hidden; custom/WhatsApp open
-- **Live** — show products
+- **Coming soon** — shop & home show “Products coming soon”; sitemap lists **brand URLs only** (no `/product/*`, avoids “Page with redirect” in GSC)
+- **Live** — catalog visible; sitemap auto-includes published products + categories
 
-Thin “coming soon” pages are harder to index — go **Live** once real products exist, then request indexing.
+Saving products or switching store mode revalidates `/sitemap.xml` immediately.
 
-## GSC checklist after each deploy
+Default after seed / clear is **Coming soon**. Placeholder products are not seeded.
 
-1. Sitemaps → confirm `https://zayune.com/sitemap/sitemap.xml` is **Success**
-2. URL Inspection → request indexing for:
-   - `https://zayune.com/`
-   - `https://zayune.com/shop`
-   - `https://zayune.com/custom`
-   - `https://zayune.com/about`
-   - `https://zayune.com/contact`
-   - top category/product URLs when live
-3. Page indexing → open **404** and **Redirect** reasons; fix or 301 stray URLs
-4. Leave robots/noindex private paths alone (expected “not indexed”)
+Wipe leftover demo rows:
 
-## Ranking reality
+```bash
+npx prisma db push
+npm run db:clear-products
+```
 
-Technical SEO is necessary but not enough. Ranking “on top” needs:
+Also set Vercel Production: `NEXT_PUBLIC_WHATSAPP_NUMBER=923055282964`.
 
-- Real product catalog + unique copy (titles, stories, materials)
-- Consistent Google Business Profile (Satellite Town, Rawalpindi) matching NAP on site
-- Reviews, Instagram/WhatsApp engagement, and backlinks over time
-- Pakistan-focused keywords already in `siteConfig.focusKeywords`
+## Vercel domains (canonical host)
+
+In Vercel → Domains for this project:
+
+- Primary: **`https://zayune.com`** (apex)
+- Redirect **`www.zayune.com` → apex**
+- Ensure **HTTP → HTTPS**
+
+GSC Domain property covers both hosts; still pick one public canonical.
+
+## Product meta (admin)
+
+When adding products:
+
+1. Fill **Meta title** (~50–60 chars) and **Meta description** (~150–160 chars) in the “Search engine listing” panel.
+2. If left empty, the storefront falls back to product name + one-liner / story snippet.
+3. Publish the product, then set Settings to **Live** so URLs appear in the sitemap and Product JSON-LD is served.
+4. In GSC, request indexing for each new product URL.
 
 ## Ongoing
 
-- Fill product `seoTitle` / `seoDescription` in admin
-- Ship journal posts before indexing `/journal`
-- Add a ~1200×630 OG image (replace logo-only shares)
-- Monitor Coverage weekly until indexed count rises past the early 5/22 split
+- Keep product meta title/description filled before going Live.
+- Ship real journal posts before re-adding `/journal` to the footer or sitemap.
+- Prefer a ~1200×630 brand share image later (replace default `/logo.png` in OG).
+- Monitor Pages in GSC for soft 404s; resubmit the sitemap after switching from Coming soon → Live.

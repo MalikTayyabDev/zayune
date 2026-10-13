@@ -557,20 +557,63 @@ export function ProductForm({ categories, catalog = [], initial }: Props) {
                 value={values.slug}
                 onChange={(v) => setField("slug", v)}
               />
-              <Field
-                label="SEO title"
-                value={values.seoTitle}
-                onChange={(v) => setField("seoTitle", v)}
-              />
-              <TextArea
-                label="SEO description"
-                value={values.seoDescription}
-                onChange={(v) => setField("seoDescription", v)}
-              />
+              <div>
+                <Field
+                  label="Meta title"
+                  value={values.seoTitle}
+                  onChange={(v) => setField("seoTitle", v)}
+                  placeholder={values.name || "Product name"}
+                />
+                <p
+                  className={`mt-1.5 text-xs ${
+                    values.seoTitle.length > 60
+                      ? "text-copper"
+                      : "text-aubergine/45"
+                  }`}
+                >
+                  {values.seoTitle.length}/60 characters
+                  {!values.seoTitle && values.name
+                    ? ` · Suggested: ${values.name}`
+                    : " · Aim for ~50–60"}
+                </p>
+              </div>
+              <div>
+                <TextArea
+                  label="Meta description"
+                  value={values.seoDescription}
+                  onChange={(v) => setField("seoDescription", v)}
+                  placeholder={
+                    values.oneLiner ||
+                    "Short summary for Google (about 150–160 characters)"
+                  }
+                  rows={3}
+                />
+                <p
+                  className={`mt-1.5 text-xs ${
+                    values.seoDescription.length > 160
+                      ? "text-copper"
+                      : "text-aubergine/45"
+                  }`}
+                >
+                  {values.seoDescription.length}/160 characters
+                  {!values.seoDescription && values.oneLiner
+                    ? ` · Suggested: ${values.oneLiner.slice(0, 160)}`
+                    : " · Aim for ~150–160"}
+                </p>
+              </div>
+              {values.published &&
+                (!values.seoTitle.trim() || !values.seoDescription.trim()) && (
+                  <p className="border border-brass/40 bg-brass/10 px-3 py-2 text-xs text-aubergine/75">
+                    Published without meta title/description — Google will fall
+                    back to the product name and one-liner. Fill these before
+                    going Live for best rankings.
+                  </p>
+                )}
               <Field
                 label="Tags (comma separated)"
                 value={values.tags}
                 onChange={(v) => setField("tags", v)}
+                placeholder="handmade, crochet, pakistan"
               />
             </div>
           </section>
@@ -773,11 +816,13 @@ function Field({
   value,
   onChange,
   type = "text",
+  placeholder,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   type?: string;
+  placeholder?: string;
 }) {
   return (
     <label className="block">
@@ -785,6 +830,7 @@ function Field({
       <input
         type={type}
         value={value}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         className="mt-2 w-full border border-stone bg-porcelain px-4 py-3 text-sm outline-none focus:border-aubergine/40"
       />
@@ -797,17 +843,20 @@ function TextArea({
   value,
   onChange,
   rows = 4,
+  placeholder,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   rows?: number;
+  placeholder?: string;
 }) {
   return (
     <label className="block">
       <span className="text-nav text-aubergine/55">{label}</span>
       <textarea
         value={value}
+        placeholder={placeholder}
         onChange={(e) => onChange(e.target.value)}
         rows={rows}
         className="mt-2 w-full border border-stone bg-porcelain px-4 py-3 text-sm outline-none focus:border-aubergine/40"

@@ -11,6 +11,7 @@ import {
 } from "@/lib/demo-catalog";
 import { isDemoMode } from "@/lib/demo-data";
 import { prisma } from "@/lib/prisma";
+import { revalidateSitemaps } from "@/lib/sitemap-data";
 import { generateProductSku, generateVariantSku } from "@/lib/sku";
 
 const variantSchema = z.object({
@@ -133,6 +134,7 @@ export async function PUT(request: Request, { params }: Props) {
       } as unknown as DemoProduct;
 
       upsertDemoProduct(product);
+      await revalidateSitemaps();
       return NextResponse.json({ id: params.id });
     }
 
@@ -187,6 +189,7 @@ export async function PUT(request: Request, { params }: Props) {
       },
     });
 
+    await revalidateSitemaps();
     return NextResponse.json({ id: params.id });
   } catch (error) {
     console.error(error);
@@ -206,9 +209,11 @@ export async function DELETE(_request: Request, { params }: Props) {
 
   if (isDemoMode()) {
     deleteDemoProduct(params.id);
+    await revalidateSitemaps();
     return NextResponse.json({ ok: true });
   }
 
   await prisma.product.delete({ where: { id: params.id } });
+  await revalidateSitemaps();
   return NextResponse.json({ ok: true });
 }

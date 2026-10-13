@@ -9,6 +9,9 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
+  // Order items reference products with RESTRICT — clear them first.
+  const orderItems = await prisma.orderItem.deleteMany();
+  const orders = await prisma.order.deleteMany();
   const variants = await prisma.variant.deleteMany();
   const images = await prisma.productImage.deleteMany();
   const wishlist = await prisma.wishlistItem.deleteMany();
@@ -40,6 +43,9 @@ async function main() {
     variants: variants.count,
     wishlist: wishlist.count,
     waitlist: waitlist.count,
+    orderItems: orderItems.count,
+    orders: orders.count,
+    storeMode: "COMING_SOON",
   });
 }
 

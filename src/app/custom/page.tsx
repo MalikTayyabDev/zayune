@@ -15,15 +15,14 @@ import { pageMetadata } from "@/lib/seo";
 import { siteConfig, whatsappHref } from "@/lib/site";
 
 export const metadata = pageMetadata({
-  title: "Custom Crochet Orders Pakistan",
+  title: "Custom Orders",
   description:
-    "Request a made-to-order crochet flower, jewelry piece, keychain, or custom colorway from ZAYUNE in Rawalpindi, Pakistan.",
+    "Request a made-to-order crochet flower, jewelry piece, keychain, or custom colorway from ZAYUNE Pakistan.",
   path: "/custom",
   keywords: [
     "custom crochet orders Pakistan",
-    "made to order crochet flowers Rawalpindi",
+    "made to order crochet flowers",
     "custom handmade jewelry Pakistan",
-    "custom crochet keychain Pakistan",
   ],
 });
 

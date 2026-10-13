@@ -10,6 +10,7 @@ import {
 } from "@/lib/demo-catalog";
 import { isDemoMode } from "@/lib/demo-data";
 import { prisma } from "@/lib/prisma";
+import { revalidateSitemaps } from "@/lib/sitemap-data";
 import { generateProductSku, generateVariantSku } from "@/lib/sku";
 
 const variantSchema = z.object({
@@ -129,6 +130,7 @@ export async function POST(request: Request) {
       } as unknown as DemoProduct;
 
       upsertDemoProduct(product);
+      await revalidateSitemaps();
       return NextResponse.json({ id });
     }
 
@@ -179,6 +181,7 @@ export async function POST(request: Request) {
       },
     });
 
+    await revalidateSitemaps();
     return NextResponse.json({ id: product.id });
   } catch (error) {
     console.error(error);

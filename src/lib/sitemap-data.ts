@@ -1,5 +1,6 @@
 import { getCategories, getProducts } from "@/lib/products";
 import { siteConfig } from "@/lib/site";
+import { isStoreComingSoon } from "@/lib/store-mode";
 
 export type SitemapEntry = {
   loc: string;
@@ -49,10 +50,15 @@ function entry(
   };
 }
 
-/** Build public sitemap URLs. Never throws — falls back to static pages. */
+/**
+ * Build public sitemap URLs.
+ * Coming soon: brand pages only (no /product/* — those redirect to /shop).
+ * Live: published products + categories from the database.
+ */
 export async function getSitemapEntries(): Promise<SitemapEntry[]> {
   const base = siteConfig.url.replace(/\/$/, "");
   const now = new Date();
+  const comingSoon = await isStoreComingSoon();
 
   const entries: SitemapEntry[] = [
     entry(`${base}/`, "1.0", "daily", now),
@@ -63,9 +69,11 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
     entry(`${base}/shipping-returns`, "0.4", "monthly", now),
     entry(`${base}/privacy`, "0.3", "yearly", now),
     entry(`${base}/cookies`, "0.3", "yearly", now),
-    entry(`${base}/site-map`, "0.3", "weekly", now),
-    // Journal stays out until editorial content ships (also noindex).
   ];
+
+  if (comingSoon) {
+    return entries;
+  }
 
   try {
     const [products, categories] = await withTimeout(
@@ -133,4 +141,11 @@ export function sitemapResponse(xml: string): Response {
       "X-Content-Type-Options": "nosniff",
     },
   });
+}
+
+/** Call after product create/update/delete so Live sitemaps refresh quickly. */
+export async function revalidateSitemaps() {
+  const { revalidatePath } = await import("next/cache");
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/sitemap/sitemap.xml");
 }

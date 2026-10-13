@@ -21,14 +21,33 @@ type Props = {
 export async function generateMetadata({ params }: Props) {
   const product = await getProductBySlug(params.slug);
   if (!product) return { title: "Product" };
-  const title = product.seoTitle || product.name;
-  const description = product.seoDescription || product.oneLiner;
+
+  const title = (product.seoTitle || product.name).trim();
+  const storySnippet =
+    typeof product.story === "string" ? product.story.slice(0, 160).trim() : "";
+  const description = (
+    product.seoDescription ||
+    product.oneLiner ||
+    storySnippet ||
+    `${product.name} — handmade by ZAYUNE in Satellite Town, Rawalpindi.`
+  ).trim();
+  const tags = Array.isArray(product.tags)
+    ? product.tags.filter((t): t is string => Boolean(t))
+    : [];
+
   return pageMetadata({
     title,
     description,
     path: `/product/${product.slug}`,
     image: product.images[0]?.url,
     absoluteTitle: Boolean(product.seoTitle?.match(/zayune/i)),
+    keywords: [
+      product.name,
+      product.category?.name,
+      "handmade Pakistan",
+      "ZAYUNE",
+      ...tags,
+    ].filter((k): k is string => Boolean(k)),
   });
 }
 

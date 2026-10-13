@@ -4,6 +4,7 @@ import { z } from "zod";
 import { authOptions } from "@/lib/auth";
 import { isDemoMode } from "@/lib/demo-data";
 import { prisma } from "@/lib/prisma";
+import { revalidateSitemaps } from "@/lib/sitemap-data";
 
 const schema = z.object({
   storeMode: z.enum(["LIVE", "COMING_SOON"]).default("COMING_SOON"),
@@ -52,6 +53,7 @@ export async function PUT(request: Request) {
         bankIban: data.bankIban || null,
       },
     });
+    await revalidateSitemaps();
     return NextResponse.json({ ok: true });
   } catch (error) {
     const { friendlyError } = await import("@/lib/api-error");
