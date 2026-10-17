@@ -20,7 +20,7 @@ const replies: { match: RegExp; answer: string }[] = [
   {
     match: /discount|coupon|code|welcome|offer/i,
     answer:
-      "Try WELCOME10 for 10% off (intro), or SUBSCRIBE5 for 5% if you joined our list. Product-specific and one-time codes may also appear in admin promos.",
+      "Winter Special prices already include 5% seasonal off (see compare-at). Try WELCOME10 for 10% intro at checkout, WINTER5 for an extra 5%, or SUBSCRIBE5 if you joined our list.",
   },
   {
     match: /bundle|set|floral set/i,

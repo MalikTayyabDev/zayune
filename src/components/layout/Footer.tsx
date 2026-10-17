@@ -83,7 +83,7 @@ export function Footer() {
                 order history.
               </p>
               <p className="mt-5 text-[11px] uppercase tracking-nav text-brass/90">
-                Intro code · WELCOME10
+                Winter Special · WELCOME10 · WINTER5
               </p>
             </div>
 

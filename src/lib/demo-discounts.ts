@@ -72,6 +72,24 @@ const defaults: DemoDiscount[] = [
     createdAt: new Date(),
     updatedAt: new Date(),
   },
+  {
+    id: "disc-winter5",
+    code: "WINTER5",
+    type: "PERCENT",
+    value: 5,
+    minSubtotal: 0,
+    maxUses: null,
+    usedCount: 0,
+    active: true,
+    isIntroOffer: false,
+    usageType: "UNLIMITED",
+    productIds: null,
+    startsAt: null,
+    endsAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 90),
+    description: "Winter Special — extra 5% off at checkout",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
 ];
 
 const globalStore = globalThis as unknown as {
