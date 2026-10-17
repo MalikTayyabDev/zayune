@@ -1,14 +1,21 @@
 import {
   entriesToXml,
+  fallbackSitemapXml,
   getSitemapEntries,
   sitemapResponse,
 } from "@/lib/sitemap-data";
 
-/** Alternate path for Google Search Console when /sitemap.xml is stuck on a cached "Couldn't fetch". */
+/** Alternate path for GSC if /sitemap.xml was previously stuck on "Couldn't fetch". */
 export const revalidate = 3600;
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function GET() {
-  const entries = await getSitemapEntries();
-  return sitemapResponse(entriesToXml(entries));
+  try {
+    const entries = await getSitemapEntries();
+    return sitemapResponse(entriesToXml(entries));
+  } catch (error) {
+    console.error("[sitemap/sitemap.xml] failed; serving brand fallback", error);
+    return sitemapResponse(fallbackSitemapXml());
+  }
 }

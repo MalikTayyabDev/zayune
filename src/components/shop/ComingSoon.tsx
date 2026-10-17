@@ -1,6 +1,7 @@
+import Link from "next/link";
 import { CopperStar } from "@/components/brand/CopperStar";
 import { Button } from "@/components/ui/Button";
-import { siteConfig, whatsappHref } from "@/lib/site";
+import { siteConfig, studioLocationLine, whatsappHref } from "@/lib/site";
 
 type Props = {
   title?: string;
@@ -9,7 +10,7 @@ type Props = {
 
 export function ComingSoon({
   title = "Products coming soon",
-  description = "We’re finishing the first studio edit — handmade crochet flowers, jewelry, and keychains. Meanwhile, custom orders are open.",
+  description = `We’re finishing the first studio edit of handmade crochet flowers, jewelry, and keychains from ${studioLocationLine()}. Custom orders stay open — design-led pieces made by hand, shipped across Pakistan.`,
 }: Props) {
   return (
     <div className="mt-14 border border-stone/80 bg-stone/20 px-6 py-14 text-center sm:px-10">
@@ -20,8 +21,27 @@ export function ComingSoon({
       <h2 className="mt-3 font-display text-3xl text-aubergine sm:text-4xl">
         {title}
       </h2>
-      <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-aubergine/70">
+      <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-aubergine/70">
         {description}
+      </p>
+      <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-aubergine/60">
+        Explore{" "}
+        <Link href="/shop/crochet-flowers" className="text-copper hover:underline">
+          crochet flowers
+        </Link>
+        ,{" "}
+        <Link href="/shop/jewelry" className="text-copper hover:underline">
+          handmade jewelry
+        </Link>
+        ,{" "}
+        <Link href="/shop/keychains" className="text-copper hover:underline">
+          keychains
+        </Link>
+        , or start a{" "}
+        <Link href="/custom" className="text-copper hover:underline">
+          custom order
+        </Link>{" "}
+        now.
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Button href="/custom">Request a custom piece</Button>

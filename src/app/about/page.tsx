@@ -9,13 +9,14 @@ import { studioLocationLine } from "@/lib/site";
 import { siteImages } from "@/lib/site-images";
 
 export const metadata = pageMetadata({
-  title: "About the Studio",
-  description: `ZAYUNE is a designer-led handmade label from ${studioLocationLine()} — two sisters making crochet flowers, jewelry, keychains, and custom orders with quiet confidence.`,
+  title: "About ZAYUNE — Handmade Studio in Rawalpindi, Pakistan",
+  description: `Meet ZAYUNE — a designer-led handmade crochet & jewelry studio in ${studioLocationLine()}. Two sisters making crochet flowers, jewelry, keychains, and custom orders.`,
   path: "/about",
   keywords: [
     "ZAYUNE Rawalpindi",
     "handmade Satellite Town",
     "crochet studio Rawalpindi",
+    "handmade accessories Pakistan studio",
   ],
 });
 

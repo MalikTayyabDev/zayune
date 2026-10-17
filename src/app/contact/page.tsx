@@ -6,12 +6,13 @@ import { pageMetadata } from "@/lib/seo";
 import { siteConfig, whatsappHref } from "@/lib/site";
 
 export const metadata = pageMetadata({
-  title: "Contact",
-  description: `Contact ZAYUNE on WhatsApp ${siteConfig.phoneDisplay}, Instagram, or email for orders and custom requests.`,
+  title: "Contact ZAYUNE — WhatsApp Handmade Studio Rawalpindi",
+  description: `Contact ZAYUNE in Satellite Town, Rawalpindi on WhatsApp ${siteConfig.phoneDisplay}, Instagram @zayune.pk, or email for handmade orders and custom crochet requests.`,
   path: "/contact",
   keywords: [
     "contact ZAYUNE",
     "ZAYUNE WhatsApp",
+    "handmade studio Rawalpindi contact",
     "custom crochet Pakistan contact",
   ],
 });

@@ -64,6 +64,18 @@ export function OrganizationJsonLd() {
       slogan: siteConfig.tagline,
       logo: `${base}/logo.png`,
     },
+    knowsAbout: siteConfig.focusKeywords,
+    makesOffer: [
+      {
+        "@type": "Offer",
+        itemOffered: {
+          "@type": "Service",
+          name: "Custom crochet & handmade accessories",
+          description:
+            "Made-to-order crochet flowers, jewelry, keychains, and custom colorways from ZAYUNE Pakistan.",
+        },
+      },
+    ],
     priceRange: "$$",
     currenciesAccepted: "PKR",
     paymentAccepted: "Cash, Bank Transfer",
@@ -217,15 +229,27 @@ export function CollectionJsonLd({
   path: string;
   products: { name: string; slug: string }[];
 }) {
-  if (products.length === 0) return null;
   const base = siteConfig.url.replace(/\/$/, "");
-  const data = {
+  const data: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name,
     description,
     url: `${base}${path}`,
-    mainEntity: {
+    isPartOf: {
+      "@type": "WebSite",
+      name: siteConfig.name,
+      url: base,
+    },
+    about: {
+      "@type": "Thing",
+      name,
+      description,
+    },
+  };
+
+  if (products.length > 0) {
+    data.mainEntity = {
       "@type": "ItemList",
       numberOfItems: products.length,
       itemListElement: products.map((product, index) => ({
@@ -234,8 +258,8 @@ export function CollectionJsonLd({
         url: `${base}/product/${product.slug}`,
         name: product.name,
       })),
-    },
-  };
+    };
+  }
 
   return (
     <script

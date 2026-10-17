@@ -5,8 +5,10 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { ComingSoon } from "@/components/shop/ComingSoon";
 import { ShopToolbar } from "@/components/shop/ShopToolbar";
 import { CollectionJsonLd } from "@/components/seo/JsonLd";
+import { CollectionSeoCopy } from "@/components/seo/SeoKeywordBlock";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getCategories, getProducts } from "@/lib/products";
+import { collectionSeo } from "@/lib/seo-copy";
 import { pageMetadata } from "@/lib/seo";
 import { isStoreComingSoon } from "@/lib/store-mode";
 import { cn } from "@/lib/utils";
@@ -20,14 +22,20 @@ export async function generateMetadata({ params }: Props) {
   const categories = await getCategories();
   const category = categories.find((c) => c.slug === params.category);
   const name = category?.name || "Shop";
+  const seo = category ? collectionSeo[category.slug] : undefined;
   return pageMetadata({
-    title: category ? `${name} — Handmade` : "Shop",
+    title: seo?.h1Extra || (category ? `${name} — Handmade Pakistan` : "Shop"),
     description:
+      seo?.body?.slice(0, 155) ||
       category?.description ||
       "Browse handmade pieces from ZAYUNE Pakistan.",
     path: `/shop/${params.category}`,
     keywords: category
-      ? [`${category.name} handmade Pakistan`, `ZAYUNE ${category.name}`]
+      ? [
+          ...(seo?.keywords || []),
+          `${category.name} handmade Pakistan`,
+          `ZAYUNE ${category.name}`,
+        ]
       : undefined,
   });
 }
@@ -52,46 +60,51 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   );
   const showComingSoon = comingSoon || products.length === 0;
 
+  const seo = collectionSeo[category.slug];
+
   return (
     <div className="container-content py-10 sm:py-20">
-      {!comingSoon && (
-        <CollectionJsonLd
-          name={category.name}
-          description={
-            category.description || `Handmade ${category.name} from ZAYUNE.`
-          }
-          path={`/shop/${category.slug}`}
-          products={products.map((p) => ({ name: p.name, slug: p.slug }))}
-        />
-      )}
+      <CollectionJsonLd
+        name={seo?.h1Extra || `${category.name} — ZAYUNE`}
+        description={
+          seo?.body ||
+          category.description ||
+          `Handmade ${category.name} from ZAYUNE Pakistan.`
+        }
+        path={`/shop/${category.slug}`}
+        products={products.map((p) => ({ name: p.name, slug: p.slug }))}
+      />
       <SectionHeading
         as="h1"
         eyebrow="Shop"
-        title={category.name}
+        title={seo?.h1Extra || category.name}
         description={category.description || undefined}
       />
+      <CollectionSeoCopy
+        slug={category.slug}
+        name={category.name}
+        fallbackDescription={category.description}
+      />
 
-      {!comingSoon && (
-        <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
-          <Link href="/shop" className="text-nav text-aubergine/50 hover:text-copper">
-            All
+      <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
+        <Link href="/shop" className="text-nav text-aubergine/50 hover:text-copper">
+          All
+        </Link>
+        {categories.map((item) => (
+          <Link
+            key={item.id}
+            href={`/shop/${item.slug}`}
+            className={cn(
+              "text-nav transition-colors hover:text-copper",
+              item.slug === category.slug
+                ? "text-aubergine"
+                : "text-aubergine/50"
+            )}
+          >
+            {item.name}
           </Link>
-          {categories.map((item) => (
-            <Link
-              key={item.id}
-              href={`/shop/${item.slug}`}
-              className={cn(
-                "text-nav transition-colors hover:text-copper",
-                item.slug === category.slug
-                  ? "text-aubergine"
-                  : "text-aubergine/50"
-              )}
-            >
-              {item.name}
-            </Link>
-          ))}
-        </div>
-      )}
+        ))}
+      </div>
 
       {!comingSoon && products.length > 0 && (
         <Suspense fallback={null}>

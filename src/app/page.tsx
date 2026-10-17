@@ -19,6 +19,7 @@ import {
   getNewestProducts,
   getProducts,
 } from "@/lib/products";
+import { HomeSeoBlock } from "@/components/seo/SeoKeywordBlock";
 import { pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 import { siteImages } from "@/lib/site-images";
@@ -26,14 +27,17 @@ import { isStoreComingSoon } from "@/lib/store-mode";
 
 export const metadata = pageMetadata({
   title:
-    "ZAYUNE — Designed, not just made. | Handmade Jewelry & Crochet Pakistan",
-  description: siteConfig.description,
+    "ZAYUNE — Handmade Jewelry, Crochet Flowers & Keychains | Pakistan",
+  description:
+    "Buy handmade crochet flowers, jewelry, and keychains from ZAYUNE in Satellite Town, Rawalpindi. Designer-led pieces made by hand in Pakistan — custom orders open on WhatsApp.",
   path: "/",
   absoluteTitle: true,
   keywords: [
     "handmade crochet Pakistan",
-    "ZAYUNE handmade",
+    "handmade jewelry Pakistan",
     "crochet flowers online Pakistan",
+    "handmade accessories Rawalpindi",
+    "ZAYUNE handmade",
   ],
 });
 
@@ -173,6 +177,10 @@ export default async function HomePage() {
 
       <Reveal>
         <StoryBlock />
+      </Reveal>
+
+      <Reveal>
+        <HomeSeoBlock />
       </Reveal>
 
       <Reveal as="section" className="container-content pb-24">

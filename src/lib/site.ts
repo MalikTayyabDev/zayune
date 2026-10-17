@@ -40,7 +40,7 @@ export const siteConfig = {
   tagline: "Designed, not just made.",
   supportingLine: "Tiny things, big vibes.",
   description:
-    "ZAYUNE is a crochet handmade accessories label from Satellite Town, Rawalpindi, Pakistan — crochet flowers, jewelry, keychains, and custom orders. Made by hand. Led by design.",
+    "ZAYUNE makes handmade crochet flowers, jewelry, and keychains in Satellite Town, Rawalpindi, Pakistan. Designer-led accessories finished by hand — custom orders open nationwide.",
   url: resolvePublicSiteUrl(),
   locale: "en_PK",
   instagram:
@@ -66,14 +66,19 @@ export const siteConfig = {
   ],
   focusKeywords: [
     "ZAYUNE",
+    "zayune.pk",
     "handmade jewelry Pakistan",
+    "handmade jewelry Rawalpindi",
     "crochet flowers Pakistan",
+    "buy crochet flowers online Pakistan",
     "handmade crochet Rawalpindi",
     "handmade accessories Satellite Town",
+    "handmade accessories Pakistan",
     "handmade keychains Pakistan",
-    "custom crochet orders",
+    "custom crochet orders Pakistan",
+    "custom handmade jewelry Pakistan",
     "designer handmade accessories",
-    "zayune.pk",
+    "crochet studio Rawalpindi",
   ],
 };
 

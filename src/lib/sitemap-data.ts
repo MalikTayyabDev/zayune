@@ -50,42 +50,50 @@ function entry(
   };
 }
 
+/** Brand URLs that always return 200 — safe for Coming soon and Live. */
+export function getBrandSitemapEntries(base: string, now = new Date()): SitemapEntry[] {
+  return [
+    entry(`${base}/`, "1.0", "daily", now),
+    entry(`${base}/shop`, "0.9", "daily", now),
+    entry(`${base}/custom`, "0.9", "weekly", now),
+    entry(`${base}/about`, "0.7", "monthly", now),
+    entry(`${base}/contact`, "0.7", "monthly", now),
+    entry(`${base}/shipping-returns`, "0.4", "monthly", now),
+    entry(`${base}/privacy`, "0.3", "yearly", now),
+    entry(`${base}/cookies`, "0.3", "yearly", now),
+    entry(`${base}/site-map`, "0.3", "weekly", now),
+  ];
+}
+
 /**
  * Build public sitemap URLs.
- * Coming soon: brand pages only (no /product/* — those redirect to /shop).
- * Live: published products + categories from the database.
+ * Never throws — brand URLs always returned so Google can crawl even if DB is slow.
+ * Categories included in Coming soon (they serve 200 + keyword copy, not redirects).
+ * Products only when Live.
  */
 export async function getSitemapEntries(): Promise<SitemapEntry[]> {
   const base = siteConfig.url.replace(/\/$/, "");
   const now = new Date();
-  const comingSoon = await isStoreComingSoon();
-
-  const entries: SitemapEntry[] = [
-    entry(`${base}/`, "1.0", "daily", now),
-    entry(`${base}/shop`, "0.9", "daily", now),
-    entry(`${base}/custom`, "0.8", "weekly", now),
-    entry(`${base}/about`, "0.6", "monthly", now),
-    entry(`${base}/contact`, "0.6", "monthly", now),
-    entry(`${base}/shipping-returns`, "0.4", "monthly", now),
-    entry(`${base}/privacy`, "0.3", "yearly", now),
-    entry(`${base}/cookies`, "0.3", "yearly", now),
-  ];
-
-  if (comingSoon) {
-    return entries;
-  }
+  const entries = getBrandSitemapEntries(base, now);
 
   try {
-    const [products, categories] = await withTimeout(
-      Promise.all([getProducts(), getCategories()]),
-      4000
+    const comingSoon = await withTimeout(isStoreComingSoon(), 1500).catch(
+      () => true
     );
 
+    const categories = await withTimeout(getCategories(), 2500).catch(() => []);
     for (const category of categories) {
       if (!category.slug) continue;
-      entries.push(entry(`${base}/shop/${category.slug}`, "0.75", "weekly", now));
+      entries.push(
+        entry(`${base}/shop/${category.slug}`, "0.8", "weekly", now)
+      );
     }
 
+    if (comingSoon) {
+      return entries;
+    }
+
+    const products = await withTimeout(getProducts(), 3000).catch(() => []);
     for (const product of products) {
       if (!product.slug || product.published === false) continue;
       entries.push(
@@ -98,7 +106,7 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
       );
     }
   } catch (error) {
-    console.error("[sitemap] catalog load failed; serving static URLs only", error);
+    console.error("[sitemap] catalog load failed; serving brand URLs only", error);
   }
 
   return entries;
@@ -141,6 +149,12 @@ export function sitemapResponse(xml: string): Response {
       "X-Content-Type-Options": "nosniff",
     },
   });
+}
+
+/** Absolute fallback if route handlers throw before getSitemapEntries resolves. */
+export function fallbackSitemapXml() {
+  const base = siteConfig.url.replace(/\/$/, "");
+  return entriesToXml(getBrandSitemapEntries(base));
 }
 
 /** Call after product create/update/delete so Live sitemaps refresh quickly. */

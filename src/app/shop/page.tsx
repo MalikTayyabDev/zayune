@@ -4,6 +4,7 @@ import { ProductCard } from "@/components/product/ProductCard";
 import { ComingSoon } from "@/components/shop/ComingSoon";
 import { ShopToolbar } from "@/components/shop/ShopToolbar";
 import { CollectionJsonLd } from "@/components/seo/JsonLd";
+import { ShopSeoIntro } from "@/components/seo/SeoKeywordBlock";
 import { Reveal } from "@/components/ui/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { getCategories, getProducts } from "@/lib/products";
@@ -12,14 +13,16 @@ import { isStoreComingSoon } from "@/lib/store-mode";
 import { cn } from "@/lib/utils";
 
 export const metadata = pageMetadata({
-  title: "Shop Handmade Jewelry, Crochet Flowers & Keychains",
+  title: "Shop Handmade Jewelry, Crochet Flowers & Keychains Pakistan",
   description:
-    "Shop ZAYUNE — handmade jewelry, crochet flowers, keychains, and custom orders from Pakistan. Designed, not just made.",
+    "Shop handmade jewelry, crochet flowers, and keychains from ZAYUNE Rawalpindi. Designer-led crochet accessories made by hand in Pakistan — custom orders welcome.",
   path: "/shop",
   keywords: [
     "shop handmade crochet Pakistan",
     "buy crochet flowers online Pakistan",
     "handmade jewelry shop Pakistan",
+    "handmade keychains shop Pakistan",
+    "ZAYUNE shop",
   ],
 });
 
@@ -47,39 +50,36 @@ export default async function ShopPage({ searchParams }: Props) {
 
   return (
     <div className="container-content py-10 sm:py-20">
-      {!comingSoon && (
-        <CollectionJsonLd
-          name="ZAYUNE Shop"
-          description="Handmade crochet accessories from Pakistan."
-          path="/shop"
-          products={products.map((p) => ({ name: p.name, slug: p.slug }))}
-        />
-      )}
+      <CollectionJsonLd
+        name="Shop handmade jewelry & crochet — ZAYUNE"
+        description="Handmade crochet flowers, jewelry, and keychains from ZAYUNE Pakistan."
+        path="/shop"
+        products={products.map((p) => ({ name: p.name, slug: p.slug }))}
+      />
       <SectionHeading
         as="h1"
         eyebrow="Crochet handmade accessories"
-        title="All pieces"
-        description="Crochet flowers, jewelry, keychains, and custom orders — made by hand in Pakistan, presented with room to breathe."
+        title="Shop handmade jewelry & crochet"
+        description="Crochet flowers, jewelry, keychains, and custom orders — made by hand in Satellite Town, Rawalpindi, Pakistan."
       />
+      <ShopSeoIntro />
 
-      {!comingSoon && (
-        <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
-          <Link href="/shop" className="text-nav text-aubergine">
-            All
+      <div className="mt-10 flex flex-wrap gap-x-6 gap-y-3">
+        <Link href="/shop" className="text-nav text-aubergine">
+          All
+        </Link>
+        {categories.map((category) => (
+          <Link
+            key={category.id}
+            href={`/shop/${category.slug}`}
+            className={cn(
+              "text-nav text-aubergine/50 transition-colors hover:text-copper"
+            )}
+          >
+            {category.name}
           </Link>
-          {categories.map((category) => (
-            <Link
-              key={category.id}
-              href={`/shop/${category.slug}`}
-              className={cn(
-                "text-nav text-aubergine/50 transition-colors hover:text-copper"
-              )}
-            >
-              {category.name}
-            </Link>
-          ))}
-        </div>
-      )}
+        ))}
+      </div>
 
       {!comingSoon && products.length > 0 && (
         <Suspense fallback={null}>

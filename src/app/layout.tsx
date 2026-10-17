@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
     default:
-      "ZAYUNE — Designed, not just made. | Handmade Jewelry & Crochet Pakistan",
+      "ZAYUNE — Handmade Jewelry, Crochet Flowers & Keychains | Pakistan",
     template: "%s · ZAYUNE",
   },
   description: siteConfig.description,

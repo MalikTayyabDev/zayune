@@ -41,10 +41,16 @@ Open these in a browser (expect **200**, not 500):
 ## Submit in Google Search Console
 
 1. Add property **Domain** `zayune.com` (or URL-prefix `https://zayune.com`) and verify DNS/ownership.
-2. **Sitemaps** → submit **only** `https://zayune.com/sitemap.xml`  
-   (Optional fallback if apex still shows a cached failure: `https://zayune.com/sitemap/sitemap.xml` — do not keep both active long-term.)
-3. While **Coming soon**: URL Inspection → Request indexing for `/`, `/shop`, `/custom`, `/about`, `/contact` only. Do **not** request product URLs (they redirect to `/shop`).
+2. **Sitemaps** → submit **only** `https://zayune.com/sitemap.xml` (robots.txt lists this single URL).
+3. While **Coming soon**: URL Inspection → Request indexing for `/`, `/shop`, `/shop/crochet-flowers`, `/shop/jewelry`, `/shop/keychains`, `/custom`, `/about`, `/contact`. Do **not** request product URLs (they redirect to `/shop`).
 4. When products are ready: Admin → fill **Meta title** / **Meta description** → Publish → **Settings → Live** → wait for sitemap refresh → Request indexing for each `/product/...` URL.
+
+### Fix crawling / “not indexed” faster
+
+- Sitemap always returns **200** with brand (+ category) URLs even if the database is slow.
+- Category pages stay **200** during Coming soon with keyword copy (not redirects) so Google can index collection intent.
+- HTML sitemap: `https://zayune.com/site-map` (linked in footer).
+- Soft-404 risk: Coming soon boxes include real collection links + copy — do not strip that content.
 
 ## What we index
 
@@ -78,8 +84,10 @@ Also set Vercel Production: `NEXT_PUBLIC_WHATSAPP_NUMBER=923055282964`.
 In Vercel → Domains for this project:
 
 - Primary: **`https://zayune.com`** (apex)
-- Redirect **`www.zayune.com` → apex**
+- Add **`www.zayune.com`** and set redirect **www → apex** (must issue a valid SSL cert for www)
 - Ensure **HTTP → HTTPS**
+
+If `https://www.zayune.com` fails TLS / certificate trust, Google may keep reporting host / crawl issues — fix the www domain certificate in Vercel Domains (re-add domain or refresh SSL), then force redirect to apex.
 
 GSC Domain property covers both hosts; still pick one public canonical.
 

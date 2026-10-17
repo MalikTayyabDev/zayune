@@ -24,8 +24,8 @@ export default function robots(): MetadataRoute.Robots {
         ],
       },
     ],
-    // Both paths serve the same XML. Prefer the nested URL in GSC if /sitemap.xml is stuck on "Couldn't fetch".
-    sitemap: [`${base}/sitemap.xml`, `${base}/sitemap/sitemap.xml`],
+    // One primary sitemap — avoid duplicate GSC submissions.
+    sitemap: `${base}/sitemap.xml`,
     host: base.replace(/^https?:\/\//, ""),
   };
 }
