@@ -4,8 +4,6 @@
  */
 
 const local = (file: string) => `/products/winter/${file}`;
-const u = (id: string, w = 1200) =>
-  `https://images.unsplash.com/${id}?w=${w}&q=80&auto=format&fit=crop`;
 
 /** Apply 5% seasonal discount; compare-at shows the list price. */
 export function withSeasonalPrice(listPricePkr: number) {
@@ -20,6 +18,7 @@ export type WinterVariantSeed = {
   swatchHex: string;
   priceDelta?: number;
   stock?: number | null;
+  sku?: string;
 };
 
 export type WinterCategorySeed = {
@@ -32,6 +31,7 @@ export type WinterCategorySeed = {
 export type WinterProductSeed = {
   name: string;
   slug: string;
+  sku: string;
   categorySlug: string;
   oneLiner: string;
   story: string;
@@ -127,6 +127,7 @@ export const winterProducts: WinterProductSeed[] = [
   {
     name: "Crochet Beanie & Slouchy Hat",
     slug: "crochet-beanie-slouchy-hat",
+    sku: "ZAY-WIN-BEANIE",
     categorySlug: "beanies-hats",
     oneLiner: "The winter bestseller — soft structure, wide color range, made by hand.",
     story:
@@ -156,21 +157,22 @@ export const winterProducts: WinterProductSeed[] = [
         kind: "hero",
       },
       {
-        url: u("photo-1576871337632-b9aef4c17ab9"),
-        alt: "Crochet beanie texture detail — winter hat",
+        url: local("beanie-detail.jpg"),
+        alt: "Crochet beanie stitch and brim detail — matching studio shot",
         kind: "detail",
       },
     ],
     variants: [
-      { name: "Camel", optionGroup: "Color", swatchHex: "#C4A484", stock: 5 },
-      { name: "Ivory", optionGroup: "Color", swatchHex: "#F5F0E8", stock: 5 },
-      { name: "Charcoal", optionGroup: "Color", swatchHex: "#3A3A3A", stock: 4 },
-      { name: "Blush", optionGroup: "Color", swatchHex: "#E8C4C0", stock: 4 },
+      { name: "Camel", optionGroup: "Color", swatchHex: "#C4A484", stock: 5, sku: "ZAY-WIN-BEANIE-CAM" },
+      { name: "Ivory", optionGroup: "Color", swatchHex: "#F5F0E8", stock: 5, sku: "ZAY-WIN-BEANIE-IVY" },
+      { name: "Charcoal", optionGroup: "Color", swatchHex: "#3A3A3A", stock: 4, sku: "ZAY-WIN-BEANIE-CHR" },
+      { name: "Blush", optionGroup: "Color", swatchHex: "#E8C4C0", stock: 4, sku: "ZAY-WIN-BEANIE-BLS" },
     ],
   },
   {
     name: "Chunky Crochet Scarf & Muffler",
     slug: "chunky-crochet-scarf-muffler",
+    sku: "ZAY-WIN-SCARF",
     categorySlug: "scarves-mufflers",
     oneLiner: "Oversized cozy texture — the Instagram-ready winter muffler.",
     story:
@@ -199,20 +201,21 @@ export const winterProducts: WinterProductSeed[] = [
         kind: "hero",
       },
       {
-        url: u("photo-1601925260368-ae2f83cf8b7f"),
-        alt: "Soft scarf yarn texture — chunky crochet muffler",
+        url: local("scarf-detail.jpg"),
+        alt: "Chunky scarf stitch detail — matching studio shot",
         kind: "detail",
       },
     ],
     variants: [
-      { name: "Oatmeal", optionGroup: "Color", swatchHex: "#D9CBB8", stock: 5 },
-      { name: "Cocoa", optionGroup: "Color", swatchHex: "#6B4A34", stock: 5 },
-      { name: "Fog Grey", optionGroup: "Color", swatchHex: "#9A9A9A", stock: 4 },
+      { name: "Oatmeal", optionGroup: "Color", swatchHex: "#D9CBB8", stock: 5, sku: "ZAY-WIN-SCARF-OAT" },
+      { name: "Cocoa", optionGroup: "Color", swatchHex: "#6B4A34", stock: 5, sku: "ZAY-WIN-SCARF-COC" },
+      { name: "Fog Grey", optionGroup: "Color", swatchHex: "#9A9A9A", stock: 4, sku: "ZAY-WIN-SCARF-GRY" },
     ],
   },
   {
     name: "Fingerless Gloves & Hand Warmers",
     slug: "fingerless-gloves-hand-warmers",
+    sku: "ZAY-WIN-GLOVES",
     categorySlug: "gloves-warmers",
     oneLiner: "Practical, cute, and high-margin — the small-gift winter staple.",
     story:
@@ -241,20 +244,21 @@ export const winterProducts: WinterProductSeed[] = [
         kind: "hero",
       },
       {
-        url: u("photo-1489987707025-afc232f7ea0f"),
-        alt: "Soft knit texture detail — fingerless gloves",
+        url: local("gloves-detail.jpg"),
+        alt: "Fingerless gloves stitch and thumb detail — matching studio shot",
         kind: "detail",
       },
     ],
     variants: [
-      { name: "Blush", optionGroup: "Color", swatchHex: "#E8C4C0", stock: 8 },
-      { name: "Cream", optionGroup: "Color", swatchHex: "#F3EDE4", stock: 7 },
-      { name: "Sage", optionGroup: "Color", swatchHex: "#A8B5A0", stock: 7 },
+      { name: "Blush", optionGroup: "Color", swatchHex: "#E8C4C0", stock: 8, sku: "ZAY-WIN-GLOVES-BLS" },
+      { name: "Cream", optionGroup: "Color", swatchHex: "#F3EDE4", stock: 7, sku: "ZAY-WIN-GLOVES-CRM" },
+      { name: "Sage", optionGroup: "Color", swatchHex: "#A8B5A0", stock: 7, sku: "ZAY-WIN-GLOVES-SAG" },
     ],
   },
   {
     name: "Crochet Poncho & Shrug",
     slug: "crochet-poncho-shrug",
+    sku: "ZAY-WIN-PONCHO",
     categorySlug: "ponchos-shrugs",
     oneLiner: "A statement winter layer for dinners, dawats, and Reels-ready looks.",
     story:
@@ -283,26 +287,28 @@ export const winterProducts: WinterProductSeed[] = [
         kind: "hero",
       },
       {
-        url: u("photo-1434389677669-e08b4cac3105"),
-        alt: "Soft layered knitwear styling — crochet shrug",
-        kind: "lifestyle",
+        url: local("poncho-detail.jpg"),
+        alt: "Poncho yarn drape detail — matching studio shot",
+        kind: "detail",
       },
     ],
     variants: [
-      { name: "Ivory", optionGroup: "Color", swatchHex: "#F5F0E8", stock: null },
-      { name: "Soft Taupe", optionGroup: "Color", swatchHex: "#B8A99A", stock: null },
+      { name: "Ivory", optionGroup: "Color", swatchHex: "#F5F0E8", stock: null, sku: "ZAY-WIN-PONCHO-IVY" },
+      { name: "Soft Taupe", optionGroup: "Color", swatchHex: "#B8A99A", stock: null, sku: "ZAY-WIN-PONCHO-TAU" },
       {
         name: "Deep Wine",
         optionGroup: "Color",
         swatchHex: "#6B2D3C",
         priceDelta: 400,
         stock: null,
+        sku: "ZAY-WIN-PONCHO-WIN",
       },
     ],
   },
   {
     name: "Ear Warmers & Headbands",
     slug: "ear-warmers-headbands",
+    sku: "ZAY-WIN-EAR",
     categorySlug: "ear-warmers",
     oneLiner: "Smaller than a beanie — ideal add-on and first-time try-us purchase.",
     story:
@@ -331,20 +337,21 @@ export const winterProducts: WinterProductSeed[] = [
         kind: "hero",
       },
       {
-        url: u("photo-1515886657613-9f3515b0c78f"),
-        alt: "Winter accessory styling — ear warmer headband",
-        kind: "lifestyle",
+        url: local("earwarmer-detail.jpg"),
+        alt: "Ear warmer stitch detail — matching studio shot",
+        kind: "detail",
       },
     ],
     variants: [
-      { name: "Sage", optionGroup: "Color", swatchHex: "#A8B5A0", stock: 9 },
-      { name: "Cream", optionGroup: "Color", swatchHex: "#F3EDE4", stock: 8 },
-      { name: "Berry", optionGroup: "Color", swatchHex: "#9B2D2D", stock: 8 },
+      { name: "Sage", optionGroup: "Color", swatchHex: "#A8B5A0", stock: 9, sku: "ZAY-WIN-EAR-SAG" },
+      { name: "Cream", optionGroup: "Color", swatchHex: "#F3EDE4", stock: 8, sku: "ZAY-WIN-EAR-CRM" },
+      { name: "Berry", optionGroup: "Color", swatchHex: "#9B2D2D", stock: 8, sku: "ZAY-WIN-EAR-BER" },
     ],
   },
   {
     name: "Crochet Boot Cuffs",
     slug: "crochet-boot-cuffs",
+    sku: "ZAY-WIN-BOOT",
     categorySlug: "boot-cuffs",
     oneLiner: "A niche winter search winner — almost no local competition.",
     story:
@@ -373,20 +380,21 @@ export const winterProducts: WinterProductSeed[] = [
         kind: "hero",
       },
       {
-        url: u("photo-1543163521-1bf539c55dd2"),
-        alt: "Boots styling context for crochet boot cuffs",
-        kind: "lifestyle",
+        url: local("bootcuffs-detail.jpg"),
+        alt: "Boot cuffs stitch detail — matching studio shot",
+        kind: "detail",
       },
     ],
     variants: [
-      { name: "Cream", optionGroup: "Color", swatchHex: "#F5F0E8", stock: 6 },
-      { name: "Camel", optionGroup: "Color", swatchHex: "#C4A484", stock: 5 },
-      { name: "Grey", optionGroup: "Color", swatchHex: "#8A8A8A", stock: 5 },
+      { name: "Cream", optionGroup: "Color", swatchHex: "#F5F0E8", stock: 6, sku: "ZAY-WIN-BOOT-CRM" },
+      { name: "Camel", optionGroup: "Color", swatchHex: "#C4A484", stock: 5, sku: "ZAY-WIN-BOOT-CAM" },
+      { name: "Grey", optionGroup: "Color", swatchHex: "#8A8A8A", stock: 5, sku: "ZAY-WIN-BOOT-GRY" },
     ],
   },
   {
     name: "Pearl & Beaded Jewelry Set",
     slug: "pearl-beaded-jewelry-set",
+    sku: "ZAY-WIN-PEARL",
     categorySlug: "jewelry",
     oneLiner: "Necklace, earrings & tikka energy — built for Nov–Feb wedding season.",
     story:
@@ -415,24 +423,20 @@ export const winterProducts: WinterProductSeed[] = [
         kind: "hero",
       },
       {
-        url: u("photo-1599643478518-a784e5dc4c8f"),
-        alt: "Pearl jewelry detail — wedding season set",
-        kind: "detail",
-      },
-      {
-        url: u("photo-1535632066927-ab7c9ab60908"),
-        alt: "Earrings from pearl and beaded jewelry set",
+        url: local("pearl-set-detail.jpg"),
+        alt: "Pearl earrings and necklace detail — matching studio shot",
         kind: "detail",
       },
     ],
     variants: [
-      { name: "Classic Pearl", optionGroup: "Tone", swatchHex: "#F0E6DC", stock: 5 },
-      { name: "Gold Bead", optionGroup: "Tone", swatchHex: "#C4A35A", stock: 5 },
+      { name: "Classic Pearl", optionGroup: "Tone", swatchHex: "#F0E6DC", stock: 5, sku: "ZAY-WIN-PEARL-CLS" },
+      { name: "Gold Bead", optionGroup: "Tone", swatchHex: "#C4A35A", stock: 5, sku: "ZAY-WIN-PEARL-GLD" },
     ],
   },
   {
     name: "Crochet Flower Hair Clips & Gajras",
     slug: "crochet-flower-hair-clips-gajras",
+    sku: "ZAY-WIN-HAIR",
     categorySlug: "hair-accessories",
     oneLiner: "Validated ZAYUNE price band — everyday wear and mehndi-ready.",
     story:
@@ -461,19 +465,20 @@ export const winterProducts: WinterProductSeed[] = [
         kind: "hero",
       },
       {
-        url: u("photo-1700171518313-5dd219beaaa6"),
-        alt: "Crochet flower bloom detail for hair clip",
+        url: local("flower-clips-detail.jpg"),
+        alt: "Flower clip petal detail — matching studio shot",
         kind: "detail",
       },
     ],
     variants: [
-      { name: "Single Clip", optionGroup: "Style", swatchHex: "#E8C4C0", stock: 12 },
+      { name: "Single Clip", optionGroup: "Style", swatchHex: "#E8C4C0", stock: 12, sku: "ZAY-WIN-HAIR-SGL" },
       {
         name: "Pair of Clips",
         optionGroup: "Style",
         swatchHex: "#F5F0E8",
         priceDelta: 400,
         stock: 10,
+        sku: "ZAY-WIN-HAIR-PR",
       },
       {
         name: "Gajra Strand",
@@ -481,12 +486,14 @@ export const winterProducts: WinterProductSeed[] = [
         swatchHex: "#C4A090",
         priceDelta: 500,
         stock: 8,
+        sku: "ZAY-WIN-HAIR-GAJ",
       },
     ],
   },
   {
     name: "Mini Crochet Ornaments & Gift Toppers",
     slug: "mini-crochet-ornaments-gift-toppers",
+    sku: "ZAY-WIN-ORN",
     categorySlug: "ornaments-gifts",
     oneLiner: "Snowflake & festive minis — light to ship, strong holiday spike.",
     story:
@@ -515,20 +522,21 @@ export const winterProducts: WinterProductSeed[] = [
         kind: "hero",
       },
       {
-        url: u("photo-1512389142860-9c449e58a543"),
-        alt: "Festive winter gift styling for crochet ornaments",
-        kind: "lifestyle",
+        url: local("ornaments-detail.jpg"),
+        alt: "Snowflake ornament detail — matching studio shot",
+        kind: "detail",
       },
     ],
     variants: [
-      { name: "Snowflake Set (3)", optionGroup: "Set", swatchHex: "#E8EEF5", stock: 10 },
-      { name: "Festive Mix (4)", optionGroup: "Set", swatchHex: "#9B2D2D", priceDelta: 100, stock: 10 },
-      { name: "Mistletoe Pair", optionGroup: "Set", swatchHex: "#5F7A5A", stock: 8 },
+      { name: "Snowflake Set (3)", optionGroup: "Set", swatchHex: "#E8EEF5", stock: 10, sku: "ZAY-WIN-ORN-SNW" },
+      { name: "Festive Mix (4)", optionGroup: "Set", swatchHex: "#9B2D2D", priceDelta: 100, stock: 10, sku: "ZAY-WIN-ORN-FST" },
+      { name: "Mistletoe Pair", optionGroup: "Set", swatchHex: "#5F7A5A", stock: 8, sku: "ZAY-WIN-ORN-MST" },
     ],
   },
   {
     name: "Crochet Tote Bag & Pouch",
     slug: "crochet-tote-bag-pouch",
+    sku: "ZAY-WIN-TOTE",
     categorySlug: "bags-pouches",
     oneLiner: "Chunky textured tote — winter gifting peak, year-round everyday carry.",
     story:
@@ -557,19 +565,20 @@ export const winterProducts: WinterProductSeed[] = [
         kind: "hero",
       },
       {
-        url: u("photo-1590874103328-eac38a67429f"),
-        alt: "Tote bag lifestyle styling — crochet carryall",
-        kind: "lifestyle",
+        url: local("tote-detail.jpg"),
+        alt: "Tote stitch and handle detail — matching studio shot",
+        kind: "detail",
       },
     ],
     variants: [
-      { name: "Cream Chunky", optionGroup: "Style", swatchHex: "#F5F0E8", stock: null },
+      { name: "Cream Chunky", optionGroup: "Style", swatchHex: "#F5F0E8", stock: null, sku: "ZAY-WIN-TOTE-CRM" },
       {
         name: "Granny Square Color",
         optionGroup: "Style",
         swatchHex: "#C4A484",
         priceDelta: 300,
         stock: null,
+        sku: "ZAY-WIN-TOTE-GRN",
       },
       {
         name: "Tote + Pouch Set",
@@ -577,6 +586,7 @@ export const winterProducts: WinterProductSeed[] = [
         swatchHex: "#6B4A34",
         priceDelta: 500,
         stock: null,
+        sku: "ZAY-WIN-TOTE-SET",
       },
     ],
   },

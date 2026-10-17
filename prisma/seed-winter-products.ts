@@ -113,6 +113,7 @@ async function main() {
       data: {
         name: item.name,
         slug: item.slug,
+        sku: item.sku,
         oneLiner: item.oneLiner,
         story: item.story,
         materials: item.materials,
@@ -146,6 +147,8 @@ async function main() {
             swatchHex: v.swatchHex,
             priceDelta: v.priceDelta ?? 0,
             stock: v.stock ?? null,
+            sku: v.sku ?? null,
+            imageUrl: item.images[0]?.url ?? null,
           })),
         },
       },
