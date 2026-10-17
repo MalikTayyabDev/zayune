@@ -15,7 +15,7 @@ const items = [
   },
   {
     title: "Handmade accessories",
-    body: "Flowers, jewelry, keychains & keepsakes",
+    body: "Beanies, scarves, jewelry & winter gifts",
     icon: HandHeart,
   },
   {

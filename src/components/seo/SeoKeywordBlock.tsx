@@ -8,10 +8,13 @@ import {
 } from "@/lib/seo-copy";
 
 const collectionLinks = [
-  { href: "/shop/crochet-flowers", label: "Handmade crochet flowers" },
-  { href: "/shop/jewelry", label: "Handmade jewelry" },
-  { href: "/shop/keychains", label: "Handmade keychains" },
-  { href: "/custom", label: "Custom crochet orders" },
+  { href: "/shop/beanies-hats", label: "Crochet beanies & hats" },
+  { href: "/shop/scarves-mufflers", label: "Chunky scarves" },
+  { href: "/shop/gloves-warmers", label: "Fingerless gloves" },
+  { href: "/shop/jewelry", label: "Pearl jewelry sets" },
+  { href: "/shop/hair-accessories", label: "Flower clips & gajras" },
+  { href: "/shop/bags-pouches", label: "Crochet totes" },
+  { href: "/custom", label: "Custom orders" },
 ];
 
 export function HomeSeoBlock() {
@@ -25,7 +28,7 @@ export function HomeSeoBlock() {
           }))}
         />
         <h2 className="font-display text-3xl text-aubergine sm:text-4xl">
-          Handmade crochet &amp; jewelry from Pakistan
+          Handmade winter crochet &amp; jewelry from Pakistan
         </h2>
         <div className="mt-6 max-w-2xl space-y-4 text-sm leading-relaxed text-aubergine/75 sm:text-base">
           {homeSeoParagraphs.map((p) => (

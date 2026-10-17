@@ -4,32 +4,31 @@ import { ArrowUpRight } from "lucide-react";
 import { CopperStar } from "@/components/brand/CopperStar";
 import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/ui/Reveal";
-import { siteImages } from "@/lib/site-images";
 
 const pieces = [
   {
-    title: "Crochet Flowers",
-    href: "/shop/crochet-flowers",
-    image: siteImages.flowers.clusterBlue,
-    note: "Lasting blooms",
+    title: "Beanies & Hats",
+    href: "/shop/beanies-hats",
+    image: "/products/winter/beanie.jpg",
+    note: "Winter bestseller",
+  },
+  {
+    title: "Scarves",
+    href: "/shop/scarves-mufflers",
+    image: "/products/winter/scarf.jpg",
+    note: "Chunky layers",
   },
   {
     title: "Jewelry",
     href: "/shop/jewelry",
-    image: siteImages.jewelry.earrings,
-    note: "Worn close",
+    image: "/products/winter/pearl-set.jpg",
+    note: "Wedding season",
   },
   {
-    title: "Keychains",
-    href: "/shop/keychains",
-    image: siteImages.keychains.smallBloom,
-    note: "Everyday charms",
-  },
-  {
-    title: "Custom",
-    href: "/custom",
-    image: siteImages.studio.yarnBalls,
-    note: "Made for you",
+    title: "Bags",
+    href: "/shop/bags-pouches",
+    image: "/products/winter/tote.jpg",
+    note: "Everyday carry",
   },
 ];
 
@@ -50,63 +49,49 @@ export function CollectionBanners() {
             <div className="max-w-lg">
               <p className="text-nav inline-flex items-center gap-2 text-aubergine/50">
                 <CopperStar size={10} />
-                <span>Collections</span>
+                <span>Winter Special</span>
               </p>
               <h2 className="mt-3 font-display text-3xl text-aubergine sm:text-4xl md:text-[2.75rem]">
                 Shop by piece
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-aubergine/65">
-                Four ways into the studio edit — flowers, jewelry, keychains, and
-                custom colorways.
+                Ten winning winter products — beanies, scarves, gloves, jewelry,
+                hair clips, ornaments, and totes.
               </p>
             </div>
             <Link
               href="/shop"
-              className="inline-flex items-center gap-1.5 text-nav text-copper transition hover:text-aubergine"
+              className="inline-flex items-center gap-1.5 text-nav text-copper transition-colors hover:text-aubergine"
             >
-              View all accessories
-              <Icon icon={ArrowUpRight} size={14} className="text-current" />
+              Shop all
+              <Icon icon={ArrowUpRight} size={14} />
             </Link>
           </div>
         </Reveal>
 
-        <div className="card-grid-tiles lg:grid-cols-4">
+        <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {pieces.map((piece, index) => (
-            <Reveal key={piece.href} delay={index * 70} as="article">
+            <Reveal key={piece.href} delay={index * 60}>
               <Link
                 href={piece.href}
-                className="group relative block aspect-[3/4] overflow-hidden bg-stone/50"
+                className="group relative block aspect-[4/5] overflow-hidden bg-stone/40"
               >
                 <Image
                   src={piece.image}
                   alt={piece.title}
                   fill
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover transition duration-[900ms] ease-out group-hover:scale-[1.06]"
+                  className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-aubergine/90 via-aubergine/35 to-aubergine/10 transition duration-500" />
-
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 p-3 sm:gap-3 sm:p-6">
-                  <div className="min-w-0">
-                    <p className="text-[9px] uppercase tracking-nav text-white/80 sm:text-[11px]">
-                      {piece.note}
-                    </p>
-                    <h3 className="mt-1 font-display text-base leading-tight !text-white sm:mt-1.5 sm:text-[1.65rem]">
-                      {piece.title}
-                    </h3>
-                  </div>
-                  <span className="mb-0.5 inline-flex h-7 w-7 shrink-0 items-center justify-center border border-white/35 text-white transition duration-300 group-hover:border-brass group-hover:bg-brass group-hover:text-aubergine sm:mb-1 sm:h-9 sm:w-9">
-                    <Icon
-                      icon={ArrowUpRight}
-                      size={15}
-                      className="text-current transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
-                    />
-                  </span>
+                <div className="absolute inset-0 bg-gradient-to-t from-aubergine/70 via-aubergine/10 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                  <p className="text-[10px] uppercase tracking-nav text-porcelain/60">
+                    {piece.note}
+                  </p>
+                  <p className="mt-1 font-display text-2xl text-porcelain">
+                    {piece.title}
+                  </p>
                 </div>
-
-                <span className="absolute left-3 top-3 font-body text-[9px] uppercase tracking-nav text-white/70 sm:left-6 sm:top-6 sm:text-[10px]">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
               </Link>
             </Reveal>
           ))}

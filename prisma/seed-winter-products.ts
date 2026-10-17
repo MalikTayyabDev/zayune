@@ -1,9 +1,10 @@
 /**
- * Seeds the Winter Special catalog + discounts and sets store to LIVE.
- * Usage: npx tsx prisma/seed-winter-products.ts
+ * Seeds the 10 winning Winter Special products + discounts; sets store LIVE.
+ * Usage: npm run db:seed-winter
  */
 import { PrismaClient } from "@prisma/client";
 import {
+  winterCategories,
   winterProducts,
   withSeasonalPrice,
 } from "../src/lib/winter-catalog";
@@ -11,39 +12,17 @@ import {
 const prisma = new PrismaClient();
 
 async function ensureCategories() {
-  const defs = [
-    {
-      name: "Jewelry",
-      slug: "jewelry",
-      description:
-        "Handmade jewelry with quiet presence — pieces meant to be worn close and often.",
-      sortOrder: 1,
-    },
-    {
-      name: "Crochet Flowers",
-      slug: "crochet-flowers",
-      description:
-        "Crochet flowers and floral forms — soft structure, lasting bloom, made by hand in Pakistan.",
-      sortOrder: 2,
-    },
-    {
-      name: "Keychains",
-      slug: "keychains",
-      description:
-        "Small keepsakes with character — keychains and charms for everyday carry.",
-      sortOrder: 3,
-    },
-    {
-      name: "Custom Orders",
-      slug: "custom-orders",
-      description:
-        "Made for you — custom colorways, names, and one-of-a-kind requests.",
-      sortOrder: 4,
-    },
-  ];
+  // Keep Custom Orders for made-to-order flow, but replace shop taxonomy.
+  const custom = {
+    name: "Custom Orders",
+    slug: "custom-orders",
+    description:
+      "Made for you — custom colorways, names, and one-of-a-kind requests.",
+    sortOrder: 99,
+  };
 
   const map = new Map<string, string>();
-  for (const def of defs) {
+  for (const def of [...winterCategories, custom]) {
     const row = await prisma.category.upsert({
       where: { slug: def.slug },
       update: {
@@ -179,7 +158,7 @@ async function main() {
     update: {
       storeMode: "LIVE",
       bannerText:
-        "Winter Special · 5% seasonal on products · Intro code WELCOME10 · Extra WINTER5 at checkout",
+        "Winter Special · 10 winning pieces · 5% seasonal on products · WELCOME10 · WINTER5",
     },
     create: {
       id: "default",
@@ -187,15 +166,15 @@ async function main() {
       shippingFlatFee: 250,
       freeShippingOver: 5000,
       bannerText:
-        "Winter Special · 5% seasonal on products · Intro code WELCOME10 · Extra WINTER5 at checkout",
+        "Winter Special · 10 winning pieces · 5% seasonal on products · WELCOME10 · WINTER5",
     },
   });
 
-  console.log("Winter Special seeded:", {
+  console.log("Winter Special (10 products) seeded:", {
     products: created,
+    categories: winterCategories.length,
     storeMode: "LIVE",
     discounts: ["WELCOME10", "WINTER5"],
-    note: "Product prices already include 5% seasonal (compare-at = list).",
   });
 }
 

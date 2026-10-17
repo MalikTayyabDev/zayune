@@ -12,10 +12,12 @@ const columns = [
   {
     title: "Shop",
     links: [
-      { href: "/shop", label: "All accessories" },
-      { href: "/shop/crochet-flowers", label: "Crochet flowers" },
-      { href: "/shop/jewelry", label: "Jewelry" },
-      { href: "/shop/keychains", label: "Keychains" },
+      { href: "/shop", label: "All winter pieces" },
+      { href: "/shop/beanies-hats", label: "Beanies & hats" },
+      { href: "/shop/scarves-mufflers", label: "Scarves & mufflers" },
+      { href: "/shop/jewelry", label: "Pearl jewelry sets" },
+      { href: "/shop/hair-accessories", label: "Hair clips & gajras" },
+      { href: "/shop/bags-pouches", label: "Totes & pouches" },
       { href: "/custom", label: "Custom orders" },
     ],
   },

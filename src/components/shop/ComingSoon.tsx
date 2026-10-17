@@ -10,7 +10,7 @@ type Props = {
 
 export function ComingSoon({
   title = "Products coming soon",
-  description = `We’re finishing the first studio edit of handmade crochet flowers, jewelry, and keychains from ${studioLocationLine()}. Custom orders stay open — design-led pieces made by hand, shipped across Pakistan.`,
+  description = `We’re preparing the next studio edit from ${studioLocationLine()}. Meanwhile, browse Winter Special categories or request a custom piece.`,
 }: Props) {
   return (
     <div className="mt-14 border border-stone/80 bg-stone/20 px-6 py-14 text-center sm:px-10">
@@ -26,22 +26,25 @@ export function ComingSoon({
       </p>
       <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-aubergine/60">
         Explore{" "}
-        <Link href="/shop/crochet-flowers" className="text-copper hover:underline">
-          crochet flowers
+        <Link href="/shop/beanies-hats" className="text-copper hover:underline">
+          beanies
+        </Link>
+        ,{" "}
+        <Link
+          href="/shop/scarves-mufflers"
+          className="text-copper hover:underline"
+        >
+          scarves
         </Link>
         ,{" "}
         <Link href="/shop/jewelry" className="text-copper hover:underline">
-          handmade jewelry
-        </Link>
-        ,{" "}
-        <Link href="/shop/keychains" className="text-copper hover:underline">
-          keychains
+          jewelry
         </Link>
         , or start a{" "}
         <Link href="/custom" className="text-copper hover:underline">
           custom order
-        </Link>{" "}
-        now.
+        </Link>
+        .
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-3">
         <Button href="/custom">Request a custom piece</Button>

@@ -1,24 +1,25 @@
 import { siteConfig, studioLocationLine } from "@/lib/site";
 
-/** Shared keyword copy for brand + collection pages (indexable while Coming soon). */
+/** Shared keyword copy for brand + collection pages. */
 export const brandFaqs = [
   {
-    question: "Where can I buy handmade crochet flowers in Pakistan?",
-    answer: `ZAYUNE makes handmade crochet flowers in ${studioLocationLine()}. Browse the shop when the studio edit is live, or request a made-to-order bloom via Custom orders / WhatsApp ${siteConfig.phoneDisplay}.`,
+    question: "Where can I buy handmade crochet beanies in Pakistan?",
+    answer: `ZAYUNE makes handmade crochet beanies, scarves, gloves, and winter accessories in ${studioLocationLine()}. Shop the Winter Special online or WhatsApp ${siteConfig.phoneDisplay}.`,
   },
   {
-    question: "Do you sell handmade jewelry in Rawalpindi?",
-    answer: `Yes — ZAYUNE is a designer-led handmade jewelry and accessories label based in Satellite Town, Rawalpindi. Pieces are made by hand and ship across Pakistan.`,
-  },
-  {
-    question: "Can I order custom crochet keychains or jewelry?",
+    question: "Do you sell pearl jewelry sets for wedding season?",
     answer:
-      "Custom colorways, names, initials, and one-of-a-kind requests are open year-round. Share your idea on the Custom orders page or WhatsApp the studio for a quote and lead time.",
+      "Yes — pearl and beaded jewelry sets are part of our Winter Special for Pakistan’s Nov–Feb wedding and dawat season, handmade in Rawalpindi.",
   },
   {
-    question: "What does ZAYUNE make?",
+    question: "Can I order custom crochet colors?",
     answer:
-      "ZAYUNE designs and handmakes crochet flowers, jewelry, keychains, and custom accessories — design-led pieces finished by hand in Pakistan.",
+      "Custom colorways and one-of-a-kind requests stay open year-round. Share your idea on the Custom orders page or WhatsApp the studio for a quote.",
+  },
+  {
+    question: "What is in the ZAYUNE Winter Special?",
+    answer:
+      "Ten winning winter products: beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, pearl jewelry sets, flower hair clips & gajras, mini ornaments, and crochet totes.",
   },
 ];
 
@@ -26,36 +27,99 @@ export const collectionSeo: Record<
   string,
   { h1Extra: string; body: string; keywords: string[] }
 > = {
-  "crochet-flowers": {
-    h1Extra: "Handmade crochet flowers Pakistan",
-    body: `Looking for handmade crochet flowers in Pakistan? ZAYUNE crafts soft floral forms by hand in ${studioLocationLine()} — lasting blooms for gifts, styling, and keepsakes. Shop the crochet flowers edit when live, or request a custom colorway anytime.`,
+  "beanies-hats": {
+    h1Extra: "Handmade crochet beanies & slouchy hats Pakistan",
+    body: `Shop handmade crochet beanies and slouchy hats from ZAYUNE in ${studioLocationLine()}. Winter bestsellers with wide colorways, seasonal pricing, and nationwide shipping.`,
     keywords: [
-      "handmade crochet flowers Pakistan",
-      "buy crochet flowers online Pakistan",
-      "crochet flower bouquet Rawalpindi",
+      "crochet beanie Pakistan",
+      "handmade slouchy hat",
+      "winter beanie Rawalpindi",
+    ],
+  },
+  "scarves-mufflers": {
+    h1Extra: "Chunky crochet scarves & mufflers Pakistan",
+    body: `Oversized handmade crochet scarves and mufflers from ZAYUNE — cozy winter layers that bundle perfectly with a beanie. Designed and finished by hand in Rawalpindi.`,
+    keywords: [
+      "chunky crochet scarf Pakistan",
+      "handmade muffler",
+      "winter scarf Rawalpindi",
+    ],
+  },
+  "gloves-warmers": {
+    h1Extra: "Fingerless gloves & hand warmers Pakistan",
+    body: `Handmade crochet fingerless gloves and hand warmers from ZAYUNE — practical winter gifts with high handmade margin. Ships across Pakistan.`,
+    keywords: [
+      "fingerless gloves crochet Pakistan",
+      "hand warmers handmade",
+      "winter gift gloves",
+    ],
+  },
+  "ponchos-shrugs": {
+    h1Extra: "Handmade crochet ponchos & shrugs Pakistan",
+    body: `Premium crochet ponchos and shrugs from ZAYUNE for winter outfits and wedding-season dinners. Made to order in Satellite Town, Rawalpindi.`,
+    keywords: [
+      "crochet poncho Pakistan",
+      "handmade shrug",
+      "winter wedding layer",
+    ],
+  },
+  "ear-warmers": {
+    h1Extra: "Crochet ear warmers & headbands Pakistan",
+    body: `Light handmade ear warmers and headbands from ZAYUNE — ideal winter add-ons with easy shipping for first-time buyers.`,
+    keywords: [
+      "crochet ear warmer Pakistan",
+      "handmade headband",
+      "winter add-on",
+    ],
+  },
+  "boot-cuffs": {
+    h1Extra: "Handmade crochet boot cuffs Pakistan",
+    body: `Crochet boot cuffs from ZAYUNE — a niche winter accessory with loyal search demand and almost no local competition.`,
+    keywords: [
+      "crochet boot cuffs Pakistan",
+      "boot toppers handmade",
+      "winter boot cuffs",
     ],
   },
   jewelry: {
-    h1Extra: "Handmade jewelry Pakistan",
-    body: `ZAYUNE handmade jewelry is designed first, then finished by hand in Rawalpindi — quiet earrings, accents, and everyday pieces meant to be worn often. Explore the jewelry collection when the studio edit drops, or commission a custom piece.`,
+    h1Extra: "Pearl & beaded jewelry sets Pakistan",
+    body: `Pearl and beaded handmade jewelry sets from ZAYUNE for Pakistan’s wedding and dawat season — necklace and earring sets finished by hand in Rawalpindi.`,
     keywords: [
-      "handmade jewelry Pakistan",
-      "handmade jewelry Rawalpindi",
-      "designer handmade jewelry Pakistan",
+      "pearl jewelry set Pakistan",
+      "wedding jewelry Rawalpindi",
+      "beaded necklace earrings",
     ],
   },
-  keychains: {
-    h1Extra: "Handmade keychains Pakistan",
-    body: `Handmade keychains and crochet charms from ZAYUNE — small keepsakes with character for everyday carry. Based in Satellite Town, Rawalpindi, we ship across Pakistan and take custom name or initial requests.`,
+  "hair-accessories": {
+    h1Extra: "Crochet flower hair clips & gajras Pakistan",
+    body: `Handmade crochet flower hair clips and gajras from ZAYUNE — everyday wear and mehndi/wedding functions, priced for easy upsell.`,
     keywords: [
-      "handmade keychains Pakistan",
-      "custom crochet keychain Pakistan",
-      "handmade keychains Rawalpindi",
+      "crochet flower hair clip",
+      "handmade gajra Pakistan",
+      "mehndi hair accessories",
+    ],
+  },
+  "ornaments-gifts": {
+    h1Extra: "Mini crochet ornaments & gift toppers",
+    body: `Mini handmade crochet ornaments and gift toppers from ZAYUNE — light to ship internationally for Christmas and New Year gifting.`,
+    keywords: [
+      "crochet ornaments set",
+      "gift toppers handmade",
+      "christmas crochet Pakistan",
+    ],
+  },
+  "bags-pouches": {
+    h1Extra: "Handmade crochet tote bags & pouches Pakistan",
+    body: `Chunky crochet totes and pouches from ZAYUNE — winter gifting peaks with year-round everyday carry demand.`,
+    keywords: [
+      "crochet tote bag Pakistan",
+      "handmade pouch",
+      "granny square bag",
     ],
   },
   "custom-orders": {
     h1Extra: "Custom crochet orders Pakistan",
-    body: `Request custom crochet orders from ZAYUNE — flowers, jewelry, keychains, and colorways made to your brief. Share inspiration on WhatsApp or the custom form; we quote before making and ship nationwide from Rawalpindi.`,
+    body: `Request custom crochet colorways and one-of-a-kind winter pieces from ZAYUNE. Quote first, then we make by hand in Rawalpindi.`,
     keywords: [
       "custom crochet orders Pakistan",
       "made to order crochet Pakistan",
@@ -64,10 +128,10 @@ export const collectionSeo: Record<
   },
 };
 
-export const shopIntro = `Shop handmade accessories from ZAYUNE — crochet flowers, jewelry, and keychains designed and made by hand in ${studioLocationLine()}. Nationwide shipping across Pakistan. Custom orders stay open while the next studio edit is prepared.`;
+export const shopIntro = `Shop the ZAYUNE Winter Special from ${studioLocationLine()} — handmade beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, pearl jewelry sets, flower hair clips, ornaments, and crochet totes. Seasonal 5% on products · WELCOME10 intro · WINTER5 at checkout.`;
 
 export const homeSeoParagraphs = [
-  `ZAYUNE is a handmade accessories label from ${studioLocationLine()} — crochet flowers, jewelry, keychains, and custom orders. Designed, not just made.`,
-  `Search for handmade jewelry Pakistan, crochet flowers Pakistan, or handmade keychains Rawalpindi and you’ll find our studio: design-led pieces finished by hand, with WhatsApp support and made-to-order colorways.`,
-  `Whether you want a soft crochet bloom, quiet jewelry for everyday wear, or a custom keychain, start with Shop or Custom orders — guest checkout when pieces are live, or message ${siteConfig.phoneDisplay} anytime.`,
+  `ZAYUNE’s Winter Special brings ten winning handmade products from ${studioLocationLine()} — crochet beanies, scarves, gloves, ponchos, ear warmers, boot cuffs, pearl jewelry, flower hair clips, ornaments, and totes.`,
+  `Search for crochet beanie Pakistan, chunky scarf, fingerless gloves, pearl jewelry set, or crochet tote bag and you’ll find design-led pieces finished by hand, with WhatsApp support and custom colorways.`,
+  `Shop online or message ${siteConfig.phoneDisplay} — guest checkout available, nationwide shipping across Pakistan.`,
 ];

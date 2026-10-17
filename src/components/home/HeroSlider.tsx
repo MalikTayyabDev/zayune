@@ -6,7 +6,6 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { CopperStar } from "@/components/brand/CopperStar";
 import { Icon } from "@/components/ui/Icon";
-import { siteImages } from "@/lib/site-images";
 import { cn } from "@/lib/utils";
 
 const SLIDE_MS = 6200;
@@ -14,40 +13,40 @@ const SLIDE_MS = 6200;
 const slides = [
   {
     id: 1,
-    image: siteImages.hero.crochetBloom,
-    eyebrow: "Crochet handmade accessories",
+    image: "/products/winter/beanie.jpg",
+    eyebrow: "Winter Special",
     title: "Designed, not just made.",
     subtitle:
-      "Crochet flowers, jewelry & keychains — handmade in Pakistan.",
-    cta: "Shop the edit",
+      "Beanies, scarves, gloves & more — handmade winter pieces from Pakistan.",
+    cta: "Shop Winter Special",
     href: "/shop",
   },
   {
     id: 2,
-    image: siteImages.hero.crochetBouquet,
-    eyebrow: "Crochet flowers",
-    title: "Blooms that last.",
-    subtitle: "Soft structure, lasting color — crocheted stitch by stitch.",
-    cta: "Shop flowers",
-    href: "/shop/crochet-flowers",
+    image: "/products/winter/scarf.jpg",
+    eyebrow: "Chunky layers",
+    title: "Scarves built for cold days.",
+    subtitle: "Oversized crochet mufflers — cozy, giftable, bundle-ready.",
+    cta: "Shop scarves",
+    href: "/shop/scarves-mufflers",
   },
   {
     id: 3,
-    image: siteImages.hero.jewelry,
-    eyebrow: "Handmade jewelry",
-    title: "Quiet pieces. Worn close.",
-    subtitle: "Pendants and earrings finished by hand for every day.",
+    image: "/products/winter/pearl-set.jpg",
+    eyebrow: "Wedding season",
+    title: "Pearl & beaded sets.",
+    subtitle: "Necklace and earrings for Nov–Feb dawats and festive outfits.",
     cta: "Shop jewelry",
     href: "/shop/jewelry",
   },
   {
     id: 4,
-    image: siteImages.hero.yarnStudio,
-    eyebrow: "Custom orders",
-    title: "Your palette. Our hand.",
-    subtitle: "Custom colorways and one-of-a-kind crochet, made for you.",
-    cta: "Start a custom",
-    href: "/custom",
+    image: "/products/winter/tote.jpg",
+    eyebrow: "Everyday carry",
+    title: "Totes that outlast winter.",
+    subtitle: "Chunky crochet bags for gifting now and carrying all year.",
+    cta: "Shop bags",
+    href: "/shop/bags-pouches",
   },
 ];
 

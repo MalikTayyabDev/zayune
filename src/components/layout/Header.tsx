@@ -31,10 +31,10 @@ const nav = [
 ];
 
 const collections = [
-  { href: "/shop/crochet-flowers", label: "Flowers", note: "01" },
-  { href: "/shop/jewelry", label: "Jewelry", note: "02" },
-  { href: "/shop/keychains", label: "Keychains", note: "03" },
-  { href: "/custom", label: "Custom", note: "04" },
+  { href: "/shop/beanies-hats", label: "Beanies", note: "01" },
+  { href: "/shop/scarves-mufflers", label: "Scarves", note: "02" },
+  { href: "/shop/jewelry", label: "Jewelry", note: "03" },
+  { href: "/shop/bags-pouches", label: "Bags", note: "04" },
 ];
 
 export function Header() {
@@ -236,9 +236,9 @@ export function Header() {
         <nav className="hidden flex-1 items-center justify-center gap-5 xl:gap-7 lg:flex">
           {[
             { href: "/shop", label: "Shop" },
-            { href: "/shop/crochet-flowers", label: "Flowers" },
+            { href: "/shop/beanies-hats", label: "Beanies" },
+            { href: "/shop/scarves-mufflers", label: "Scarves" },
             { href: "/shop/jewelry", label: "Jewelry" },
-            { href: "/shop/keychains", label: "Keychains" },
             { href: "/custom", label: "Custom" },
             { href: "/about", label: "About" },
             { href: "/contact", label: "Contact" },
