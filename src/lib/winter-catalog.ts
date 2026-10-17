@@ -18,7 +18,7 @@ export type WinterVariantSeed = {
   optionGroup: string;
   swatchHex: string;
   priceDelta?: number;
-  stock?: number;
+  stock?: number | null;
 };
 
 export type WinterProductSeed = {
