@@ -131,7 +131,6 @@ export const collectionSeo: Record<
 export const shopIntro = `Shop the ZAYUNE Winter Special from ${studioLocationLine()} — handmade beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, pearl jewelry sets, flower hair clips, ornaments, and crochet totes. Seasonal 5% on products · WELCOME10 intro · WINTER5 at checkout.`;
 
 export const homeSeoParagraphs = [
-  `ZAYUNE’s Winter Special brings ten winning handmade products from ${studioLocationLine()} — crochet beanies, scarves, gloves, ponchos, ear warmers, boot cuffs, pearl jewelry, flower hair clips, ornaments, and totes.`,
-  `Search for crochet beanie Pakistan, chunky scarf, fingerless gloves, pearl jewelry set, or crochet tote bag and you’ll find design-led pieces finished by hand, with WhatsApp support and custom colorways.`,
-  `Shop online or message ${siteConfig.phoneDisplay} — guest checkout available, nationwide shipping across Pakistan.`,
+  `ZAYUNE is a handmade studio in ${studioLocationLine()} — design-led crochet beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, pearl jewelry sets, flower hair clips, ornaments, and totes.`,
+  `Every piece is finished by hand with clear checkout, guest shopping, custom colorways, and WhatsApp support on ${siteConfig.phoneDisplay}. We ship nationwide across Pakistan.`,
 ];

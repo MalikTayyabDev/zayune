@@ -47,10 +47,11 @@ Open these in a browser (expect **200**, not 500):
 
 ### Fix crawling / “not indexed” faster
 
-- Sitemap always returns **200** with brand (+ category) URLs even if the database is slow.
-- Category pages stay **200** during Coming soon with keyword copy (not redirects) so Google can index collection intent.
+- Sitemap always returns **200** with brand URLs even if the database is slow.
+- **Live:** sitemap includes only categories that have published products + all published product URLs (no empty legacy categories).
 - HTML sitemap: `https://zayune.com/site-map` (linked in footer).
-- Soft-404 risk: Coming soon boxes include real collection links + copy — do not strip that content.
+- Soft-404 risk: keep real collection copy on shop/category pages.
+- Rankings: technical SEO helps crawl/index; first-page positions also need real products, reviews, backlinks, and time — there is no code-only #1 switch.
 
 ## What we index
 

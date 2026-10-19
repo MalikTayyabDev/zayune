@@ -81,25 +81,39 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
       () => true
     );
 
-    const categories = await withTimeout(getCategories(), 2500).catch(() => []);
+    if (comingSoon) {
+      // Coming soon: only brand URLs (categories without products look thin to Google).
+      return entries;
+    }
+
+    const [categories, products] = await withTimeout(
+      Promise.all([getCategories(), getProducts()]),
+      4000
+    ).catch(() => [[], []] as const);
+
+    const published = products.filter(
+      (p) => p.slug && p.published !== false
+    );
+    const usedCategorySlugs = new Set(
+      published
+        .map((p) => ("category" in p && p.category ? p.category.slug : null))
+        .filter(Boolean) as string[]
+    );
+
     for (const category of categories) {
       if (!category.slug) continue;
+      // Only list categories that have at least one published product.
+      if (!usedCategorySlugs.has(category.slug)) continue;
       entries.push(
         entry(`${base}/shop/${category.slug}`, "0.8", "weekly", now)
       );
     }
 
-    if (comingSoon) {
-      return entries;
-    }
-
-    const products = await withTimeout(getProducts(), 3000).catch(() => []);
-    for (const product of products) {
-      if (!product.slug || product.published === false) continue;
+    for (const product of published) {
       entries.push(
         entry(
           `${base}/product/${product.slug}`,
-          "0.8",
+          "0.85",
           "weekly",
           "updatedAt" in product ? product.updatedAt : now
         )

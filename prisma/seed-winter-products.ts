@@ -34,6 +34,17 @@ async function ensureCategories() {
     });
     map.set(def.slug, row.id);
   }
+
+  // Drop legacy empty categories so they stop appearing in the sitemap.
+  const keep = new Set([...winterCategories.map((c) => c.slug), "custom-orders"]);
+  const stale = await prisma.category.findMany({
+    where: { products: { none: {} } },
+  });
+  for (const category of stale) {
+    if (keep.has(category.slug)) continue;
+    await prisma.category.delete({ where: { id: category.id } }).catch(() => null);
+  }
+
   return map;
 }
 
