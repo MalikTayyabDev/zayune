@@ -128,11 +128,37 @@ export function ProductJsonLd({
     currency: string;
     image?: string;
     availability: "InStock" | "OutOfStock" | "PreOrder";
+    /** Offer start date (ISO date). Defaults to today. */
+    validFrom?: string;
+    shippingFlatFee?: number;
+    freeShippingOver?: number;
+    /** Only pass real customer reviews — never invent ratings. */
+    aggregateRating?: {
+      ratingValue: number;
+      reviewCount: number;
+      bestRating?: number;
+      worstRating?: number;
+    };
+    reviews?: {
+      author: string;
+      datePublished: string;
+      reviewBody: string;
+      ratingValue: number;
+    }[];
   };
 }) {
   const base = siteConfig.url.replace(/\/$/, "");
   const url = `${base}/product/${product.slug}`;
-  const data = {
+  const currency = product.currency || "PKR";
+  const shippingFee = product.shippingFlatFee ?? 250;
+  const freeOver = product.freeShippingOver ?? 5000;
+  const validFrom =
+    product.validFrom || new Date().toISOString().slice(0, 10);
+  const priceValidUntil = new Date(Date.now() + 1000 * 60 * 60 * 24 * 90)
+    .toISOString()
+    .slice(0, 10);
+
+  const data: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
@@ -140,22 +166,88 @@ export function ProductJsonLd({
     image: product.image ? [product.image] : undefined,
     brand: { "@type": "Brand", name: "ZAYUNE" },
     url,
+    itemCondition: "https://schema.org/NewCondition",
     offers: {
       "@type": "Offer",
       url,
-      priceCurrency: product.currency,
+      priceCurrency: currency,
       price: product.price,
+      priceValidUntil,
+      validFrom,
       availability: `https://schema.org/${product.availability}`,
+      itemCondition: "https://schema.org/NewCondition",
       seller: {
         "@type": "Organization",
         name: "ZAYUNE",
         telephone: siteConfig.phoneE164,
+        url: base,
       },
-      priceValidUntil: new Date(Date.now() + 1000 * 60 * 60 * 24 * 90)
-        .toISOString()
-        .slice(0, 10),
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        applicableCountry: "PK",
+        returnPolicyCategory:
+          "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 3,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
+        refundType: "https://schema.org/FullRefund",
+        returnPolicyCountry: "PK",
+        url: `${base}/shipping-returns`,
+      },
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingRate: {
+          "@type": "MonetaryAmount",
+          value: product.price >= freeOver ? 0 : shippingFee,
+          currency,
+        },
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "PK",
+        },
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: product.availability === "PreOrder" ? 7 : 1,
+            maxValue: product.availability === "PreOrder" ? 14 : 3,
+            unitCode: "DAY",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 2,
+            maxValue: 7,
+            unitCode: "DAY",
+          },
+        },
+      },
     },
   };
+
+  if (product.aggregateRating && product.aggregateRating.reviewCount > 0) {
+    data.aggregateRating = {
+      "@type": "AggregateRating",
+      ratingValue: product.aggregateRating.ratingValue,
+      reviewCount: product.aggregateRating.reviewCount,
+      bestRating: product.aggregateRating.bestRating ?? 5,
+      worstRating: product.aggregateRating.worstRating ?? 1,
+    };
+  }
+
+  if (product.reviews && product.reviews.length > 0) {
+    data.review = product.reviews.map((r) => ({
+      "@type": "Review",
+      author: { "@type": "Person", name: r.author },
+      datePublished: r.datePublished,
+      reviewBody: r.reviewBody,
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: r.ratingValue,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    }));
+  }
 
   return (
     <script

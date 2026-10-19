@@ -8,7 +8,12 @@ import { BreadcrumbJsonLd, ProductJsonLd } from "@/components/seo/JsonLd";
 import { Reveal } from "@/components/ui/Reveal";
 import { findDemoProduct } from "@/lib/demo-catalog";
 import { isDemoMode } from "@/lib/demo-data";
-import { getProductBySlug, getProducts, getRelatedProducts } from "@/lib/products";
+import {
+  getProductBySlug,
+  getProducts,
+  getRelatedProducts,
+  getSettings,
+} from "@/lib/products";
 import { prisma } from "@/lib/prisma";
 import { pageMetadata } from "@/lib/seo";
 import { isStoreComingSoon } from "@/lib/store-mode";
@@ -109,6 +114,16 @@ export default async function ProductPage({ params }: Props) {
             ? `${product.stock} available`
             : "Check options below";
 
+  const settings = await getSettings();
+  const shippingFlatFee =
+    "shippingFlatFee" in settings ? Number(settings.shippingFlatFee) : 250;
+  const freeShippingOver =
+    "freeShippingOver" in settings ? Number(settings.freeShippingOver) : 5000;
+  const validFrom =
+    "createdAt" in product && product.createdAt instanceof Date
+      ? product.createdAt.toISOString().slice(0, 10)
+      : undefined;
+
   return (
     <div className="container-content py-12 sm:py-16">
       <ProductJsonLd
@@ -120,6 +135,9 @@ export default async function ProductPage({ params }: Props) {
           currency: product.currency,
           image: product.images[0]?.url,
           availability,
+          validFrom,
+          shippingFlatFee,
+          freeShippingOver,
         }}
       />
       <BreadcrumbJsonLd

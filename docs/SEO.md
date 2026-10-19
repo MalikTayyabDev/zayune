@@ -100,6 +100,12 @@ When adding products:
 3. Publish the product, then set Settings to **Live** so URLs appear in the sitemap and Product JSON-LD is served.
 4. In GSC, request indexing for each new product URL.
 
+## Product rich results (GSC warnings)
+
+Product JSON-LD includes real **shippingDetails**, **hasMerchantReturnPolicy**, and **validFrom** (from `/shipping-returns` + checkout fees).
+
+**Do not invent** `aggregateRating` / `review` — Google can demote or invalidate rich results for fake reviews. Those warnings stay until you collect real customer reviews and wire them into `ProductJsonLd`.
+
 ## Ongoing
 
 - Keep product meta title/description filled before going Live.
