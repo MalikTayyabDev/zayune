@@ -1,5 +1,24 @@
 import { siteConfig } from "@/lib/site";
 
+function absoluteAssetUrl(base: string, url?: string | null) {
+  if (!url) return undefined;
+  if (url.startsWith("http://") || url.startsWith("https://")) return url;
+  return `${base}${url.startsWith("/") ? url : `/${url}`}`;
+}
+
+const merchantReturnPolicy = (base: string) => ({
+  "@type": "MerchantReturnPolicy",
+  applicableCountry: "PK",
+  returnPolicyCategory:
+    "https://schema.org/MerchantReturnFiniteReturnWindow",
+  merchantReturnDays: 3,
+  returnMethod: "https://schema.org/ReturnByMail",
+  returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
+  refundType: "https://schema.org/FullRefund",
+  returnPolicyCountry: "PK",
+  url: `${base}/shipping-returns`,
+});
+
 export function OrganizationJsonLd() {
   const base = siteConfig.url.replace(/\/$/, "");
 
@@ -65,6 +84,7 @@ export function OrganizationJsonLd() {
       logo: `${base}/logo.png`,
     },
     knowsAbout: siteConfig.focusKeywords,
+    hasMerchantReturnPolicy: merchantReturnPolicy(base),
     makesOffer: [
       {
         "@type": "Offer",
@@ -127,6 +147,9 @@ export function ProductJsonLd({
     price: number;
     currency: string;
     image?: string;
+    images?: string[];
+    sku?: string | null;
+    category?: string;
     availability: "InStock" | "OutOfStock" | "PreOrder";
     /** Offer start date (ISO date). Defaults to today. */
     validFrom?: string;
@@ -158,12 +181,23 @@ export function ProductJsonLd({
     .toISOString()
     .slice(0, 10);
 
+  const imageList = Array.from(
+    new Set(
+      [...(product.images || []), product.image]
+        .map((src) => absoluteAssetUrl(base, src))
+        .filter(Boolean) as string[]
+    )
+  );
+
   const data: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.name,
     description: product.description,
-    image: product.image ? [product.image] : undefined,
+    image: imageList.length ? imageList : undefined,
+    sku: product.sku || undefined,
+    mpn: product.sku || undefined,
+    category: product.category || undefined,
     brand: { "@type": "Brand", name: "ZAYUNE" },
     url,
     itemCondition: "https://schema.org/NewCondition",
@@ -182,18 +216,7 @@ export function ProductJsonLd({
         telephone: siteConfig.phoneE164,
         url: base,
       },
-      hasMerchantReturnPolicy: {
-        "@type": "MerchantReturnPolicy",
-        applicableCountry: "PK",
-        returnPolicyCategory:
-          "https://schema.org/MerchantReturnFiniteReturnWindow",
-        merchantReturnDays: 3,
-        returnMethod: "https://schema.org/ReturnByMail",
-        returnFees: "https://schema.org/ReturnFeesCustomerResponsibility",
-        refundType: "https://schema.org/FullRefund",
-        returnPolicyCountry: "PK",
-        url: `${base}/shipping-returns`,
-      },
+      hasMerchantReturnPolicy: merchantReturnPolicy(base),
       shippingDetails: {
         "@type": "OfferShippingDetails",
         shippingRate: {

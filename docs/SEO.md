@@ -112,11 +112,35 @@ When adding products:
 3. Publish the product, then set Settings to **Live** so URLs appear in the sitemap and Product JSON-LD is served.
 4. In GSC, request indexing for each new product URL.
 
-## Product rich results (GSC warnings)
+## Product snippets vs Merchant listings
 
-Product JSON-LD includes real **shippingDetails**, **hasMerchantReturnPolicy**, and **validFrom** (from `/shipping-returns` + checkout fees).
+These are **two related but different** Google surfaces:
 
-**Do not invent** `aggregateRating` / `review` — Google can demote or invalidate rich results for fake reviews. Those warnings stay until you collect real customer reviews and wire them into `ProductJsonLd`.
+| Surface | What it is | How ZAYUNE qualifies |
+|---|---|---|
+| **Product snippets** | Rich result in Search (price, availability, sometimes shipping) | Product JSON-LD on each `/product/...` page |
+| **Merchant listings** | Shopping-style free listings (price, store name, more commerce UI) | Same Product + `Offer` markup **and** Google Merchant Center / Seller profile eligibility |
+
+### Already in code (product pages)
+
+- `Product` + nested `Offer` (required for merchant listings — not AggregateOffer)
+- `name`, `image` (all gallery URLs, absolute), `description`, `brand`, `sku` / `mpn`, `category`
+- `offers.price`, `priceCurrency` (PKR), `availability`, `priceValidUntil`, `validFrom`
+- `shippingDetails` + `hasMerchantReturnPolicy` (also on Organization)
+- BreadcrumbList
+
+### Still needed for full Merchant listings
+
+1. **Google Merchant Center** account linked to `zayune.com` (and Business Profile / payments verification as Google asks for your country).
+2. Products must be **indexable** (in sitemap, Live store, request indexing).
+3. Images must be crawlable (ours are on `/products/winter/...` and Unsplash).
+4. **Real reviews** for star ratings (`aggregateRating` / `review`) — optional for eligibility, recommended for appearance. Never invent them.
+5. Pakistan free listings availability depends on Google’s current country support — confirm in Merchant Center for PK.
+
+### GSC “Improve item appearance” warnings
+
+- Missing `shippingDetails` / `hasMerchantReturnPolicy` / `validFrom` → **fixed in code**.
+- Missing `aggregateRating` / `review` → expected until real reviews exist.
 
 ## Ongoing
 
