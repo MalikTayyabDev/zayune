@@ -7,7 +7,7 @@ import { isStoreComingSoon } from "@/lib/store-mode";
 export const metadata = pageMetadata({
   title: "Sitemap",
   description:
-    "Browse every public page on ZAYUNE — shop, custom orders, about, contact, and studio policies.",
+    "Browse every public ZAYUNE page — Winter Special collections, products, custom orders, and studio policies.",
   path: "/site-map",
   keywords: ["ZAYUNE sitemap", "handmade shop pages Pakistan"],
 });
@@ -30,13 +30,21 @@ export default async function HtmlSitemapPage() {
     comingSoon ? Promise.resolve([]) : getProducts(),
   ]);
 
+  const published = products.filter((p) => p.published !== false);
+  const usedCategorySlugs = new Set(
+    published
+      .map((p) => ("category" in p && p.category ? p.category.slug : null))
+      .filter(Boolean) as string[]
+  );
+  const liveCategories = categories.filter((c) => usedCategorySlugs.has(c.slug));
+
   return (
     <div className="container-content py-14 sm:py-20 max-w-narrow">
       <SectionHeading
         as="h1"
         eyebrow="Index"
         title="Sitemap"
-        description="A plain list of public ZAYUNE pages for visitors and search engines."
+        description="Public ZAYUNE pages for visitors and search engines. Private account and checkout URLs are not listed."
       />
 
       <section className="mt-12 space-y-3">
@@ -52,11 +60,11 @@ export default async function HtmlSitemapPage() {
         </ul>
       </section>
 
-      {categories.length > 0 && (
+      {liveCategories.length > 0 && (
         <section className="mt-12 space-y-3">
           <h2 className="font-display text-2xl text-aubergine">Collections</h2>
           <ul className="space-y-2 text-sm text-aubergine/75">
-            {categories.map((category) => (
+            {liveCategories.map((category) => (
               <li key={category.id}>
                 <Link
                   href={`/shop/${category.slug}`}
@@ -70,11 +78,11 @@ export default async function HtmlSitemapPage() {
         </section>
       )}
 
-      {products.length > 0 && (
+      {published.length > 0 && (
         <section className="mt-12 space-y-3">
           <h2 className="font-display text-2xl text-aubergine">Products</h2>
           <ul className="space-y-2 text-sm text-aubergine/75">
-            {products.map((product) => (
+            {published.map((product) => (
               <li key={product.id}>
                 <Link
                   href={`/product/${product.slug}`}

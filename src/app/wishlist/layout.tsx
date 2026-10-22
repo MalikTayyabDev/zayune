@@ -2,7 +2,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
   title: "Wishlist",
-  description: "Saved ZAYUNE pieces.",
+  description: "Your saved ZAYUNE pieces.",
   path: "/wishlist",
   noIndex: true,
 });

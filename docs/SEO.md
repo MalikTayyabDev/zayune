@@ -40,25 +40,36 @@ Open these in a browser (expect **200**, not 500):
 
 ## Submit in Google Search Console
 
-1. Add property **Domain** `zayune.com` (or URL-prefix `https://zayune.com`) and verify DNS/ownership.
-2. **Sitemaps** → submit **only** `https://zayune.com/sitemap.xml` (robots.txt lists this single URL).
-3. While **Coming soon**: URL Inspection → Request indexing for `/`, `/shop`, `/shop/crochet-flowers`, `/shop/jewelry`, `/shop/keychains`, `/custom`, `/about`, `/contact`. Do **not** request product URLs (they redirect to `/shop`).
-4. When products are ready: Admin → fill **Meta title** / **Meta description** → Publish → **Settings → Live** → wait for sitemap refresh → Request indexing for each `/product/...` URL.
+1. Property: **Domain** `zayune.com` (covers apex + www).
+2. **Sitemaps** → only `https://zayune.com/sitemap.xml`.
+3. After each deploy: URL Inspection → **Request indexing** for `/`, `/shop`, each `/shop/...` collection, and each `/product/...` URL in the sitemap.
+4. In **Pages** report, click **Validate fix** after redirects/noindex changes ship.
+
+### How to read GSC “issues” (not all are failures)
+
+| Report | Meaning | Action |
+|---|---|---|
+| **Blocked by robots.txt** | Private routes (`/admin`, `/api`, `/account`, `/order`) | Expected — leave blocked |
+| **Excluded by noindex** | Cart, wishlist, track, checkout, journal | Expected — should not rank |
+| **Page with redirect** | Old category/product URLs permanently redirected | Expected after taxonomy change; validate fix |
+| **Not found (404)** | Dead URLs without redirect | We 301 legacy paths; validate fix |
+| **Discovered – not indexed** | Google knows the URL but hasn’t chosen to index yet | Normal for new/low-authority sites; request indexing + earn links |
+| **Crawled – not indexed** | Crawled, quality/selection skipped | Improve content uniqueness; wait; don’t spam resubmit |
 
 ### Fix crawling / “not indexed” faster
 
-- Sitemap always returns **200** with brand URLs even if the database is slow.
-- **Live:** sitemap includes only categories that have published products + all published product URLs (no empty legacy categories).
-- HTML sitemap: `https://zayune.com/site-map` (linked in footer).
-- Soft-404 risk: keep real collection copy on shop/category pages.
-- Rankings: technical SEO helps crawl/index; first-page positions also need real products, reviews, backlinks, and time — there is no code-only #1 switch.
+- Sitemap always returns **200**; Live lists only categories with published products + all published products.
+- Legacy `/shop/crochet-flowers`, `/shop/keychains`, and first-seed product slugs **301** to live collections.
+- Utility pages use **noindex** (not robots-block) so Google can process the exclusion cleanly.
+- HTML sitemap: `https://zayune.com/site-map`.
+- **Critical ops:** Vercel Domains — apex `zayune.com` primary; `www` must have a **valid SSL** and redirect to apex. Broken www TLS causes crawl/host confusion.
 
 ## What we index
 
-**Coming soon:** home, shop, custom, about, contact, shipping/returns, privacy, cookies.  
-**Live:** same + published categories (`/shop/...`) and products (`/product/...`).
+**Live:** `/`, `/shop`, live collections, published products, `/custom`, `/about`, `/contact`, shipping/returns, privacy, cookies, `/site-map`.
 
-Excluded / noindex: `/admin`, `/api`, `/checkout`, `/cart`, `/account`, `/order`, `/wishlist`, `/track`, `/journal` (until editorial content ships). Footer account/wishlist/track links use `rel="nofollow"`.
+**noindex (not in sitemap):** `/checkout`, `/cart`, `/wishlist`, `/track`, `/journal`.  
+**robots disallow:** `/admin`, `/api`, `/account`, `/order`.
 
 ## Catalog & store mode
 

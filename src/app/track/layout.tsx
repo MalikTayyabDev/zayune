@@ -1,8 +1,8 @@
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata = pageMetadata({
-  title: "Track Order",
-  description: "Track your ZAYUNE order.",
+  title: "Track order",
+  description: "Track your ZAYUNE order status.",
   path: "/track",
   noIndex: true,
 });
