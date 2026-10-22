@@ -172,7 +172,9 @@ export async function buildGoogleMerchantFeedXml() {
       "compareAtPrice" in product && product.compareAtPrice != null
         ? Number(product.compareAtPrice)
         : null;
-    const groupId = product.sku || product.slug;
+    const groupId =
+      ("sku" in product && product.sku ? String(product.sku) : null) ||
+      product.slug;
 
     if (product.variants.length > 0) {
       for (const variant of product.variants) {
