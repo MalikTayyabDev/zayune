@@ -44,6 +44,25 @@ export function SettingsForm({
   return (
     <form onSubmit={onSubmit} className="max-w-xl space-y-5">
       <div className="border border-stone bg-stone/20 px-5 py-4 text-sm text-aubergine/70">
+        <p className="text-nav text-aubergine/45">Google Merchant Center</p>
+        <p className="mt-2 leading-relaxed">
+          Product sync uses a secured feed URL (Merchant Center ID{" "}
+          <code className="text-aubergine">5879055103</code>). Set{" "}
+          <code className="text-aubergine">GOOGLE_MERCHANT_FEED_TOKEN</code> on
+          Vercel, then in Merchant Center add a{" "}
+          <strong className="font-medium text-aubergine">scheduled fetch</strong>{" "}
+          of:
+        </p>
+        <p className="mt-2 break-all text-xs text-aubergine/80">
+          https://zayune.com/api/feeds/google-merchant?token=YOUR_TOKEN
+        </p>
+        <p className="mt-2 text-xs text-aubergine/55">
+          See <code className="text-aubergine">docs/SEO.md</code> for the full
+          checklist. Feed is not listed in the public sitemap.
+        </p>
+      </div>
+
+      <div className="border border-stone bg-stone/20 px-5 py-4 text-sm text-aubergine/70">
         <p className="text-nav text-aubergine/45">Admin login</p>
         <p className="mt-2 leading-relaxed">
           Change studio admin email/password in environment variables — not on

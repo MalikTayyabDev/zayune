@@ -129,13 +129,34 @@ These are **two related but different** Google surfaces:
 - `shippingDetails` + `hasMerchantReturnPolicy` (also on Organization)
 - BreadcrumbList
 
+### Product feed sync (Merchant Center ID `5879055103`)
+
+Published products sync via a **scheduled feed fetch** (not a live Merchant API push):
+
+1. Set on Vercel (Production):
+   - `GOOGLE_MERCHANT_CENTER_ID=5879055103`
+   - `GOOGLE_MERCHANT_FEED_TOKEN=` a long random secret
+2. Redeploy.
+3. Feed URL (keep private — do not share publicly):
+
+   `https://zayune.com/api/feeds/google-merchant?token=YOUR_TOKEN`
+
+4. In Merchant Center → **Products** → **Add product data source** → **Scheduled fetch**:
+   - Paste the feed URL (with token)
+   - File type: **XML / RSS**
+   - Fetch daily (or every 6–12 hours)
+   - Country **Pakistan**, currency **PKR**, website `https://zayune.com`
+5. After the first fetch, open **Diagnostics** and fix any item warnings Google reports.
+
+Wrong/missing token → HTTP 401. Missing env token → HTTP 503.
+
 ### Still needed for full Merchant listings
 
-1. **Google Merchant Center** account linked to `zayune.com` (and Business Profile / payments verification as Google asks for your country).
-2. Products must be **indexable** (in sitemap, Live store, request indexing).
-3. Images must be crawlable (ours are on `/products/winter/...` and Unsplash).
-4. **Real reviews** for star ratings (`aggregateRating` / `review`) — optional for eligibility, recommended for appearance. Never invent them.
-5. Pakistan free listings availability depends on Google’s current country support — confirm in Merchant Center for PK.
+1. Merchant Center account claimed for `zayune.com` (you have ID `5879055103`) + feed connected as above.
+2. Products **indexable** in Search (sitemap + Live store).
+3. Crawlable product images.
+4. **Real reviews** for star ratings — never invent them.
+5. Confirm Pakistan free-listing eligibility in Merchant Center.
 
 ### GSC “Improve item appearance” warnings
 
