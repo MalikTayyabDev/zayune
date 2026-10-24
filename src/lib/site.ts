@@ -64,19 +64,67 @@ export const siteConfig = {
     process.env.NEXT_PUBLIC_INSTAGRAM_URL ||
       "https://www.instagram.com/zayune.pk/",
   ],
+  /**
+   * Sitewide focus keywords — brand → common → mid → advanced long-tail.
+   * Merged into page metadata + Organization knowsAbout. Prefer crochet-only terms.
+   */
   focusKeywords: [
+    // Brand
     "ZAYUNE",
     "zayune.pk",
+    "ZAYUNE handmade",
+    "ZAYUNE crochet",
+    "ZAYUNE Pakistan",
+    "ZAYUNE Rawalpindi",
+
+    // Common / head terms
     "handmade crochet Pakistan",
-    "handmade crochet Rawalpindi",
     "crochet accessories Pakistan",
-    "crochet gajra Pakistan",
-    "crochet beanie Pakistan",
-    "handmade accessories Satellite Town",
     "handmade accessories Pakistan",
+    "buy crochet online Pakistan",
+    "crochet shop Pakistan",
+    "handmade gifts Pakistan",
+    "winter crochet Pakistan",
+    "crochet beanie Pakistan",
+    "crochet scarf Pakistan",
+    "crochet gajra Pakistan",
+    "flower hair clips crochet",
     "custom crochet orders Pakistan",
-    "designer handmade accessories",
+
+    // Mid / local + category
+    "handmade crochet Rawalpindi",
     "crochet studio Rawalpindi",
+    "handmade accessories Satellite Town",
+    "crochet accessories Rawalpindi",
+    "designer handmade accessories",
+    "handmade winter wear Pakistan",
+    "chunky crochet scarf Pakistan",
+    "fingerless gloves crochet Pakistan",
+    "crochet poncho Pakistan",
+    "crochet ear warmer Pakistan",
+    "crochet boot cuffs Pakistan",
+    "crochet tote bag Pakistan",
+    "mehndi crochet accessories",
+    "handmade gajra Pakistan",
+    "crochet flower hair clip Pakistan",
+    "wedding crochet accessories Pakistan",
+    "made to order crochet Pakistan",
+
+    // Advanced / long-tail intent
+    "where to buy handmade crochet beanie in Pakistan",
+    "handmade crochet gajra for mehndi Pakistan",
+    "custom colour crochet beanie Rawalpindi",
+    "chunky handmade muffler online Pakistan",
+    "ivory crochet gajra for walima",
+    "handmade crochet flower clips for wedding",
+    "winter crochet gift set Pakistan",
+    "buy handmade crochet accessories Satellite Town Rawalpindi",
+    "small business crochet studio Pakistan WhatsApp order",
+    "designer crochet accessories shipped across Pakistan",
+    "handmade crochet ornaments Christmas gift Pakistan",
+    "crochet shawl pin handmade Pakistan",
+    "slouchy crochet hat handmade Pakistan",
+    "soft yarn handmade accessories Pakistan women",
   ],
 };
 

@@ -33,13 +33,16 @@ export const metadata = pageMetadata({
   image: "/og.png",
   absoluteTitle: true,
   keywords: [
-    "handmade crochet Pakistan",
-    "crochet accessories Pakistan",
-    "crochet gajra",
-    "crochet beanie Pakistan",
+    "buy crochet online Pakistan",
+    "crochet shop Pakistan",
+    "handmade gifts Pakistan",
+    "winter crochet Pakistan",
     "mehndi crochet accessories",
-    "handmade accessories Rawalpindi",
-    "ZAYUNE handmade",
+    "handmade crochet beanie Rawalpindi",
+    "chunky crochet scarf Pakistan",
+    "handmade crochet gajra for mehndi Pakistan",
+    "custom colour crochet beanie Rawalpindi",
+    "designer crochet accessories shipped across Pakistan",
   ],
 });
 
