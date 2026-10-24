@@ -27,15 +27,18 @@ import { isStoreComingSoon } from "@/lib/store-mode";
 
 export const metadata = pageMetadata({
   title:
-    "ZAYUNE — Handmade Jewelry, Crochet Flowers & Keychains | Pakistan",
+    "ZAYUNE — Handmade Jewelry, Crochet & Wedding Accessories | Pakistan",
   description:
-    "Buy handmade crochet flowers, jewelry, and keychains from ZAYUNE in Satellite Town, Rawalpindi. Designer-led pieces made by hand in Pakistan — custom orders open on WhatsApp.",
+    "Shop Winter Dawat Edit mehndi, engagement and walima accessories plus winter crochet from ZAYUNE in Rawalpindi — handmade in Pakistan, custom orders on WhatsApp.",
   path: "/",
   absoluteTitle: true,
   keywords: [
     "handmade crochet Pakistan",
     "handmade jewelry Pakistan",
-    "crochet flowers online Pakistan",
+    "mehndi accessories Pakistan",
+    "engagement jewelry handmade",
+    "walima accessories",
+    "crochet gajra",
     "handmade accessories Rawalpindi",
     "ZAYUNE handmade",
   ],

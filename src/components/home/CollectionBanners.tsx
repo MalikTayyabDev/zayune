@@ -7,28 +7,28 @@ import { Reveal } from "@/components/ui/Reveal";
 
 const pieces = [
   {
+    title: "Mehndi",
+    href: "/shop/mehndi",
+    image: "/products/dawat/gajra.jpg",
+    note: "Winter Dawat Edit",
+  },
+  {
+    title: "Engagement",
+    href: "/shop/engagement",
+    image: "/products/dawat/pearl-necklace-set.jpg",
+    note: "Pearl & formal",
+  },
+  {
+    title: "Walima",
+    href: "/shop/walima",
+    image: "/products/dawat/kundan-choker.jpg",
+    note: "Evening elegance",
+  },
+  {
     title: "Beanies & Hats",
     href: "/shop/beanies-hats",
     image: "/products/winter/beanie.jpg",
     note: "Winter bestseller",
-  },
-  {
-    title: "Scarves",
-    href: "/shop/scarves-mufflers",
-    image: "/products/winter/scarf.jpg",
-    note: "Chunky layers",
-  },
-  {
-    title: "Jewelry",
-    href: "/shop/jewelry",
-    image: "/products/winter/pearl-set.jpg",
-    note: "Wedding season",
-  },
-  {
-    title: "Bags",
-    href: "/shop/bags-pouches",
-    image: "/products/winter/tote.jpg",
-    note: "Everyday carry",
   },
 ];
 
@@ -49,14 +49,14 @@ export function CollectionBanners() {
             <div className="max-w-lg">
               <p className="text-nav inline-flex items-center gap-2 text-aubergine/50">
                 <CopperStar size={10} />
-                <span>Winter Special</span>
+                <span>Winter Special · Winter Dawat Edit</span>
               </p>
               <h2 className="mt-3 font-display text-3xl text-aubergine sm:text-4xl md:text-[2.75rem]">
                 Shop by piece
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-aubergine/65">
-                Ten winning winter products — beanies, scarves, gloves, jewelry,
-                hair clips, ornaments, and totes.
+                Wedding-season Mehndi, Engagement and Walima edits — plus winter
+                crochet essentials handmade in Pakistan.
               </p>
             </div>
             <Link

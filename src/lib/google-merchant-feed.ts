@@ -14,6 +14,9 @@ const GPC_BY_CATEGORY: Record<string, string> = {
   "hair-accessories": "171", // Hair Accessories
   "ornaments-gifts": "696", // Home & Garden > Decor > Seasonal & Holiday Decorations
   "bags-pouches": "3032", // Handbags, Wallets & Cases > Handbags
+  mehndi: "171", // Hair Accessories / floral wedding accessories
+  engagement: "188", // Jewelry
+  walima: "188", // Jewelry (potli/shawl pin still apparel-adjacent; jewelry GPC fits sets)
   "custom-orders": "166", // Apparel & Accessories
 };
 

@@ -163,6 +163,16 @@ Wrong/missing token → HTTP 401. Missing env token → HTTP 503.
 - Missing `shippingDetails` / `hasMerchantReturnPolicy` / `validFrom` → **fixed in code**.
 - Missing `aggregateRating` / `review` → expected until real reviews exist.
 
+### Winter Dawat Edit catalog
+
+Wedding-season products (Mehndi / Engagement / Walima + bundles) live in [`src/lib/dawat-catalog.ts`](../src/lib/dawat-catalog.ts). Append without wiping Winter Special:
+
+```bash
+npm run db:seed-dawat
+```
+
+Merchant feed GPC map includes `mehndi`, `engagement`, and `walima`. After seeding, wait for the next Merchant Center scheduled fetch.
+
 ## Ongoing
 
 - Keep product meta title/description filled before going Live.

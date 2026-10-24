@@ -12,6 +12,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:clear-products": "tsx prisma/clear-products.ts",
     "db:seed-winter": "tsx prisma/seed-winter-products.ts",
+    "db:seed-dawat": "tsx prisma/seed-dawat-products.ts",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate"
   },
