@@ -15,8 +15,8 @@ import { WhatsAppFloat } from "@/components/support/WhatsAppFloat";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 
-const GOOGLE_TAG_ID =
-  process.env.NEXT_PUBLIC_GOOGLE_TAG_ID || "GT-NSLH4C2B";
+/** Full Google tag ID — must include the GT- prefix for Tag Assistant. */
+const GOOGLE_TAG_ID = "GT-NSLH4C2B";
 
 const bodoni = Bodoni_Moda({
   subsets: ["latin"],
@@ -108,16 +108,17 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${bodoni.variable} ${inter.variable} ${cormorant.variable}`}>
       <body>
+        {/* beforeInteractive puts the tag in initial HTML so Google Tag Assistant can detect it */}
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_TAG_ID}`}
-          strategy="afterInteractive"
+          strategy="beforeInteractive"
         />
-        <Script id="google-tag" strategy="afterInteractive">
+        <Script id="google-tag-gt-nslh4c2b" strategy="beforeInteractive">
           {`
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
             gtag('js', new Date());
-            gtag('config', '${GOOGLE_TAG_ID}');
+            gtag('config', 'GT-NSLH4C2B');
           `}
         </Script>
         <SessionProvider>
