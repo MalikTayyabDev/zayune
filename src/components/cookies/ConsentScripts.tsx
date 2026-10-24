@@ -5,7 +5,8 @@ import { hasConsent } from "@/lib/cookie-consent";
 
 /**
  * Loads optional third-party scripts only after cookie consent.
- * Add GA / Meta pixel IDs via env when ready:
+ * Google Tag / GA / Meta via env (or site Google Tag default):
+ *   NEXT_PUBLIC_GOOGLE_TAG_ID=GT-NSLH4C2B
  *   NEXT_PUBLIC_GA_MEASUREMENT_ID=G-XXXX
  *   NEXT_PUBLIC_META_PIXEL_ID=123456
  */
@@ -23,6 +24,7 @@ export function ConsentScripts() {
     return () => window.removeEventListener("zayune:cookie-consent", sync);
   }, []);
 
+  // Site Google Tag (GT-NSLH4C2B) loads in root layout. Optional extra GA4 ID here.
   const gaId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
   const metaId = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 

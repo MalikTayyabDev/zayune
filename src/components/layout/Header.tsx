@@ -33,8 +33,8 @@ const nav = [
 const collections = [
   { href: "/shop/beanies-hats", label: "Beanies", note: "01" },
   { href: "/shop/scarves-mufflers", label: "Scarves", note: "02" },
-  { href: "/shop/jewelry", label: "Jewelry", note: "03" },
-  { href: "/shop/bags-pouches", label: "Bags", note: "04" },
+  { href: "/shop/hair-accessories", label: "Hair", note: "03" },
+  { href: "/shop/mehndi", label: "Mehndi", note: "04" },
 ];
 
 export function Header() {
@@ -238,7 +238,8 @@ export function Header() {
             { href: "/shop", label: "Shop" },
             { href: "/shop/beanies-hats", label: "Beanies" },
             { href: "/shop/scarves-mufflers", label: "Scarves" },
-            { href: "/shop/jewelry", label: "Jewelry" },
+            { href: "/shop/hair-accessories", label: "Hair" },
+            { href: "/shop/mehndi", label: "Mehndi" },
             { href: "/custom", label: "Custom" },
             { href: "/about", label: "About" },
             { href: "/contact", label: "Contact" },

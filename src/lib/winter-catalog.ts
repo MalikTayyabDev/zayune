@@ -94,32 +94,26 @@ export const winterCategories: WinterCategorySeed[] = [
     sortOrder: 6,
   },
   {
-    name: "Jewelry",
-    slug: "jewelry",
-    description:
-      "Pearl and beaded jewelry sets for Pakistan’s wedding and dawat season.",
-    sortOrder: 7,
-  },
   {
     name: "Hair Accessories",
     slug: "hair-accessories",
     description:
       "Crochet flower hair clips and gajras — everyday wear and mehndi/wedding functions.",
-    sortOrder: 8,
+    sortOrder: 7,
   },
   {
     name: "Ornaments & Gifts",
     slug: "ornaments-gifts",
     description:
       "Mini crochet ornaments and gift toppers for Christmas and New Year gifting.",
-    sortOrder: 9,
+    sortOrder: 8,
   },
   {
     name: "Bags & Pouches",
     slug: "bags-pouches",
     description:
       "Chunky crochet totes and pouches — winter gifting staples that work year-round.",
-    sortOrder: 10,
+    sortOrder: 9,
   },
 ];
 
@@ -389,48 +383,6 @@ export const winterProducts: WinterProductSeed[] = [
       { name: "Cream", optionGroup: "Color", swatchHex: "#F5F0E8", stock: 6, sku: "ZAY-WIN-BOOT-CRM" },
       { name: "Camel", optionGroup: "Color", swatchHex: "#C4A484", stock: 5, sku: "ZAY-WIN-BOOT-CAM" },
       { name: "Grey", optionGroup: "Color", swatchHex: "#8A8A8A", stock: 5, sku: "ZAY-WIN-BOOT-GRY" },
-    ],
-  },
-  {
-    name: "Pearl & Beaded Jewelry Set",
-    slug: "pearl-beaded-jewelry-set",
-    sku: "ZAY-WIN-PEARL",
-    categorySlug: "jewelry",
-    oneLiner: "Necklace, earrings & tikka energy — built for Nov–Feb wedding season.",
-    story:
-      "Pakistan’s wedding and dawat season runs through winter. This pearl and beaded set is designed as a festive-outfit add-on — necklace and earrings that photograph clean and gift easily.",
-    materials: "Pearl-effect & glass beads · Brass findings · Hand-strung",
-    handmadeProof: "Strung, knotted, and clasp-checked by hand in studio.",
-    stylingNote: "Ideal for wedding guests, mehndi nights, and formal dinners.",
-    listPrice: 2800,
-    fulfillment: "IN_STOCK",
-    stock: 10,
-    leadTimeDays: null,
-    featured: true,
-    seoTitle: "Pearl & Beaded Jewelry Set Pakistan | Wedding Season ZAYUNE",
-    seoDescription:
-      "Shop pearl and beaded handmade jewelry sets from ZAYUNE — necklace & earrings for Pakistan wedding season. Winter Special pricing.",
-    tags: [
-      "pearl jewelry set Pakistan",
-      "wedding jewelry",
-      "beaded necklace earrings",
-      "dawat season",
-    ],
-    images: [
-      {
-        url: local("pearl-set.jpg"),
-        alt: "Pearl and beaded handmade jewelry set — necklace and earrings",
-        kind: "hero",
-      },
-      {
-        url: local("pearl-set-detail.jpg"),
-        alt: "Pearl earrings and necklace detail — matching studio shot",
-        kind: "detail",
-      },
-    ],
-    variants: [
-      { name: "Classic Pearl", optionGroup: "Tone", swatchHex: "#F0E6DC", stock: 5, sku: "ZAY-WIN-PEARL-CLS" },
-      { name: "Gold Bead", optionGroup: "Tone", swatchHex: "#C4A35A", stock: 5, sku: "ZAY-WIN-PEARL-GLD" },
     ],
   },
   {

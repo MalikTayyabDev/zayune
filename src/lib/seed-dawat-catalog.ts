@@ -8,8 +8,15 @@ import {
   dawatProducts,
   withSeasonalPrice,
 } from "@/lib/dawat-catalog";
+import { JEWELRY_PRODUCT_SLUGS } from "@/lib/jewelry-slugs";
+import { unpublishJewelryProducts } from "@/lib/unpublish-jewelry";
+
+const jewelrySet = new Set<string>(JEWELRY_PRODUCT_SLUGS);
 
 export async function seedDawatCatalog(prisma: PrismaClient) {
+  const crochetProducts = dawatProducts.filter((p) => !jewelrySet.has(p.slug));
+  const crochetBundles = dawatBundles.filter((b) => !jewelrySet.has(b.slug));
+
   const categories = new Map<string, string>();
   for (const def of dawatCategories) {
     const row = await prisma.category.upsert({
@@ -27,7 +34,7 @@ export async function seedDawatCatalog(prisma: PrismaClient) {
   const slugToId = new Map<string, string>();
   let products = 0;
 
-  for (const item of dawatProducts) {
+  for (const item of crochetProducts) {
     const categoryId = categories.get(item.categorySlug);
     if (!categoryId) throw new Error(`Missing category ${item.categorySlug}`);
     const { price, compareAtPrice } = withSeasonalPrice(item.listPrice);
@@ -121,7 +128,7 @@ export async function seedDawatCatalog(prisma: PrismaClient) {
   }
 
   let bundles = 0;
-  for (const item of dawatBundles) {
+  for (const item of crochetBundles) {
     const categoryId = categories.get(item.categorySlug);
     if (!categoryId) throw new Error(`Missing category ${item.categorySlug}`);
     const childIds = item.childSlugs
@@ -228,7 +235,7 @@ export async function seedDawatCatalog(prisma: PrismaClient) {
     update: {
       storeMode: "LIVE",
       bannerText:
-        "Winter Special + Winter Dawat Edit · Mehndi · Engagement · Walima · WELCOME10 · WINTER5",
+        "Handmade crochet accessories · Winter Special · Mehndi Edit · WELCOME10 · WINTER5",
     },
     create: {
       id: "default",
@@ -236,15 +243,18 @@ export async function seedDawatCatalog(prisma: PrismaClient) {
       shippingFlatFee: 250,
       freeShippingOver: 5000,
       bannerText:
-        "Winter Special + Winter Dawat Edit · Mehndi · Engagement · Walima · WELCOME10 · WINTER5",
+        "Handmade crochet accessories · Winter Special · Mehndi Edit · WELCOME10 · WINTER5",
     },
   });
+
+  const jewelry = await unpublishJewelryProducts(prisma);
 
   return {
     categories: dawatCategories.length,
     products,
     bundles,
     winterProductsStillPresent: winterCount,
+    jewelryUnpublished: jewelry.unpublished,
     storeMode: "LIVE" as const,
   };
 }

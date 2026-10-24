@@ -77,18 +77,11 @@ export const dawatCategories: DawatCategorySeed[] = [
     sortOrder: 20,
   },
   {
-    name: "Engagement Collection",
-    slug: "engagement",
-    description:
-      "Pearl and pastel engagement jewelry — necklace sets, tikka & jhumar, hair pins and premium organza dupattas.",
-    sortOrder: 21,
-  },
-  {
     name: "Walima Collection",
     slug: "walima",
     description:
-      "Understated walima pieces — kundan chokers, ivory gajras, pearl combs, potlis and shawl pins for evening looks.",
-    sortOrder: 22,
+      "Soft walima crochet — ivory gajras and shawl pins for evening looks.",
+    sortOrder: 21,
   },
 ];
 
@@ -599,23 +592,22 @@ export const dawatBundles: DawatBundleSeed[] = [
     slug: "mehndi-glow-set",
     sku: "ZAY-DAW-BDL-MEH",
     categorySlug: "mehndi",
-    oneLiner: "Gajra pair + flower clips set + beaded jhumkas — one colour story.",
+    oneLiner: "Crochet gajra pair + flower clips set — one colour story.",
     story:
-      "Our curated mehndi bundle: a crochet gajra pair, set of three flower clips, and beaded jhumkas styled to match. Higher order value without guessing what pairs together.",
-    materials: "See included products — crochet & beadwork handmade set",
+      "Our curated mehndi crochet bundle: a handmade gajra pair and set of three flower clips styled to match. Pure crochet accessories — higher order value without guessing what pairs together.",
+    materials: "See included products — crochet handmade set",
     handmadeProof: "Each piece handmade; bundle packed as a matched set.",
-    stylingNote: "Choose a colour story variant so all three pieces feel coordinated.",
-    listPrice: 3500,
+    stylingNote: "Choose a colour story variant so both pieces feel coordinated.",
+    listPrice: 2399,
     childSlugs: [
       "crochet-gajra-mehndi",
       "crochet-flower-hair-clips-set-mehndi",
-      "beaded-jhumka-earrings-mehndi",
     ],
     featured: true,
-    seoTitle: "Mehndi Glow Set Bundle | Gajra Clips Jhumkas ZAYUNE",
+    seoTitle: "Mehndi Glow Crochet Set | Gajra & Clips | ZAYUNE",
     seoDescription:
-      "Mehndi Glow Set: handmade crochet gajra pair, flower clips & beaded jhumkas. Curated wedding bundle by ZAYUNE Pakistan.",
-    tags: ["mehndi bundle", "gajra set", "wedding accessories bundle"],
+      "Mehndi Glow crochet set: handmade gajra pair and flower hair clips. Curated crochet bundle by ZAYUNE Pakistan.",
+    tags: ["mehndi bundle", "crochet gajra set", "crochet accessories bundle"],
     images: [
       { url: local("mehndi-glow-bundle.jpg"), alt: "Mehndi Glow Set — gajra, clips and jhumkas", kind: "hero" },
     ],

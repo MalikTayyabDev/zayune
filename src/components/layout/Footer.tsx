@@ -12,11 +12,11 @@ const columns = [
   {
     title: "Shop",
     links: [
-      { href: "/shop", label: "All winter pieces" },
+      { href: "/shop", label: "All crochet pieces" },
       { href: "/shop/beanies-hats", label: "Beanies & hats" },
       { href: "/shop/scarves-mufflers", label: "Scarves & mufflers" },
-      { href: "/shop/jewelry", label: "Pearl jewelry sets" },
       { href: "/shop/hair-accessories", label: "Hair clips & gajras" },
+      { href: "/shop/mehndi", label: "Mehndi crochet" },
       { href: "/shop/bags-pouches", label: "Totes & pouches" },
       { href: "/custom", label: "Custom orders" },
     ],
@@ -80,9 +80,9 @@ export function Footer() {
                 {siteConfig.supportingLine}
               </p>
               <p className="mt-4 text-sm leading-relaxed text-porcelain/65">
-                Crochet flowers, jewelry, keychains, and made-to-order custom pieces
-                from Pakistan. Guest checkout anytime — accounts for wishlist and
-                order history.
+                Handmade crochet accessories and made-to-order custom pieces from
+                Pakistan. Guest checkout anytime — accounts for wishlist and order
+                history.
               </p>
               <p className="mt-5 text-[11px] uppercase tracking-nav text-brass/90">
                 Winter Special · WELCOME10 · WINTER5

@@ -7,19 +7,19 @@ export const brandFaqs = [
     answer: `ZAYUNE makes handmade crochet beanies, scarves, gloves, and winter accessories in ${studioLocationLine()}. Shop the Winter Special online or WhatsApp ${siteConfig.phoneDisplay}.`,
   },
   {
-    question: "Do you sell pearl jewelry sets for wedding season?",
+    question: "Do you make crochet gajras and hair clips for mehndi?",
     answer:
-      "Yes — pearl and beaded jewelry sets are part of our Winter Special for Pakistan’s Nov–Feb wedding and dawat season, handmade in Rawalpindi.",
+      "Yes — handmade crochet gajras and flower hair clips are part of our Mehndi Edit and Winter Special, finished by hand in Rawalpindi.",
   },
   {
     question: "Can I order custom crochet colors?",
     answer:
-      "Custom colorways and one-of-a-kind requests stay open year-round. Share your idea on the Custom orders page or WhatsApp the studio for a quote.",
+      "Custom colorways and one-of-a-kind crochet requests stay open year-round. Share your idea on the Custom orders page or WhatsApp the studio for a quote.",
   },
   {
-    question: "What is in the ZAYUNE Winter Special?",
+    question: "What does ZAYUNE make?",
     answer:
-      "Ten winning winter products: beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, pearl jewelry sets, flower hair clips & gajras, mini ornaments, and crochet totes.",
+      "Handmade crochet accessories only: beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, flower hair clips & gajras, mini ornaments, and crochet totes.",
   },
 ];
 
@@ -81,13 +81,22 @@ export const collectionSeo: Record<
       "winter boot cuffs",
     ],
   },
-  jewelry: {
-    h1Extra: "Pearl & beaded jewelry sets Pakistan",
-    body: `Pearl and beaded handmade jewelry sets from ZAYUNE for Pakistan’s wedding and dawat season — necklace and earring sets finished by hand in Rawalpindi.`,
+  mehndi: {
+    h1Extra: "Mehndi crochet gajras & clips Pakistan",
+    body: `Handmade crochet gajras and flower hair clips from ZAYUNE for mehndi season — colour-forward crochet accessories finished by hand in Rawalpindi.`,
     keywords: [
-      "pearl jewelry set Pakistan",
-      "wedding jewelry Rawalpindi",
-      "beaded necklace earrings",
+      "crochet gajra mehndi",
+      "mehndi crochet accessories",
+      "handmade gajra Pakistan",
+    ],
+  },
+  walima: {
+    h1Extra: "Walima crochet accessories Pakistan",
+    body: `Soft ivory crochet gajras and shawl pins from ZAYUNE for walima evenings — handmade crochet accessories only.`,
+    keywords: [
+      "ivory crochet gajra",
+      "walima crochet accessories",
+      "crochet shawl pin",
     ],
   },
   "hair-accessories": {
@@ -128,9 +137,9 @@ export const collectionSeo: Record<
   },
 };
 
-export const shopIntro = `Shop the ZAYUNE Winter Special from ${studioLocationLine()} — handmade beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, pearl jewelry sets, flower hair clips, ornaments, and crochet totes. Seasonal 5% on products · WELCOME10 intro · WINTER5 at checkout.`;
+export const shopIntro = `Shop handmade crochet accessories from ZAYUNE in ${studioLocationLine()} — beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, flower hair clips & gajras, ornaments, and crochet totes. Seasonal 5% on products · WELCOME10 intro · WINTER5 at checkout.`;
 
 export const homeSeoParagraphs = [
-  `ZAYUNE is a handmade studio in ${studioLocationLine()} — design-led crochet beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, pearl jewelry sets, flower hair clips, ornaments, and totes.`,
-  `Every piece is finished by hand with clear checkout, guest shopping, custom colorways, and WhatsApp support on ${siteConfig.phoneDisplay}. We ship nationwide across Pakistan.`,
+  `ZAYUNE is a handmade crochet studio in ${studioLocationLine()} — design-led beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, flower hair clips & gajras, ornaments, and totes.`,
+  `Every piece is finished by hand with clear checkout, guest shopping, custom crochet colorways, and WhatsApp support on ${siteConfig.phoneDisplay}. We ship nationwide across Pakistan.`,
 ];

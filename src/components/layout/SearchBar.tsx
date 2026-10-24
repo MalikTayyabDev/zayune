@@ -42,7 +42,7 @@ export function SearchBar({
         type="search"
         value={q}
         onChange={(e) => setQ(e.target.value)}
-        placeholder="Search crochet flowers, jewelry, keychains…"
+        placeholder="Search crochet beanies, scarves, gajras…"
         autoFocus={autoFocus}
         className={cn(
           "w-full border border-stone bg-porcelain/80 text-sm text-aubergine outline-none transition focus:border-aubergine/40",

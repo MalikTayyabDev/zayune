@@ -26,19 +26,17 @@ import { siteImages } from "@/lib/site-images";
 import { isStoreComingSoon } from "@/lib/store-mode";
 
 export const metadata = pageMetadata({
-  title:
-    "ZAYUNE — Handmade Jewelry, Crochet & Wedding Accessories | Pakistan",
+  title: "ZAYUNE — Handmade Crochet Accessories | Pakistan",
   description:
-    "Shop Winter Dawat Edit mehndi, engagement and walima accessories plus winter crochet from ZAYUNE in Rawalpindi — handmade in Pakistan, custom orders on WhatsApp.",
+    "Shop handmade crochet beanies, scarves, gajras, flower clips and winter warmers from ZAYUNE in Rawalpindi — crochet accessories only, custom orders on WhatsApp.",
   path: "/",
   absoluteTitle: true,
   keywords: [
     "handmade crochet Pakistan",
-    "handmade jewelry Pakistan",
-    "mehndi accessories Pakistan",
-    "engagement jewelry handmade",
-    "walima accessories",
+    "crochet accessories Pakistan",
     "crochet gajra",
+    "crochet beanie Pakistan",
+    "mehndi crochet accessories",
     "handmade accessories Rawalpindi",
     "ZAYUNE handmade",
   ],

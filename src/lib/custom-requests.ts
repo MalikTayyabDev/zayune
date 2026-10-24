@@ -1,6 +1,6 @@
 export const PIECE_TYPES = [
   { value: "flower", label: "Crochet flower" },
-  { value: "jewelry", label: "Jewelry" },
+  { value: "hair-accessory", label: "Hair accessory (gajra / clips)" },
   { value: "keychain", label: "Keychain" },
   { value: "colorway", label: "Colorway of an existing piece" },
   { value: "other", label: "Other / tell us more" },

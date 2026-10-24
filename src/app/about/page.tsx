@@ -10,7 +10,7 @@ import { siteImages } from "@/lib/site-images";
 
 export const metadata = pageMetadata({
   title: "About ZAYUNE — Handmade Studio in Rawalpindi, Pakistan",
-  description: `Meet ZAYUNE — a designer-led handmade crochet & jewelry studio in ${studioLocationLine()}. Two sisters making crochet flowers, jewelry, keychains, and custom orders.`,
+  description: `Meet ZAYUNE — a designer-led handmade crochet studio in ${studioLocationLine()}. Two sisters making crochet accessories, gajras, flower clips, and custom orders.`,
   path: "/about",
   keywords: [
     "ZAYUNE Rawalpindi",
@@ -28,7 +28,7 @@ export default function AboutPage() {
           as="h1"
           eyebrow="About"
           title="Two sisters. One point of view."
-          description={`ZAYUNE is a designer-led handmade label from ${studioLocationLine()} — jewelry, crochet flowers, keychains, and custom orders. Quiet confidence, careful craft, pieces that begin on paper.`}
+          description={`ZAYUNE is a designer-led handmade crochet label from ${studioLocationLine()} — beanies, scarves, gajras, flower clips, and custom crochet orders. Quiet confidence, careful craft.`}
           accent="star"
         />
 
@@ -50,12 +50,11 @@ export default function AboutPage() {
               first line, then finished by hand in the studio.
             </p>
             <p>
-              Today we make jewelry, crochet flowers, keychains, and{" "}
+              Today we make handmade crochet accessories and{" "}
               <Link href="/custom" className="text-copper hover:underline">
-                custom orders
+                custom crochet orders
               </Link>
-              . Follow the making at @zayune.pk. Bags and clothing will follow as
-              the vocabulary grows.
+              . Follow the making at @zayune.pk.
             </p>
             <EditorialQuote
               quote="Made by hand. Led by design."

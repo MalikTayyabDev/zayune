@@ -15,15 +15,15 @@ import { pageMetadata } from "@/lib/seo";
 import { siteConfig, whatsappHref } from "@/lib/site";
 
 export const metadata = pageMetadata({
-  title: "Custom Crochet Orders Pakistan — Flowers, Jewelry & Keychains",
+  title: "Custom Crochet Orders Pakistan — Accessories & Colorways",
   description:
-    "Order custom crochet flowers, handmade jewelry, or keychains from ZAYUNE Pakistan. Made-to-order colorways with a clear quote and lead time before we start.",
+    "Order custom crochet accessories from ZAYUNE Pakistan — beanies, scarves, gajras, flower clips, and colorways with a clear quote before we start.",
   path: "/custom",
   keywords: [
     "custom crochet orders Pakistan",
-    "made to order crochet flowers",
-    "custom handmade jewelry Pakistan",
-    "custom crochet keychain Pakistan",
+    "made to order crochet accessories",
+    "custom crochet gajra Pakistan",
+    "custom crochet beanie Pakistan",
   ],
 });
 
@@ -50,13 +50,13 @@ const requestables = [
   },
   {
     icon: Sparkles,
-    title: "Jewelry",
-    text: "Earrings, accents, and quiet statement pieces designed with you.",
+    title: "Hair accessories",
+    text: "Crochet gajras, flower clips, and soft bridal-guest accents.",
   },
   {
     icon: KeyRound,
-    title: "Keychains",
-    text: "Names, initials, or motifs that travel with you every day.",
+    title: "Winter warmers",
+    text: "Beanies, scarves, gloves, and ear warmers in your palette.",
   },
   {
     icon: Palette,
@@ -150,7 +150,7 @@ export default function CustomOrdersPage() {
           <SectionHeading
             eyebrow="Studio"
             title="What you can request"
-            description="Flowers, jewelry, keychains, colorways — or something in between."
+            description="Gajras, clips, beanies, scarves, colorways — crochet only."
           />
           <div className="card-grid-stat mt-8 lg:grid-cols-4">
             {requestables.map((item) => (

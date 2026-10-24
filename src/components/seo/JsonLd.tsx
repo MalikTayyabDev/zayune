@@ -92,7 +92,7 @@ export function OrganizationJsonLd() {
           "@type": "Service",
           name: "Custom crochet & handmade accessories",
           description:
-            "Made-to-order crochet flowers, jewelry, keychains, and custom colorways from ZAYUNE Pakistan.",
+            "Made-to-order crochet accessories and custom colorways from ZAYUNE Pakistan.",
         },
       },
     ],

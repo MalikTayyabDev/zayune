@@ -43,14 +43,14 @@ const collectionLinks = [
     note: "Niche winter",
   },
   {
-    href: "/shop/jewelry",
-    label: "Pearl jewelry sets",
-    note: "Wedding season",
-  },
-  {
     href: "/shop/hair-accessories",
     label: "Flower clips & gajras",
     note: "Mehndi-ready",
+  },
+  {
+    href: "/shop/mehndi",
+    label: "Mehndi crochet edit",
+    note: "Gajras & clips",
   },
   {
     href: "/shop/ornaments-gifts",
@@ -81,7 +81,7 @@ export function HomeSeoBlock() {
             Winter Special · Satellite Town, Rawalpindi
           </p>
           <h2 className="mt-3 font-display text-3xl text-aubergine sm:text-4xl">
-            Handmade winter crochet &amp; jewelry from Pakistan
+            Handmade crochet accessories from Pakistan
           </h2>
           <div className="mt-5 space-y-3 text-sm leading-relaxed text-aubergine/70 sm:text-base">
             {homeSeoParagraphs.map((p) => (

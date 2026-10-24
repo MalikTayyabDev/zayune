@@ -10,25 +10,25 @@ const pieces = [
     title: "Mehndi",
     href: "/shop/mehndi",
     image: "/products/dawat/gajra.jpg",
-    note: "Winter Dawat Edit",
+    note: "Crochet gajras & clips",
   },
   {
-    title: "Engagement",
-    href: "/shop/engagement",
-    image: "/products/dawat/pearl-necklace-set.jpg",
-    note: "Pearl & formal",
-  },
-  {
-    title: "Walima",
-    href: "/shop/walima",
-    image: "/products/dawat/kundan-choker.jpg",
-    note: "Evening elegance",
+    title: "Hair",
+    href: "/shop/hair-accessories",
+    image: "/products/winter/flower-clips.jpg",
+    note: "Clips & gajras",
   },
   {
     title: "Beanies & Hats",
     href: "/shop/beanies-hats",
     image: "/products/winter/beanie.jpg",
     note: "Winter bestseller",
+  },
+  {
+    title: "Scarves",
+    href: "/shop/scarves-mufflers",
+    image: "/products/winter/scarf.jpg",
+    note: "Chunky layers",
   },
 ];
 
@@ -49,14 +49,14 @@ export function CollectionBanners() {
             <div className="max-w-lg">
               <p className="text-nav inline-flex items-center gap-2 text-aubergine/50">
                 <CopperStar size={10} />
-                <span>Winter Special · Winter Dawat Edit</span>
+                <span>Handmade crochet</span>
               </p>
               <h2 className="mt-3 font-display text-3xl text-aubergine sm:text-4xl md:text-[2.75rem]">
                 Shop by piece
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-aubergine/65">
-                Wedding-season Mehndi, Engagement and Walima edits — plus winter
-                crochet essentials handmade in Pakistan.
+                Crochet accessories only — beanies, scarves, gajras, flower clips,
+                and winter warmers made by hand in Pakistan.
               </p>
             </div>
             <Link
@@ -80,15 +80,15 @@ export function CollectionBanners() {
                   src={piece.image}
                   alt={piece.title}
                   fill
+                  className="object-cover transition duration-700 group-hover:scale-[1.03]"
                   sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-[1.03]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-aubergine/70 via-aubergine/10 to-transparent" />
                 <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
-                  <p className="text-[10px] uppercase tracking-nav text-porcelain/60">
+                  <p className="text-[10px] uppercase tracking-nav text-porcelain/70">
                     {piece.note}
                   </p>
-                  <p className="mt-1 font-display text-2xl text-porcelain">
+                  <p className="mt-1 font-display text-xl text-porcelain sm:text-2xl">
                     {piece.title}
                   </p>
                 </div>
