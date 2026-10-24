@@ -63,10 +63,10 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/logo.png",
-        width: 512,
-        height: 512,
-        alt: "ZAYUNE handmade accessories",
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "ZAYUNE — handmade crochet accessories from Pakistan",
       },
     ],
   },
@@ -74,7 +74,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "ZAYUNE — Designed, not just made.",
     description: siteConfig.description,
-    images: ["/logo.png"],
+    images: ["/og.png"],
   },
   // Relative "./" resolves to each page’s own URL via metadataBase (auto-canonical).
   // Pages using pageMetadata() still set an absolute self-canonical explicitly.
@@ -94,12 +94,14 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
       { url: "/favicon.png", type: "image/png", sizes: "512x512" },
-      { url: "/monogram.png", type: "image/png", sizes: "192x192" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
     ],
     apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
-    shortcut: "/favicon.png",
+    shortcut: "/favicon-32.png",
   },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

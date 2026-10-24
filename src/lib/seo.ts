@@ -32,7 +32,7 @@ export function pageMetadata({
   keywords = [],
 }: PageMetaInput): Metadata {
   const url = absoluteUrl(path);
-  const ogImage = image || "/logo.png";
+  const ogImage = image || "/og.png";
   const mergedKeywords = Array.from(
     new Set([...siteConfig.focusKeywords, ...keywords])
   );
@@ -49,7 +49,14 @@ export function pageMetadata({
       siteName: siteConfig.name,
       locale: siteConfig.locale,
       type: "website",
-      images: [{ url: ogImage, alt: `${title} · ${siteConfig.name}` }],
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: `${title} · ${siteConfig.name}`,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",

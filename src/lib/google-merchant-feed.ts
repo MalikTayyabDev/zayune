@@ -123,7 +123,7 @@ function itemXml(args: {
       <g:title>${cdata(title)}</g:title>
       <g:description>${cdata(description)}</g:description>
       <g:link>${escapeXml(link)}</g:link>
-      <g:image_link>${escapeXml(absoluteImage(images[0] || `${siteConfig.url}/logo.png`))}</g:image_link>
+      <g:image_link>${escapeXml(absoluteImage(images[0] || `${siteConfig.url}/og.png`))}</g:image_link>
 ${extraImages ? `${extraImages}\n` : ""}      <g:condition>new</g:condition>
       <g:availability>${availability}</g:availability>${preorderBits}
       <g:price>${formatPkr(listPrice)}</g:price>

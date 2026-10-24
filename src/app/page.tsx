@@ -30,6 +30,7 @@ export const metadata = pageMetadata({
   description:
     "Shop handmade crochet beanies, scarves, gajras, flower clips and winter warmers from ZAYUNE in Rawalpindi — crochet accessories only, custom orders on WhatsApp.",
   path: "/",
+  image: "/og.png",
   absoluteTitle: true,
   keywords: [
     "handmade crochet Pakistan",
