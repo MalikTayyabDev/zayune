@@ -94,7 +94,6 @@ export const winterCategories: WinterCategorySeed[] = [
     sortOrder: 6,
   },
   {
-  {
     name: "Hair Accessories",
     slug: "hair-accessories",
     description:
