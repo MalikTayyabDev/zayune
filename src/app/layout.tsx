@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { Bodoni_Moda, Cormorant_Garamond, Inter } from "next/font/google";
 import Script from "next/script";
 import { CartDrawer } from "@/components/cart/CartDrawer";
@@ -135,6 +136,7 @@ export default function RootLayout({
           <CookieConsent />
           <ConsentScripts />
           <GoogleCustomerReviewsBadge />
+          <Analytics />
         </SessionProvider>
       </body>
     </html>
