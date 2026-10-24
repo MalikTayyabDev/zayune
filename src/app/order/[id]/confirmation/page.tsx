@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { CopperStar } from "@/components/brand/CopperStar";
 import { OrderNextSteps } from "@/components/order/OrderNextSteps";
+import { GoogleCustomerReviewsOptIn } from "@/components/seo/GoogleCustomerReviewsOptIn";
 import { Button } from "@/components/ui/Button";
 import { findDemoOrder } from "@/lib/demo-orders";
 import { ensureDatabaseUrl, isServerlessRuntime } from "@/lib/env";
@@ -11,6 +12,13 @@ import {
 import { prisma } from "@/lib/prisma";
 import { formatPrice } from "@/lib/utils";
 import { getPaymentProvider } from "@/lib/payments/providers";
+
+/** Estimated delivery for Google Customer Reviews (Pakistan handmade + courier). */
+function estimatedDeliveryIso(from: Date = new Date()) {
+  const d = new Date(from);
+  d.setDate(d.getDate() + 10);
+  return d.toISOString().slice(0, 10);
+}
 
 type Props = {
   params: { id: string };
@@ -98,9 +106,19 @@ export default async function OrderConfirmationPage({ params }: Props) {
     orderNumber: order.orderNumber,
   });
   const payUrl = orderPayPath(payToken);
+  const createdAt =
+    "createdAt" in order && order.createdAt instanceof Date
+      ? order.createdAt
+      : new Date();
 
   return (
     <div className="container-content py-16 sm:py-24 max-w-narrow mx-auto text-center">
+      <GoogleCustomerReviewsOptIn
+        orderId={order.orderNumber}
+        email={order.customerEmail}
+        estimatedDeliveryDate={estimatedDeliveryIso(createdAt)}
+        deliveryCountry="PK"
+      />
       <CopperStar animated size={18} className="mx-auto" />
       <p className="mt-6 text-nav text-aubergine/50">Order confirmed</p>
       <h1 className="mt-3 font-display text-4xl text-aubergine">Thank you</h1>

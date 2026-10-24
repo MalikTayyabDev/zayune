@@ -10,6 +10,7 @@ import { SessionProvider } from "@/components/providers/SessionProvider";
 import { OrganizationJsonLd } from "@/components/seo/JsonLd";
 import { ConsentScripts } from "@/components/cookies/ConsentScripts";
 import { CookieConsent } from "@/components/cookies/CookieConsent";
+import { GoogleCustomerReviewsBadge } from "@/components/seo/GoogleCustomerReviewsBadge";
 import { SupportChat } from "@/components/support/SupportChat";
 import { WhatsAppFloat } from "@/components/support/WhatsAppFloat";
 import { siteConfig } from "@/lib/site";
@@ -133,6 +134,7 @@ export default function RootLayout({
           <SubscribePopup />
           <CookieConsent />
           <ConsentScripts />
+          <GoogleCustomerReviewsBadge />
         </SessionProvider>
       </body>
     </html>
