@@ -125,14 +125,8 @@ export function OrganizationJsonLd() {
         height: 512,
       },
     },
-    potentialAction: {
-      "@type": "SearchAction",
-      target: {
-        "@type": "EntryPoint",
-        urlTemplate: `${base}/shop?q={search_term_string}`,
-      },
-      "query-input": "required name=search_term_string",
-    },
+    // No SearchAction — Google was crawling the literal template URL
+    // `/shop?q={search_term_string}` as a real page (GSC "Crawled — not indexed").
   };
 
   return (

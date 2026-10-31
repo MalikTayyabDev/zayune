@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound, permanentRedirect, redirect } from "next/navigation";
 import { AddToCart } from "@/components/product/AddToCart";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { RecentlyViewedTracker } from "@/components/product/RecentlyViewedTracker";
@@ -8,6 +8,7 @@ import { BreadcrumbJsonLd, ProductJsonLd } from "@/components/seo/JsonLd";
 import { Reveal } from "@/components/ui/Reveal";
 import { findDemoProduct } from "@/lib/demo-catalog";
 import { isDemoMode } from "@/lib/demo-data";
+import { JEWELRY_PRODUCT_SLUGS } from "@/lib/jewelry-slugs";
 import {
   getProductBySlug,
   getProducts,
@@ -18,6 +19,8 @@ import { prisma } from "@/lib/prisma";
 import { pageMetadata } from "@/lib/seo";
 import { isStoreComingSoon } from "@/lib/store-mode";
 import { formatPrice } from "@/lib/utils";
+
+const JEWELRY_SLUG_SET = new Set<string>(JEWELRY_PRODUCT_SLUGS);
 
 type Props = {
   params: { slug: string };
@@ -63,6 +66,11 @@ export async function generateStaticParams() {
 
 export default async function ProductPage({ params }: Props) {
   if (await isStoreComingSoon()) redirect("/shop");
+
+  // Unpublished non-crochet catalog → 301 (cleaner than soft 404s in GSC)
+  if (JEWELRY_SLUG_SET.has(params.slug)) {
+    permanentRedirect("/shop");
+  }
 
   const product = await getProductBySlug(params.slug);
   if (!product || !product.published) notFound();
