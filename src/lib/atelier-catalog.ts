@@ -64,48 +64,47 @@ export const atelierProducts: AtelierProductSeed[] = [
     sku: "ZAY-ATL-BUTTERFLY",
     categorySlug: "sweaters-cardigans",
     oneLiner:
-      "Open-front handmade crochet butterfly cardigan — lace wing panels, center tie, made to order.",
+      "Handmade tapestry crochet butterfly sweater — black, orange monarch wings, white edge dots.",
     story:
-      "The Butterfly Crochet Sweater shoppers search for: an open-front lace crochet cardigan whose front panels form butterfly wings, cinched with a center yarn tie. Airy openwork mesh, short relaxed sleeves, and a soft ivory base — crocheted by hand in Satellite Town, Rawalpindi. Made to order in your colourway; share S–L fit notes on WhatsApp after checkout.",
+      "This is the Butterfly Crochet Sweater: dense tapestry crochet colourwork that builds monarch-style wings in black, orange-red, and white. Scalloped wing edges, black vein lines, and a ribbed cuff — crocheted row by row by hand in Satellite Town, Rawalpindi. Made to order; share size (S–L) and colour notes on WhatsApp after checkout.",
     materials:
-      "Soft acrylic-blend / cotton-blend yarn · Open lace mesh · Butterfly wing front panels · Center tie cord · Hand-finished edges",
+      "Soft acrylic-blend yarn · Tapestry crochet colourwork · Black / orange / white · Ribbed cuff · Hand-finished edges",
     handmadeProof:
-      "Wing panels, lace mesh, and tie finishing completed stitch by stitch in the ZAYUNE studio — never factory-knit.",
+      "Every colour change and wing panel is worked stitch by stitch in the ZAYUNE studio — never printed, never machine-knit.",
     stylingNote:
-      "Layer over a tank or slip dress; wear open for the full wing silhouette. Made to order S–L — note measurements on WhatsApp after checkout.",
+      "Statement layer for winter and festive looks. Made to order S–L — note measurements on WhatsApp after checkout.",
     listPrice: 6500,
     fulfillment: "MADE_TO_ORDER",
     stock: null,
     leadTimeDays: 14,
     featured: true,
-    seoTitle: "Butterfly Crochet Sweater Pakistan | Handmade Lace Cardigan",
+    seoTitle: "Butterfly Crochet Sweater Pakistan | Handmade Monarch Tapestry",
     seoDescription:
-      "Buy the handmade Butterfly Crochet Sweater from ZAYUNE Pakistan — open-front lace butterfly cardigan with center tie, made to order, ships nationwide from Rawalpindi.",
+      "Buy the handmade Butterfly Crochet Sweater from ZAYUNE Pakistan — tapestry crochet monarch wing sweater in black and orange, made to order, ships nationwide from Rawalpindi.",
     tags: [
       "butterfly crochet sweater Pakistan",
-      "butterfly crochet cardigan",
-      "handmade lace crochet cover up",
-      "open front crochet sweater",
-      "boho crochet butterfly cardigan",
+      "monarch butterfly crochet sweater",
+      "tapestry crochet sweater",
+      "handmade butterfly wing sweater",
+      "black orange crochet sweater",
       "made to order crochet Pakistan",
     ],
     images: [
       {
         url: local("butterfly-sweater.jpg"),
-        alt: "Handmade open-front Butterfly Crochet Sweater cardigan with lace wing panels — ZAYUNE Pakistan",
+        alt: "Handmade tapestry Butterfly Crochet Sweater with black and orange monarch wings — ZAYUNE Pakistan",
         kind: "hero",
       },
       {
         url: local("butterfly-sweater-detail.jpg"),
-        alt: "Close-up of handmade crochet butterfly wing lace and center tie on Butterfly Sweater",
+        alt: "Close-up of handmade tapestry crochet monarch wing stitches on Butterfly Sweater",
         kind: "detail",
       },
     ],
     variants: [
-      { name: "Ivory", optionGroup: "Color", swatchHex: "#F5F0E8", stock: null, sku: "ZAY-ATL-BUTTERFLY-IVY" },
-      { name: "Blush", optionGroup: "Color", swatchHex: "#E8C4C0", stock: null, sku: "ZAY-ATL-BUTTERFLY-BLS" },
-      { name: "Sage", optionGroup: "Color", swatchHex: "#A8B5A0", stock: null, sku: "ZAY-ATL-BUTTERFLY-SAG" },
-      { name: "Soft Black", optionGroup: "Color", swatchHex: "#2A2A2A", stock: null, sku: "ZAY-ATL-BUTTERFLY-BLK" },
+      { name: "Monarch Classic", optionGroup: "Colorway", swatchHex: "#E85D04", stock: null, sku: "ZAY-ATL-BUTTERFLY-MON" },
+      { name: "Monarch Deep", optionGroup: "Colorway", swatchHex: "#9B2D2D", stock: null, sku: "ZAY-ATL-BUTTERFLY-DEEP" },
+      { name: "Custom Palette", optionGroup: "Colorway", swatchHex: "#2A2A2A", stock: null, sku: "ZAY-ATL-BUTTERFLY-CUS" },
     ],
   },
   {
