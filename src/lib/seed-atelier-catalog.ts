@@ -25,7 +25,9 @@ export async function seedAtelierCatalog(prisma: PrismaClient) {
   }
 
   // Resolve existing category IDs for products that reuse Winter/Dawat categories.
-  const needed = new Set(atelierProducts.map((p) => p.categorySlug));
+  const needed = Array.from(
+    new Set(atelierProducts.map((p) => p.categorySlug))
+  );
   for (const slug of needed) {
     if (categories.has(slug)) continue;
     const row = await prisma.category.findUnique({ where: { slug } });
