@@ -16,7 +16,7 @@ export function PromoBanner() {
             Best-loved handmade accessories
           </h2>
           <p className="mt-3 text-sm leading-relaxed text-aubergine/65">
-            Explore our most-requested crochet flowers, jewelry, and keychains —
+            Explore our most-requested beanies, scarves, gajras, and flower clips —
             or join the waitlist when a colorway sells out.
           </p>
           <div className="mt-6 flex flex-wrap gap-4">

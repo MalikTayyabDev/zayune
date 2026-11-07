@@ -1,3 +1,7 @@
+import {
+  isHiddenStorefrontCategory,
+  isJewelryProductSlug,
+} from "@/lib/jewelry-slugs";
 import { getCategories, getProducts } from "@/lib/products";
 import { siteConfig } from "@/lib/site";
 import { isStoreComingSoon } from "@/lib/store-mode";
@@ -92,7 +96,15 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
     ).catch(() => [[], []] as const);
 
     const published = products.filter(
-      (p) => p.slug && p.published !== false
+      (p) =>
+        p.slug &&
+        p.published !== false &&
+        !isJewelryProductSlug(p.slug) &&
+        !(
+          "category" in p &&
+          p.category &&
+          isHiddenStorefrontCategory(p.category.slug)
+        )
     );
     const usedCategorySlugs = new Set(
       published
@@ -102,7 +114,8 @@ export async function getSitemapEntries(): Promise<SitemapEntry[]> {
 
     for (const category of categories) {
       if (!category.slug) continue;
-      // Only list categories that have at least one published product.
+      if (isHiddenStorefrontCategory(category.slug)) continue;
+      // Only list categories that have at least one published crochet product.
       if (!usedCategorySlugs.has(category.slug)) continue;
       entries.push(
         entry(`${base}/shop/${category.slug}`, "0.8", "weekly", now)

@@ -25,7 +25,7 @@ export async function AnnouncementBar() {
       ? settings.bannerText ||
         "Products coming soon · Custom orders open · Handmade in Pakistan"
       : intro?.description || settings.bannerText) ||
-    "Crochet handmade accessories · Flowers · Jewelry · Keychains · Custom orders";
+    "Handmade crochet · Beanies · Scarves · Gajras · Custom orders";
 
   const items = [
     {

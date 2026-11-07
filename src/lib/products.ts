@@ -1,5 +1,11 @@
 import { getDemoCatalog, getDemoCategories } from "@/lib/demo-catalog";
 import { demoSettings, isDemoMode } from "@/lib/demo-data";
+import {
+  excludeJewelryProductWhere,
+  isHiddenStorefrontCategory,
+  isJewelryProductSlug,
+  jewelrySlugList,
+} from "@/lib/jewelry-slugs";
 import { prisma } from "@/lib/prisma";
 
 export type ShopQuery = {
@@ -40,6 +46,7 @@ function filterCatalog(
       /* still filter unpublished for storefront */
     }
     if (!p.published) return false;
+    if (isJewelryProductSlug(p.slug)) return false;
     if (categorySlug && p.category.slug !== categorySlug) return false;
     if (q) {
       const query = q.toLowerCase();
@@ -55,18 +62,25 @@ function filterCatalog(
 }
 
 export async function getCategories() {
-  if (isDemoMode()) return getDemoCategories();
-  return prisma.category.findMany({ orderBy: { sortOrder: "asc" } });
+  if (isDemoMode()) {
+    return getDemoCategories().filter(
+      (c) => !isHiddenStorefrontCategory(c.slug)
+    );
+  }
+  const categories = await prisma.category.findMany({
+    orderBy: { sortOrder: "asc" },
+  });
+  return categories.filter((c) => !isHiddenStorefrontCategory(c.slug));
 }
 
 export async function getFeaturedProducts(limit = 4) {
   if (isDemoMode()) {
     return getDemoCatalog()
-      .filter((p) => p.published && p.featured)
+      .filter((p) => p.published && p.featured && !isJewelryProductSlug(p.slug))
       .slice(0, limit);
   }
   return prisma.product.findMany({
-    where: { published: true, featured: true },
+    where: { published: true, featured: true, ...excludeJewelryProductWhere() },
     include: {
       images: { orderBy: { sortOrder: "asc" } },
       category: true,
@@ -80,12 +94,12 @@ export async function getFeaturedProducts(limit = 4) {
 export async function getBestSellers(limit = 4) {
   if (isDemoMode()) {
     return [...getDemoCatalog()]
-      .filter((p) => p.published)
+      .filter((p) => p.published && !isJewelryProductSlug(p.slug))
       .sort((a, b) => Number(b.featured) - Number(a.featured) || a.price - b.price)
       .slice(0, limit);
   }
   return prisma.product.findMany({
-    where: { published: true },
+    where: { published: true, ...excludeJewelryProductWhere() },
     include: {
       images: { orderBy: { sortOrder: "asc" } },
       category: true,
@@ -99,12 +113,12 @@ export async function getBestSellers(limit = 4) {
 export async function getNewestProducts(limit = 4) {
   if (isDemoMode()) {
     return [...getDemoCatalog()]
-      .filter((p) => p.published)
+      .filter((p) => p.published && !isJewelryProductSlug(p.slug))
       .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
       .slice(0, limit);
   }
   return prisma.product.findMany({
-    where: { published: true },
+    where: { published: true, ...excludeJewelryProductWhere() },
     include: {
       images: { orderBy: { sortOrder: "asc" } },
       category: true,
@@ -121,7 +135,9 @@ export async function getRelatedProducts(
   limit = 4
 ) {
   if (isDemoMode()) {
-    const catalog = getDemoCatalog().filter((p) => p.published);
+    const catalog = getDemoCatalog().filter(
+      (p) => p.published && !isJewelryProductSlug(p.slug)
+    );
     const related = catalog.filter(
       (p) => p.slug !== slug && p.category.slug === categorySlug
     );
@@ -131,10 +147,14 @@ export async function getRelatedProducts(
     return [...related, ...fill].slice(0, limit);
   }
 
+  const blocked = new Set(jewelrySlugList);
+  blocked.add(slug);
+  const notIn = Array.from(blocked);
+
   const sameCategory = await prisma.product.findMany({
     where: {
       published: true,
-      slug: { not: slug },
+      slug: { notIn },
       category: { slug: categorySlug },
     },
     include: {
@@ -150,7 +170,7 @@ export async function getRelatedProducts(
   const more = await prisma.product.findMany({
     where: {
       published: true,
-      slug: { not: slug },
+      slug: { notIn },
       id: { notIn: sameCategory.map((p) => p.id) },
     },
     include: {
@@ -172,6 +192,7 @@ export async function getProducts(query: ShopQuery = {}) {
   const products = await prisma.product.findMany({
     where: {
       published: true,
+      ...excludeJewelryProductWhere(),
       ...(query.categorySlug ? { category: { slug: query.categorySlug } } : {}),
       ...(query.availability === "in-stock" ? { fulfillment: "IN_STOCK" } : {}),
       ...(query.availability === "made-to-order"

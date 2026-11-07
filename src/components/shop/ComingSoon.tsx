@@ -37,8 +37,8 @@ export function ComingSoon({
           scarves
         </Link>
         ,{" "}
-        <Link href="/shop/jewelry" className="text-copper hover:underline">
-          jewelry
+        <Link href="/shop/mehndi" className="text-copper hover:underline">
+          mehndi
         </Link>
         , or start a{" "}
         <Link href="/custom" className="text-copper hover:underline">

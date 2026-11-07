@@ -32,12 +32,12 @@ const slides = [
   },
   {
     id: 3,
-    image: "/products/winter/pearl-set.jpg",
-    eyebrow: "Wedding season",
-    title: "Pearl & beaded sets.",
-    subtitle: "Necklace and earrings for Nov–Feb dawats and festive outfits.",
-    cta: "Shop jewelry",
-    href: "/shop/jewelry",
+    image: "/products/dawat/gajra.jpg",
+    eyebrow: "Mehndi edit",
+    title: "Crochet gajras & clips.",
+    subtitle: "Handmade flower hair pieces for mehndi, walima guests, and festive outfits.",
+    cta: "Shop mehndi",
+    href: "/shop/mehndi",
   },
   {
     id: 4,

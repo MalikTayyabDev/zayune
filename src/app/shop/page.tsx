@@ -13,15 +13,15 @@ import { isStoreComingSoon } from "@/lib/store-mode";
 import { cn } from "@/lib/utils";
 
 export const metadata = pageMetadata({
-  title: "Shop Handmade Jewelry, Crochet Flowers & Keychains Pakistan",
+  title: "Shop Handmade Crochet Accessories Pakistan | Beanies, Scarves, Gajras",
   description:
-    "Shop handmade jewelry, crochet flowers, and keychains from ZAYUNE Rawalpindi. Designer-led crochet accessories made by hand in Pakistan — custom orders welcome.",
+    "Shop handmade crochet beanies, scarves, gloves, gajras, flower clips and winter warmers from ZAYUNE Rawalpindi — crochet accessories only, custom orders welcome.",
   path: "/shop",
   keywords: [
     "shop handmade crochet Pakistan",
-    "buy crochet flowers online Pakistan",
-    "handmade jewelry shop Pakistan",
-    "handmade keychains shop Pakistan",
+    "buy crochet beanie online Pakistan",
+    "crochet gajra shop Pakistan",
+    "handmade winter accessories Pakistan",
     "ZAYUNE shop",
   ],
 });
@@ -51,16 +51,16 @@ export default async function ShopPage({ searchParams }: Props) {
   return (
     <div className="container-content py-10 sm:py-20">
       <CollectionJsonLd
-        name="Shop handmade jewelry & crochet — ZAYUNE"
-        description="Handmade crochet flowers, jewelry, and keychains from ZAYUNE Pakistan."
+        name="Shop handmade crochet accessories — ZAYUNE"
+        description="Handmade crochet beanies, scarves, gajras, flower clips and winter warmers from ZAYUNE Pakistan."
         path="/shop"
         products={products.map((p) => ({ name: p.name, slug: p.slug }))}
       />
       <SectionHeading
         as="h1"
         eyebrow="Crochet handmade accessories"
-        title="Shop handmade jewelry & crochet"
-        description="Crochet flowers, jewelry, keychains, and custom orders — made by hand in Satellite Town, Rawalpindi, Pakistan."
+        title="Shop handmade crochet"
+        description="Beanies, scarves, gloves, gajras, flower clips, and custom crochet — made by hand in Satellite Town, Rawalpindi, Pakistan."
       />
       <ShopSeoIntro />
 

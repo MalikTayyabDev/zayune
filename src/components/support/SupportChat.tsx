@@ -28,17 +28,19 @@ const replies: { match: RegExp; answer: string }[] = [
       "Bundles are marked on product cards. Browse Shop → look for the Bundle label, or open Studio Floral Set.",
   },
   {
-    match: /flower|crochet flower|bloom/i,
+    match: /flower|crochet flower|bloom|gajra|clip/i,
     answer:
-      "Crochet flowers live under Shop → Flowers. Custom colorways are available via /custom.",
+      "Crochet gajras and flower clips are under Shop → Mehndi / Hair. Custom colorways via /custom.",
   },
   {
-    match: /jewel|earring|pendant/i,
-    answer: "Jewelry is under Shop → Jewelry — earrings and quiet statement pieces.",
+    match: /beanie|hat|scarf|glove|poncho|ear warmer|boot cuff/i,
+    answer:
+      "Winter crochet warmers are under Shop — beanies, scarves, gloves, ponchos, ear warmers, and boot cuffs.",
   },
   {
-    match: /keychain|charm/i,
-    answer: "Keychains are under Shop → Keychains — everyday charms from Rs 1,200.",
+    match: /jewel|earring|pendant|keychain|charm/i,
+    answer:
+      "ZAYUNE is crochet accessories only now — browse beanies, scarves, gajras, and flower clips in Shop, or request a custom crochet piece.",
   },
   {
     match: /ship|delivery|cod|cash/i,
