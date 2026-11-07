@@ -14,6 +14,7 @@
     "db:seed-winter": "tsx prisma/seed-winter-products.ts",
     "db:seed-dawat": "tsx prisma/seed-dawat-products.ts",
     "db:seed-atelier": "tsx prisma/seed-atelier-products.ts",
+    "db:seed-encore": "tsx prisma/seed-encore-products.ts",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate"
   },

@@ -19,7 +19,7 @@ export const brandFaqs = [
   {
     question: "What does ZAYUNE make?",
     answer:
-      "Handmade crochet accessories only: beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, flower hair clips & gajras, mini ornaments, and crochet totes.",
+      "Handmade crochet only: butterfly sweaters, granny cardigans, baby blankets, amigurumi, beanies, scarves, gajras, flower clips, market bags, cozies, and soft home gifts.",
   },
 ];
 
@@ -139,6 +139,35 @@ export const collectionSeo: Record<
       "granny square bag",
     ],
   },
+  "baby-kids": {
+    h1Extra: "Handmade crochet baby blankets & kids gifts Pakistan",
+    body: `Shop soft handmade crochet baby blankets, loveys, and amigurumi gifts from ZAYUNE in ${studioLocationLine()} — shower-ready pieces with nationwide shipping.`,
+    keywords: [
+      "crochet baby blanket Pakistan",
+      "handmade lovey Pakistan",
+      "amigurumi bunny Pakistan",
+      "baby shower crochet gift",
+    ],
+  },
+  "home-desk": {
+    h1Extra: "Handmade crochet coasters, cup cozies & desk gifts",
+    body: `Handmade crochet home and desk gifts from ZAYUNE — coaster sets, cup cozies, laptop sleeves, and soft AirPods cases finished in Rawalpindi.`,
+    keywords: [
+      "crochet coasters Pakistan",
+      "crochet cup cozy",
+      "handmade laptop sleeve crochet",
+      "crochet AirPods case Pakistan",
+    ],
+  },
+  "tops-layers": {
+    h1Extra: "Handmade crochet tops & light layers Pakistan",
+    body: `Shop cropped crochet covers and light handmade layers from ZAYUNE — statement pieces made to order in Rawalpindi.`,
+    keywords: [
+      "crochet crop top Pakistan",
+      "handmade crochet cover top",
+      "light crochet layer Pakistan",
+    ],
+  },
   "custom-orders": {
     h1Extra: "Custom crochet orders Pakistan",
     body: `Request custom crochet colorways and one-of-a-kind winter pieces from ZAYUNE. Quote first, then we make by hand in Rawalpindi.`,
@@ -150,9 +179,9 @@ export const collectionSeo: Record<
   },
 };
 
-export const shopIntro = `Shop handmade crochet accessories from ZAYUNE in ${studioLocationLine()} — beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, flower hair clips & gajras, ornaments, and crochet totes. Seasonal 5% on products · WELCOME10 intro · WINTER5 at checkout.`;
+export const shopIntro = `Shop handmade crochet from ZAYUNE in ${studioLocationLine()} — butterfly sweaters, baby blankets, granny market bags, beanies, scarves, gajras, home gifts, and custom orders. Seasonal 5% on products · WELCOME10 intro · WINTER5 at checkout.`;
 
 export const homeSeoParagraphs = [
-  `ZAYUNE is a handmade crochet studio in ${studioLocationLine()} — design-led beanies, chunky scarves, fingerless gloves, ponchos, ear warmers, boot cuffs, flower hair clips & gajras, ornaments, and totes.`,
+  `ZAYUNE is a handmade crochet studio in ${studioLocationLine()} — butterfly sweaters, baby blankets, amigurumi, granny bags, beanies, scarves, gajras, cozies, and soft home gifts.`,
   `Every piece is finished by hand with clear checkout, guest shopping, custom crochet colorways, and WhatsApp support on ${siteConfig.phoneDisplay}. We ship nationwide across Pakistan.`,
 ];

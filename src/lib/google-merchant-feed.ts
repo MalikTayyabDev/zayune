@@ -18,6 +18,9 @@ const GPC_BY_CATEGORY: Record<string, string> = {
   mehndi: "171", // Hair Accessories / floral wedding accessories
   engagement: "188", // Jewelry
   walima: "188", // Jewelry (potli/shawl pin still apparel-adjacent; jewelry GPC fits sets)
+  "baby-kids": "5424", // Baby & Toddler > Baby Gift Sets (soft toys/blankets map well)
+  "home-desk": "696", // Home & Garden > Decor
+  "tops-layers": "212", // Clothing > Outerwear / tops
   "custom-orders": "166", // Apparel & Accessories
 };
 

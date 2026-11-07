@@ -13,22 +13,22 @@ const pieces = [
     note: "Butterfly Sweater",
   },
   {
-    title: "Mehndi",
-    href: "/shop/mehndi",
-    image: "/products/dawat/gajra.jpg",
-    note: "Crochet gajras & clips",
+    title: "Baby & Kids",
+    href: "/shop/baby-kids",
+    image: "/products/encore/baby-blanket.jpg",
+    note: "Blankets & loveys",
+  },
+  {
+    title: "Bags",
+    href: "/shop/bags-pouches",
+    image: "/products/encore/market-bag.jpg",
+    note: "Granny market tote",
   },
   {
     title: "Beanies & Hats",
     href: "/shop/beanies-hats",
     image: "/products/winter/beanie.jpg",
     note: "Winter bestseller",
-  },
-  {
-    title: "Scarves",
-    href: "/shop/scarves-mufflers",
-    image: "/products/winter/scarf.jpg",
-    note: "Chunky layers",
   },
 ];
 
@@ -55,8 +55,8 @@ export function CollectionBanners() {
                 Shop by piece
               </h2>
               <p className="mt-3 text-sm leading-relaxed text-aubergine/65">
-                Crochet accessories only — beanies, scarves, gajras, flower clips,
-                and winter warmers made by hand in Pakistan.
+                Crochet only — sweaters, baby gifts, granny bags, beanies, and
+                winter warmers made by hand in Pakistan.
               </p>
             </div>
             <Link
