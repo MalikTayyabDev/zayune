@@ -88,6 +88,8 @@ export const siteConfig = {
     "crochet beanie Pakistan",
     "crochet scarf Pakistan",
     "crochet gajra Pakistan",
+    "butterfly crochet sweater Pakistan",
+    "handmade crochet sweater Pakistan",
     "flower hair clips crochet",
     "custom crochet orders Pakistan",
 

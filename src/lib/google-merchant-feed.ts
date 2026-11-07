@@ -8,6 +8,7 @@ const GPC_BY_CATEGORY: Record<string, string> = {
   "scarves-mufflers": "178", // Scarves & Shawls
   "gloves-warmers": "170", // Gloves & Mittens
   "ponchos-shrugs": "212", // Clothing > Outerwear
+  "sweaters-cardigans": "212", // Clothing > Outerwear / sweaters
   "ear-warmers": "173",
   "boot-cuffs": "178",
   jewelry: "188", // Jewelry

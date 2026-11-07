@@ -7,16 +7,16 @@ import { Reveal } from "@/components/ui/Reveal";
 
 const pieces = [
   {
+    title: "Sweaters",
+    href: "/shop/sweaters-cardigans",
+    image: "/products/atelier/butterfly-sweater.jpg",
+    note: "Butterfly Sweater",
+  },
+  {
     title: "Mehndi",
     href: "/shop/mehndi",
     image: "/products/dawat/gajra.jpg",
     note: "Crochet gajras & clips",
-  },
-  {
-    title: "Hair",
-    href: "/shop/hair-accessories",
-    image: "/products/winter/flower-clips.jpg",
-    note: "Clips & gajras",
   },
   {
     title: "Beanies & Hats",

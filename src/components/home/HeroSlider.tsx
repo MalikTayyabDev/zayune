@@ -13,6 +13,16 @@ const SLIDE_MS = 6200;
 const slides = [
   {
     id: 1,
+    image: "/products/atelier/butterfly-sweater.jpg",
+    eyebrow: "Atelier edit",
+    title: "Butterfly Crochet Sweater.",
+    subtitle:
+      "Signature handmade sweater with butterfly motif — made to order in Pakistan.",
+    cta: "Shop Butterfly Sweater",
+    href: "/product/butterfly-crochet-sweater",
+  },
+  {
+    id: 2,
     image: "/products/winter/beanie.jpg",
     eyebrow: "Winter Special",
     title: "Designed, not just made.",
@@ -22,7 +32,7 @@ const slides = [
     href: "/shop",
   },
   {
-    id: 2,
+    id: 3,
     image: "/products/winter/scarf.jpg",
     eyebrow: "Chunky layers",
     title: "Scarves built for cold days.",
@@ -31,22 +41,13 @@ const slides = [
     href: "/shop/scarves-mufflers",
   },
   {
-    id: 3,
+    id: 4,
     image: "/products/dawat/gajra.jpg",
     eyebrow: "Mehndi edit",
     title: "Crochet gajras & clips.",
     subtitle: "Handmade flower hair pieces for mehndi, walima guests, and festive outfits.",
     cta: "Shop mehndi",
     href: "/shop/mehndi",
-  },
-  {
-    id: 4,
-    image: "/products/winter/tote.jpg",
-    eyebrow: "Everyday carry",
-    title: "Totes that outlast winter.",
-    subtitle: "Chunky crochet bags for gifting now and carrying all year.",
-    cta: "Shop bags",
-    href: "/shop/bags-pouches",
   },
 ];
 

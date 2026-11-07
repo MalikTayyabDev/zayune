@@ -27,6 +27,16 @@ export const collectionSeo: Record<
   string,
   { h1Extra: string; body: string; keywords: string[] }
 > = {
+  "sweaters-cardigans": {
+    h1Extra: "Handmade crochet sweaters & cardigans Pakistan",
+    body: `Shop handmade crochet sweaters from ZAYUNE in ${studioLocationLine()} — including the signature Butterfly Crochet Sweater, made to order with nationwide shipping.`,
+    keywords: [
+      "butterfly crochet sweater Pakistan",
+      "handmade crochet sweater",
+      "crochet cardigan Rawalpindi",
+      "made to order sweater Pakistan",
+    ],
+  },
   "beanies-hats": {
     h1Extra: "Handmade crochet beanies & slouchy hats Pakistan",
     body: `Shop handmade crochet beanies and slouchy hats from ZAYUNE in ${studioLocationLine()}. Winter bestsellers with wide colorways, seasonal pricing, and nationwide shipping.`,
@@ -34,6 +44,8 @@ export const collectionSeo: Record<
       "crochet beanie Pakistan",
       "handmade slouchy hat",
       "winter beanie Rawalpindi",
+      "kids crochet beanie Pakistan",
+      "crochet bucket hat Pakistan",
     ],
   },
   "scarves-mufflers": {
