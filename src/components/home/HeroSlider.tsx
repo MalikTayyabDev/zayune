@@ -17,7 +17,7 @@ const slides = [
     eyebrow: "Atelier edit",
     title: "Butterfly Crochet Sweater.",
     subtitle:
-      "Signature handmade sweater with butterfly motif — made to order in Pakistan.",
+      "Open-front lace butterfly cardigan — handmade, made to order in Pakistan.",
     cta: "Shop Butterfly Sweater",
     href: "/product/butterfly-crochet-sweater",
   },

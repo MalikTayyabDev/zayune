@@ -64,39 +64,40 @@ export const atelierProducts: AtelierProductSeed[] = [
     sku: "ZAY-ATL-BUTTERFLY",
     categorySlug: "sweaters-cardigans",
     oneLiner:
-      "Signature handmade crochet sweater with butterfly motif — soft, gift-ready, made to measure.",
+      "Open-front handmade crochet butterfly cardigan — lace wing panels, center tie, made to order.",
     story:
-      "Our Butterfly Crochet Sweater is the atelier hero: a design-led crochet pullover with a delicate butterfly motif worked into the yoke. Each piece is made to order in Satellite Town, Rawalpindi — share your size (S–L) and preferred colourway and we crochet it by hand. Perfect for winter gifts, dawats, and everyday layers that still feel special.",
+      "The Butterfly Crochet Sweater shoppers search for: an open-front lace crochet cardigan whose front panels form butterfly wings, cinched with a center yarn tie. Airy openwork mesh, short relaxed sleeves, and a soft ivory base — crocheted by hand in Satellite Town, Rawalpindi. Made to order in your colourway; share S–L fit notes on WhatsApp after checkout.",
     materials:
-      "Soft acrylic-blend / cotton-blend yarn · Butterfly motif yoke · Ribbed cuffs & hem · Hand-finished seams",
+      "Soft acrylic-blend / cotton-blend yarn · Open lace mesh · Butterfly wing front panels · Center tie cord · Hand-finished edges",
     handmadeProof:
-      "Motif, shaping, and finishing completed stitch by stitch in the ZAYUNE studio — never factory-knit.",
+      "Wing panels, lace mesh, and tie finishing completed stitch by stitch in the ZAYUNE studio — never factory-knit.",
     stylingNote:
-      "Pair with ivory trousers or a soft skirt. Made to measure S–L — note measurements on WhatsApp after checkout.",
+      "Layer over a tank or slip dress; wear open for the full wing silhouette. Made to order S–L — note measurements on WhatsApp after checkout.",
     listPrice: 6500,
     fulfillment: "MADE_TO_ORDER",
     stock: null,
     leadTimeDays: 14,
     featured: true,
-    seoTitle: "Butterfly Crochet Sweater Pakistan | Handmade ZAYUNE",
+    seoTitle: "Butterfly Crochet Sweater Pakistan | Handmade Lace Cardigan",
     seoDescription:
-      "Buy the handmade Butterfly Crochet Sweater from ZAYUNE Pakistan. Made-to-order crochet sweater with butterfly motif — ships nationwide from Rawalpindi.",
+      "Buy the handmade Butterfly Crochet Sweater from ZAYUNE Pakistan — open-front lace butterfly cardigan with center tie, made to order, ships nationwide from Rawalpindi.",
     tags: [
       "butterfly crochet sweater Pakistan",
-      "handmade crochet sweater",
-      "crochet pullover Rawalpindi",
-      "made to order sweater Pakistan",
-      "ZAYUNE butterfly sweater",
+      "butterfly crochet cardigan",
+      "handmade lace crochet cover up",
+      "open front crochet sweater",
+      "boho crochet butterfly cardigan",
+      "made to order crochet Pakistan",
     ],
     images: [
       {
         url: local("butterfly-sweater.jpg"),
-        alt: "Handmade Butterfly Crochet Sweater — ZAYUNE Pakistan",
+        alt: "Handmade open-front Butterfly Crochet Sweater cardigan with lace wing panels — ZAYUNE Pakistan",
         kind: "hero",
       },
       {
         url: local("butterfly-sweater-detail.jpg"),
-        alt: "Butterfly motif and stitch detail on handmade crochet sweater",
+        alt: "Close-up of handmade crochet butterfly wing lace and center tie on Butterfly Sweater",
         kind: "detail",
       },
     ],

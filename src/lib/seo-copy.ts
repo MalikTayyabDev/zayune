@@ -28,13 +28,14 @@ export const collectionSeo: Record<
   { h1Extra: string; body: string; keywords: string[] }
 > = {
   "sweaters-cardigans": {
-    h1Extra: "Handmade crochet sweaters & cardigans Pakistan",
-    body: `Shop handmade crochet sweaters from ZAYUNE in ${studioLocationLine()} — including the signature Butterfly Crochet Sweater, made to order with nationwide shipping.`,
+    h1Extra: "Handmade crochet sweaters & butterfly cardigans Pakistan",
+    body: `Shop handmade crochet sweaters from ZAYUNE in ${studioLocationLine()} — including the signature open-front Butterfly Crochet Sweater (lace wing cardigan), made to order with nationwide shipping.`,
     keywords: [
       "butterfly crochet sweater Pakistan",
-      "handmade crochet sweater",
+      "butterfly crochet cardigan",
+      "handmade lace crochet cover up",
+      "open front crochet sweater",
       "crochet cardigan Rawalpindi",
-      "made to order sweater Pakistan",
     ],
   },
   "beanies-hats": {
